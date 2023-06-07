@@ -15,26 +15,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
+const jwt_1 = require("@nestjs/jwt");
+const constants_1 = require("../auth/constants");
 let UserController = class UserController {
-    constructor(userService) {
+    constructor(userService, jwtService) {
         this.userService = userService;
+        this.jwtService = jwtService;
     }
     users(id) {
         const numericId = parseInt(id, 10);
         console.log(numericId);
         return this.userService.getprofile(numericId);
     }
-    updateUser(id, uname, image) {
-        console.log(id);
-        const numericId = parseInt(id, 10);
-        if (uname && image) {
-            this.userService.updateusername(numericId, uname);
-            return this.userService.updateuserimage(numericId, image);
+    async updateUser(req, uname, image) {
+        try {
+            const data = await this.jwtService.verifyAsync(req.cookies['authcookie']['access_token'], {
+                secret: constants_1.jwtConstants.secret,
+                ignoreExpiration: true,
+            });
+            const numericId = parseInt(data.id, 10);
+            if (uname && image) {
+                this.userService.updateusername(numericId, uname);
+                return this.userService.updateuserimage(numericId, image);
+            }
+            else if (uname)
+                return this.userService.updateusername(numericId, uname);
+            else if (image)
+                return this.userService.updateuserimage(numericId, image);
         }
-        else if (uname)
-            return this.userService.updateusername(numericId, uname);
-        else if (image)
-            return this.userService.updateuserimage(numericId, image);
+        catch (e) {
+            throw new common_1.ForbiddenException('no user here');
+        }
     }
 };
 __decorate([
@@ -46,16 +57,16 @@ __decorate([
 ], UserController.prototype, "users", null);
 __decorate([
     (0, common_1.Patch)(),
-    __param(0, (0, common_1.Query)('id')),
+    __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)('username')),
     __param(2, (0, common_1.Body)('image')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [Object, String, String]),
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "updateUser", null);
 UserController = __decorate([
     (0, common_1.Controller)('user'),
-    __metadata("design:paramtypes", [user_service_1.UserService])
+    __metadata("design:paramtypes", [user_service_1.UserService, jwt_1.JwtService])
 ], UserController);
 exports.UserController = UserController;
 //# sourceMappingURL=user.controller.js.map

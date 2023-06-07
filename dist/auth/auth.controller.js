@@ -28,8 +28,6 @@ let AuthController = class AuthController {
         return this.authService.login(dto);
     }
     signup(req, dto) {
-        const cookie = req.cookies;
-        console.log(cookie);
         return this.authService.signup(dto);
     }
     async getProfile(req) {

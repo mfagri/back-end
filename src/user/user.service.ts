@@ -1,6 +1,7 @@
 
 
 import { Injectable, NotFoundException } from "@nestjs/common";
+// import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "src/prisma/prisma.service";
 
 // import { v4 as uuidv4 } from 'uuid';
@@ -26,10 +27,12 @@ export class UserService
  
             const user = await this.prisma.user.update({
                 where: {
-                  id: id, // Replace with the actual ID of the user you want to update
+                  // id:id,
+                  id:id,
+                   
                 },
                 data: {
-                  username: username, // Update the username property
+                  username: username, 
                 },
               });
 
@@ -39,13 +42,14 @@ export class UserService
     async updateuserimage(id: number,image: string)
     {
         
- 
+            
             const user = await this.prisma.user.update({
                 where: {
-                  id: id, // Replace with the actual ID of the user you want to update
+                  id:id,
+                  
                 },
                 data: {
-                  image: image, // Update the username property
+                  image: image, 
                 },
               });
 

@@ -10,13 +10,14 @@ exports.userModule = void 0;
 const common_1 = require("@nestjs/common");
 const user_controller_1 = require("./user.controller");
 const user_service_1 = require("./user.service");
+const fortytwo_strategy_1 = require("../auth/fortytwo.strategy");
 let userModule = class userModule {
 };
 userModule = __decorate([
     (0, common_1.Module)({
         imports: [],
         controllers: [user_controller_1.UserController],
-        providers: [user_service_1.UserService],
+        providers: [user_service_1.UserService, fortytwo_strategy_1.Strategy42],
     })
 ], userModule);
 exports.userModule = userModule;

@@ -20,8 +20,8 @@ export class AuthController {
   }
   @Post('signup')
   signup(@Req() req : Request,@Body() dto: AuthDto) {
-    const cookie = req.cookies
-    console.log(cookie)
+    // const cookie = req.cookies
+    // console.log(cookie)
     return this.authService.signup(dto);
   }
   

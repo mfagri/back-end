@@ -1,7 +1,10 @@
 import { UserService } from "./user.service";
+import { Request } from 'express';
+import { JwtService } from "@nestjs/jwt";
 export declare class UserController {
     private readonly userService;
-    constructor(userService: UserService);
+    private jwtService;
+    constructor(userService: UserService, jwtService: JwtService);
     users(id: string): Promise<import(".prisma/client").Profile>;
-    updateUser(id: string, uname: string, image: string): Promise<import(".prisma/client").User>;
+    updateUser(req: Request, uname: string, image: string): Promise<import(".prisma/client").User>;
 }

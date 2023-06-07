@@ -1,9 +1,11 @@
-import { Controller,Post,Body, Get,Param,Patch,Delete, Query} from "@nestjs/common";
+import { Controller,Post,Body, Get,Param,Patch,Delete, Query, Req, ForbiddenException} from "@nestjs/common";
 import { UserService } from "./user.service";
-
+import { Response, Request } from 'express';
+import { JwtService } from "@nestjs/jwt";
+import { jwtConstants } from "src/auth/constants";
 @Controller('user')
 export class UserController {
-    constructor(private readonly userService: UserService){}
+    constructor(private readonly userService: UserService,private jwtService: JwtService){}
 
     // // @Post()
     // @Post()
@@ -43,24 +45,39 @@ export class UserController {
     //     return this.userService.getSingleUser(name);
     // }
     @Patch()
-    updateUser(
-        @Query('id') id: string,
+    async updateUser(
+        @Req() req:Request,
         @Body('username') uname : string,
         @Body('image') image : string,
     ){
-        console.log(id);
-
+        
+        try{
+            const data = await this.jwtService.verifyAsync(req.cookies['authcookie']['access_token']
+            
+            ,
+            {
+              secret: jwtConstants.secret,
+              ignoreExpiration: true,
+            }
+            
+            );
+           
+            const numericId = parseInt(data.id, 10);
+            if(uname && image)
+            {
+                this.userService.updateusername(numericId,uname);
+                return this.userService.updateuserimage(numericId,image)
+            }
+            else if(uname)
+                return this.userService.updateusername(numericId,uname);
+            else if(image)
+                return this.userService.updateuserimage(numericId,image)
+          }
+          catch(e)
+          {
+            throw new ForbiddenException('no user here');
+          }
         // const User = this.userService.findByid(username);
-        const numericId = parseInt(id, 10);
-        if(uname && image)
-        {
-            this.userService.updateusername(numericId,uname);
-            return this.userService.updateuserimage(numericId,image)
-        }
-        else if(uname)
-            return this.userService.updateusername(numericId,uname);
-        else if(image)
-            return this.userService.updateuserimage(numericId,image)
     }
 
     // @Delete(':uname')
@@ -70,3 +87,4 @@ export class UserController {
     //     return true;
     // }
 }
+
