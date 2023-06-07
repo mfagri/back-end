@@ -39,12 +39,13 @@ let AuthService = class AuthService {
     }
     async userfind() {
         console.log(this.s42.tokens);
-        const user = await this.prisma.user.findUnique({
+        const user = await this.prisma.user.findFirst({
             where: {
                 token: this.s42.tokens
             }
         });
         if (!user) {
+            console.log('hiiii');
             return null;
         }
         const payload = { id: user.id,
@@ -57,6 +58,8 @@ let AuthService = class AuthService {
     }
     async signup(dto) {
         console.log(dto);
+        console.log(this.s42.user);
+        console.log('wtf');
         try {
             const user = await this.prisma.user.create({
                 data: {

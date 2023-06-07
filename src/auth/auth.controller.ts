@@ -31,7 +31,9 @@ export class AuthController {
   async getProfile(@Req() req) {
     // console.log(req)
     // this.authService÷
+    console.log('here');
     console.log(req.cookies['authcookie']);
+    console.log('eco');
     try{
       const data = await this.jwtService.verifyAsync(req.cookies['authcookie']['access_token']
       
@@ -67,12 +69,24 @@ export class AuthController {
   @Get('/callback')
   async fortyTwoAuthRedirect(@Req() req: Request, @Res() res: Response) {
     //if user exist
+    console.log('here');
+    //  console.log(req.cookies['authcookie']);
+    //  const data = await this.jwtService.verifyAsync(req.cookies['authcookie']['access_token']
+      
+    //  ,
+    //  {
+    //    secret: jwtConstants.secret,
+    //    ignoreExpiration: true,
+    //  }
+     
+    //  );
+    //  console.log(data);
     const user = await this.authService.userfind();
     if(!user)
       return res.redirect('http://localhost:3000/register');
     else
     {
-      res.cookie('authcookie',user);
+       res.cookie('authcookie',user);
       // // console.log(res);
       return res.redirect('http://localhost:3000/')
     }

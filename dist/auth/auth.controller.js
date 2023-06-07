@@ -31,7 +31,9 @@ let AuthController = class AuthController {
         return this.authService.signup(dto);
     }
     async getProfile(req) {
+        console.log('here');
         console.log(req.cookies['authcookie']);
+        console.log('eco');
         try {
             const data = await this.jwtService.verifyAsync(req.cookies['authcookie']['access_token'], {
                 secret: constants_1.jwtConstants.secret,
@@ -47,6 +49,7 @@ let AuthController = class AuthController {
         console.log('42 login');
     }
     async fortyTwoAuthRedirect(req, res) {
+        console.log('here');
         const user = await this.authService.userfind();
         if (!user)
             return res.redirect('http://localhost:3000/register');

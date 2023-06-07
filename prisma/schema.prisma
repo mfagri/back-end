@@ -20,7 +20,7 @@ model User{
   email  String? @unique
   username String? @unique
   image String?
-  token String @unique
+  token String? @unique
   auth String?
   profile Profile?
 }

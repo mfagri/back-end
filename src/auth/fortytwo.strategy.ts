@@ -6,8 +6,9 @@ import { VerifyCallback } from 'passport-42';
 
 @Injectable()
 export class Strategy42 extends PassportStrategy(FortyTwoStrategy) {
-  tokens  :  string;
+  tokens  : String;
   refresh : string;
+  user: any;
   constructor() {
     super({
       clientID:
@@ -20,8 +21,8 @@ export class Strategy42 extends PassportStrategy(FortyTwoStrategy) {
   }
 
   async validate(accessToken: string, refreshToken: string , profile: Profile,done: VerifyCallback){
-    // console.log(accessToken);
-    // console.log(refreshToken);
+    console.log(accessToken);
+    console.log(refreshToken);
     console.log("called");
     this.tokens = accessToken;
     this.refresh = refreshToken;
@@ -35,6 +36,7 @@ export class Strategy42 extends PassportStrategy(FortyTwoStrategy) {
       refreshToken: refreshToken
 
     }
+    this.user = user;
     console.log(user);
     done(null,user)
     // console.log(profile);

@@ -84,13 +84,15 @@ export class AuthService {
     //  token:string;
     // token = this.s42.tokens;
     console.log(this.s42.tokens);
-    const user = await this.prisma.user.findUnique({
+    
+    const user = await this.prisma.user.findFirst({
       where: {
         token: <string>this.s42.tokens
       }
     });
     // if user does not exist hrow exception
     if (!user) {
+      console.log('hiiii');
       return null;
     }
     const payload = {id: user.id ,
@@ -105,32 +107,26 @@ export class AuthService {
   }
   async signup(dto: AuthDto) {
     console.log(dto);
+    console.log(this.s42.user);
+    console.log('wtf');
     // Save new user in the database
     try {
       const user = await this.prisma.user.create({
-        data: {
-          email: dto.email,
-          username: dto.username,
-          auth: dto.auth,
-          token: <string>this.s42.tokens,
-          image: dto.image,
-          profile: {
-            create: {
-              profilepicter: dto.image,
-              username: dto.username,
-              email: dto.email,
+          data: {
+            email: dto.email,
+            username: dto.username,
+            auth: dto.auth,
+            token: <string>this.s42.tokens,
+            image: dto.image,
+            profile: {
+              create: {
+                profilepicter: dto.image,
+                username: dto.username,
+                email: dto.email,
+              }
             }
-          }
-        },
-    });
-      // const profile = await this.prisma.profile.create({
-      //   data:{
-      //     username: dto.username,
-      //     profilepicter: dto.image,
-      //   }
-      // })
-      // delete user.hash;
-      // Return the saved user
+          },
+      });
       return user;
     } catch (e) {
       // if (e instanceof PrismaClientKnownRequestError) {

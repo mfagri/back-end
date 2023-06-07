@@ -22,6 +22,8 @@ let Strategy42 = class Strategy42 extends (0, passport_1.PassportStrategy)(passp
         });
     }
     async validate(accessToken, refreshToken, profile, done) {
+        console.log(accessToken);
+        console.log(refreshToken);
         console.log("called");
         this.tokens = accessToken;
         this.refresh = refreshToken;
@@ -32,6 +34,7 @@ let Strategy42 = class Strategy42 extends (0, passport_1.PassportStrategy)(passp
             accessToken: accessToken,
             refreshToken: refreshToken
         };
+        this.user = user;
         console.log(user);
         done(null, user);
     }
