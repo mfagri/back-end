@@ -14,10 +14,12 @@ import { Strategy } from "passport-local";
 import { Profile, use } from "passport";
 import { VerifyCallback } from 'passport-42';
 import { JwtService } from '@nestjs/jwt';
+import { TokenService } from "./token.sever";
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService,private readonly s42:  Strategy42, private jwtService: JwtService) {
+
+  constructor(private prisma: PrismaService,private readonly s42:  Strategy42, private jwtService: JwtService,private tokenService: TokenService) {
     // super({
     //   clientID: "u-s4t2ud-d2078e9c2d7ea34d37a5adffa013cee9c2715889268480c4eba8a13a93ec6469", // Replace with your 42 app ID
     //   clientSecret: "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", // Replace with your 42 app secret
@@ -78,26 +80,25 @@ export class AuthService {
     // delete user.hash;
     // return user;
   }
-  async userfind()
+  async userfind(user1:any)
   {
 
     //  token:string;
     // token = this.s42.tokens;
     console.log(this.s42.tokens);
     
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prisma.user.findUnique({
       where: {
-        token: <string>this.s42.tokens
+        token: user1.accestoken
       }
     });
     // if user does not exist hrow exception
     if (!user) {
-      console.log('hiiii');
       return null;
     }
     const payload = {id: user.id ,
-      accestoken:  this.s42.tokens,
-      refreshtoken: this.s42.refresh,
+      accestoken:  user1.accestoken,
+      refreshtoken: user1.refreshtoken,
     };
     // console.log(this.s42.signAsync('dsdsdfsfds'));
     
@@ -105,32 +106,73 @@ export class AuthService {
       access_token: await this.jwtService.signAsync(payload),
     };
   }
+  // async signup(dto: AuthDto) {
+  //   console.log(dto);
+  //   // Save new user in the database
+  //   try {
+  //     const user = await this.prisma.user.create({
+  //       data: {
+  //         email: dto.email,
+  //         username: dto.username,
+  //         auth: dto.auth,
+  //         token: this.s42.tokens,
+  //         image: dto.image,
+  //         profile: {
+  //           create: {
+  //             profilepicter: dto.image,
+  //             username: dto.username,
+  //             email: dto.email,
+  //           }
+  //         }
+  //       },
+  //   });
+  //     // const profile = await this.prisma.profile.create({
+  //     //   data:{
+  //     //     username: dto.username,
+  //     //     profilepicter: dto.image,
+  //     //   }
+  //     // })
+  //     // delete user.hash;
+  //     // Return the saved user
+  //     return user;
+  //   } catch (e) {
+  //     // if (e instanceof PrismaClientKnownRequestError) {
+  //     console.log("heeeere");
+  //     if (e.code === "P2002") {
+  //       throw new ForbiddenException("User already exist");
+  //     }
+  //     // }
+
+  //     // Throw the original error if it's not a known request error
+  //     throw e;
+  //   }
+  //   // return 'signup';
+  // }
   async signup(dto: AuthDto) {
-    console.log(dto);
-    console.log(this.s42.user);
-    console.log('wtf');
-    // Save new user in the database
     try {
       const user = await this.prisma.user.create({
-          data: {
-            email: dto.email,
-            username: dto.username,
-            auth: dto.auth,
-            token: <string>this.s42.tokens,
-            image: dto.image,
-            profile: {
-              create: {
-                profilepicter: dto.image,
-                username: dto.username,
-                email: dto.email,
-              }
-            }
-          },
+        data: {
+          email: dto.email,
+          username: dto.username,
+          auth: dto.auth,
+          token: <string>this.s42.tokens,
+          image: dto.image,
+          profile: {
+                      create: {
+                        profilepicter: dto.image,
+                        username: dto.username,
+                        email: dto.email,
+                      }
+                    }
+        },
       });
+
+      // delete user.hash;
+      // Return the saved user
       return user;
     } catch (e) {
       // if (e instanceof PrismaClientKnownRequestError) {
-      console.log("heeeere");
+     
       if (e.code === "P2002") {
         throw new ForbiddenException("User already exist");
       }

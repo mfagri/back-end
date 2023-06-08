@@ -18,9 +18,9 @@ model User{
   updatedAt DateTime @updatedAt
 
   email  String? @unique
-  username String? @unique
+  username String?
   image String?
-  token String? @unique
+  token String @unique
   auth String?
   profile Profile?
 }

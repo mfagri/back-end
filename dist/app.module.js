@@ -16,6 +16,7 @@ const fortytwo_strategy_1 = require("./auth/fortytwo.strategy");
 const config_1 = require("@nestjs/config");
 const serilizer_1 = require("./auth/serilizer");
 const user_module_1 = require("./user/user.module");
+const token_sever_1 = require("./auth/token.sever");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -26,10 +27,11 @@ AppModule = __decorate([
             }),
             auth_module_1.AuthModule,
             passport_1.PassportModule.register({ defaultStrategy: "42" }),
+            passport_1.PassportModule,
             user_module_1.userModule,
         ],
         controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService, fortytwo_strategy_1.Strategy42, serilizer_1.Serializer],
+        providers: [app_service_1.AppService, fortytwo_strategy_1.Strategy42, serilizer_1.Serializer, token_sever_1.TokenService],
     })
 ], AppModule);
 exports.AppModule = AppModule;

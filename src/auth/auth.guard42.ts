@@ -1,17 +1,18 @@
 import { ExecutionContext, Injectable } from "@nestjs/common";
-import { AuthGuard as PassportAuthGuard } from "@nestjs/passport";
+import { AuthGuard, AuthGuard as PassportAuthGuard } from "@nestjs/passport";
 import { User } from "@prisma/client";
 
 @Injectable()
-export class AuthGuard42 extends PassportAuthGuard("42") {
-  async canActivate(context: ExecutionContext) {
-    const active = (await super.canActivate(context)) as boolean;
-    const request = context.switchToHttp().getRequest();
-    // const token = this.extractTokenFromHeader(request);
-    await super.logIn(request);
-    // console.log(token);
-    return active;
-  }
+export class AuthGuard42 extends AuthGuard("42") {
+  // async canActivate(context: ExecutionContext) {
+  //   const active = (await super.canActivate(context)) as boolean;
+  //   const request = context.switchToHttp().getRequest();
+  //   console.log("===", request.payload)
+  //   // const token = this.extractTokenFromHeader(request);
+  //   await super.logIn(request);
+  //   // console.log(token);
+  //   return active;
+  // }
   // private extractTokenFromHeader(request: Request): string | undefined {
   //   const [type, token] =
   //     request.headers.get("authorization")?.split(" ") ?? [];

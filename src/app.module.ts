@@ -7,6 +7,7 @@ import { Strategy42 } from "./auth/fortytwo.strategy";
 import { ConfigModule } from "@nestjs/config";
 import { Serializer } from "./auth/serilizer";
 import { userModule } from "./user/user.module";
+import { TokenService } from "./auth/token.sever";
 
 
 @Module({
@@ -16,9 +17,10 @@ import { userModule } from "./user/user.module";
     }),
     AuthModule,
     PassportModule.register({ defaultStrategy: "42" }),
+    PassportModule,
     userModule,
   ],
   controllers: [AppController],
-  providers: [AppService, Strategy42, Serializer],
+  providers: [AppService, Strategy42, Serializer,TokenService],
 })
 export class AppModule {}

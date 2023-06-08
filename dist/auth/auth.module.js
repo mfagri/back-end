@@ -15,6 +15,8 @@ const prisma_module_1 = require("../prisma/prisma.module");
 const jwt_1 = require("@nestjs/jwt");
 const constants_1 = require("./constants");
 const fortytwo_strategy_1 = require("./fortytwo.strategy");
+const token_sever_1 = require("./token.sever");
+const auth_guard42_1 = require("./auth.guard42");
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([
@@ -30,7 +32,7 @@ AuthModule = __decorate([
                 signOptions: { expiresIn: '60s' },
             }),
         ],
-        providers: [auth_service_1.AuthService, fortytwo_strategy_1.Strategy42],
+        providers: [auth_service_1.AuthService, fortytwo_strategy_1.Strategy42, token_sever_1.TokenService, auth_guard42_1.AuthGuard42],
         controllers: [auth_controller_1.AuthController]
     })
 ], AuthModule);

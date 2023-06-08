@@ -19,27 +19,26 @@ let Strategy42 = class Strategy42 extends (0, passport_1.PassportStrategy)(passp
             clientID: "u-s4t2ud-d2078e9c2d7ea34d37a5adffa013cee9c2715889268480c4eba8a13a93ec6469",
             clientSecret: "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",
             callbackURL: "http://localhost:5000/auth/callback",
+            scope: 'public',
         });
     }
     async validate(accessToken, refreshToken, profile, done) {
-        console.log(accessToken);
-        console.log(refreshToken);
-        console.log("called");
+        if (!accessToken) {
+            throw new common_1.UnauthorizedException("Access token missing");
+        }
         this.tokens = accessToken;
         this.refresh = refreshToken;
-        console.log(profile.id);
-        const { email, username, image } = profile;
         const user = {
-            username: username,
             accessToken: accessToken,
-            refreshToken: refreshToken
+            refreshToken: refreshToken,
         };
-        this.user = user;
-        console.log(user);
-        done(null, user);
-    }
-    signAsync(accessToken, refreshToken, payload) {
-        return 'dsdsds';
+        this.usr1 = user;
+        const payload = {
+            accestoken: accessToken,
+            refreshtoken: refreshToken,
+        };
+        console.log("/////", payload, "//////");
+        return payload;
     }
 };
 Strategy42 = __decorate([

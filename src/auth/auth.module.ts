@@ -7,6 +7,8 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { Strategy42 } from './fortytwo.strategy';
+import { TokenService } from './token.sever';
+import { AuthGuard42 } from './auth.guard42';
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { Strategy42 } from './fortytwo.strategy';
     }),
     // Strategy42
   ],
-  providers: [AuthService,Strategy42],
+  providers: [AuthService,Strategy42,TokenService, AuthGuard42],
   controllers: [AuthController]
 })
 export class AuthModule {}

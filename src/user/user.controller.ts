@@ -6,7 +6,7 @@ import { jwtConstants } from "src/auth/constants";
 @Controller('user')
 export class UserController {
     constructor(private readonly userService: UserService,private jwtService: JwtService){}
-
+    
     // // @Post()
     // @Post()
     // // async addUser(@Body() user: User): Promise<{ userid: number }> {

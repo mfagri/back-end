@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const dto_1 = require("./dto");
 const auth_guard42_1 = require("./auth.guard42");
+const App = require('express');
 const jwt_1 = require("@nestjs/jwt");
 const constants_1 = require("./constants");
 let AuthController = class AuthController {
@@ -28,12 +29,12 @@ let AuthController = class AuthController {
         return this.authService.login(dto);
     }
     signup(req, dto) {
+        console.log("*****", req.cookies["authcookie"]);
+        console.log("signup", req.cookies['authcookie']['access_token']);
         return this.authService.signup(dto);
     }
     async getProfile(req) {
-        console.log('here');
         console.log(req.cookies['authcookie']);
-        console.log('eco');
         try {
             const data = await this.jwtService.verifyAsync(req.cookies['authcookie']['access_token'], {
                 secret: constants_1.jwtConstants.secret,
@@ -49,10 +50,16 @@ let AuthController = class AuthController {
         console.log('42 login');
     }
     async fortyTwoAuthRedirect(req, res) {
-        console.log('here');
-        const user = await this.authService.userfind();
-        if (!user)
-            return res.redirect('http://localhost:3000/register');
+        console.log("========", req.user);
+        const user = await this.authService.userfind(req.user);
+        res.cookie('authcookie', req.user1, {
+            httpOnly: true,
+            secure: true,
+        });
+        if (!user) {
+            console.log('go to register page');
+            return res.redirect('http://localhost:3000/register?=1235646');
+        }
         else {
             res.cookie('authcookie', user);
             return res.redirect('http://localhost:3000/');
@@ -94,7 +101,7 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)(auth_guard42_1.AuthGuard42),
     (0, common_1.Get)('/callback'),
-    __param(0, (0, common_1.Req)()),
+    __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),

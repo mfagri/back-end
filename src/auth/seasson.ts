@@ -11,7 +11,7 @@ export class SessionSerializer extends PassportSerializer {
   deserializeUser(id: any, done: (err: Error, user: User) => void): void {
     // Fetch the user from the database using the provided id
     // const user = ...; // Fetch user by id from the database
-
+    
     done(null, null);
   }
 }

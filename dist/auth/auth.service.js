@@ -14,11 +14,13 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const fortytwo_strategy_1 = require("./fortytwo.strategy");
 const jwt_1 = require("@nestjs/jwt");
+const token_sever_1 = require("./token.sever");
 let AuthService = class AuthService {
-    constructor(prisma, s42, jwtService) {
+    constructor(prisma, s42, jwtService, tokenService) {
         this.prisma = prisma;
         this.s42 = s42;
         this.jwtService = jwtService;
+        this.tokenService = tokenService;
     }
     async login(dto) {
         console.log('in login');
@@ -37,29 +39,25 @@ let AuthService = class AuthService {
             access_token: await this.jwtService.signAsync(payload),
         };
     }
-    async userfind() {
+    async userfind(user1) {
         console.log(this.s42.tokens);
-        const user = await this.prisma.user.findFirst({
+        const user = await this.prisma.user.findUnique({
             where: {
-                token: this.s42.tokens
+                token: user1.accestoken
             }
         });
         if (!user) {
-            console.log('hiiii');
             return null;
         }
         const payload = { id: user.id,
-            accestoken: this.s42.tokens,
-            refreshtoken: this.s42.refresh,
+            accestoken: user1.accestoken,
+            refreshtoken: user1.refreshtoken,
         };
         return {
             access_token: await this.jwtService.signAsync(payload),
         };
     }
     async signup(dto) {
-        console.log(dto);
-        console.log(this.s42.user);
-        console.log('wtf');
         try {
             const user = await this.prisma.user.create({
                 data: {
@@ -80,7 +78,6 @@ let AuthService = class AuthService {
             return user;
         }
         catch (e) {
-            console.log("heeeere");
             if (e.code === "P2002") {
                 throw new common_1.ForbiddenException("User already exist");
             }
@@ -98,7 +95,7 @@ let AuthService = class AuthService {
 };
 AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService, fortytwo_strategy_1.Strategy42, jwt_1.JwtService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService, fortytwo_strategy_1.Strategy42, jwt_1.JwtService, token_sever_1.TokenService])
 ], AuthService);
 exports.AuthService = AuthService;
 //# sourceMappingURL=auth.service.js.map
