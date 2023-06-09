@@ -6,11 +6,9 @@ export declare class AuthController {
     private authService;
     private jwtService;
     constructor(authService: AuthService, jwtService: JwtService);
-    login(dto: AuthDto): Promise<{
-        access_token: string;
-    }>;
-    signup(req: any, dto: AuthDto): Promise<import(".prisma/client").User>;
-    getProfile(req: any): Promise<import(".prisma/client").User>;
+    signup(req: any, dto: AuthDto, q: any): Promise<import(".prisma/client").User>;
+    getProfile(req: any, a: any): Promise<import(".prisma/client").User>;
     fortyTwoAuth(): Promise<void>;
-    fortyTwoAuthRedirect(req: any, res: Response): Promise<void>;
+    logout(res: Response): Promise<void>;
+    fortyTwoAuthRedirect(a: any, req: any, res: Response): Promise<void>;
 }

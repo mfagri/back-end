@@ -22,49 +22,34 @@ let AuthService = class AuthService {
         this.jwtService = jwtService;
         this.tokenService = tokenService;
     }
-    async login(dto) {
-        console.log('in login');
-        console.log('in login2');
-        const user = await this.prisma.user.findUnique({
-            where: {
-                email: dto.email,
-            },
-        });
-        const payload = { id: user.id,
-            data: dto,
-            accestoken: this.s42.tokens,
-            refreshtoken: this.s42.refresh,
-        };
-        return {
-            access_token: await this.jwtService.signAsync(payload),
-        };
-    }
     async userfind(user1) {
-        console.log(this.s42.tokens);
+        console.log("my token acc", user1.mytoken["accestoken"]);
+        console.log("my token ref", user1.mytoken["refreshtoken"]);
         const user = await this.prisma.user.findUnique({
             where: {
-                token: user1.accestoken
+                intrrid: user1.id
             }
         });
         if (!user) {
             return null;
         }
-        const payload = { id: user.id,
-            accestoken: user1.accestoken,
-            refreshtoken: user1.refreshtoken,
+        const payload = {
+            id: user1.id,
+            accestoken: user1.mytoken["accestoken"],
+            refreshtoken: user1.mytoken["refreshtoken"],
         };
         return {
             access_token: await this.jwtService.signAsync(payload),
         };
     }
-    async signup(dto) {
+    async signup(dto, cookie) {
         try {
             const user = await this.prisma.user.create({
                 data: {
                     email: dto.email,
                     username: dto.username,
                     auth: dto.auth,
-                    token: this.s42.tokens,
+                    intrrid: cookie.id,
                     image: dto.image,
                     profile: {
                         create: {
@@ -85,9 +70,9 @@ let AuthService = class AuthService {
         }
     }
     async findone(id) {
-        const user = await this.prisma.user.findFirst({
+        const user = await this.prisma.user.findUnique({
             where: {
-                id: id,
+                intrrid: id.toString(),
             }
         });
         return user;

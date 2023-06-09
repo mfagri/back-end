@@ -43,62 +43,69 @@ export class AuthService {
   //   // providers.
   //   return cb(null, profile);
   // }
-  async login(dto: AuthDto) {
-    console.log('in login');
-    // const tmp = this.s42.validate(dto.token,dto.auth,dto,VerifyCallback);
-    // console.log(tmp);
-    console.log('in login2');
-    const user = await this.prisma.user.findUnique({
-      where: {
-        email: dto.email,
-      },
-    });
-    //if user does not exist hrow exception
-    // if (!user) {
-    //   throw new ForbiddenException("Credentials incorrect");
-    // }
-    const payload = {id: user.id ,
-      data:dto,
-      accestoken:  this.s42.tokens,
-      refreshtoken: this.s42.refresh,
-    };
-    // console.log(this.s42.signAsync('dsdsdfsfds'));
+  // async login(dto: AuthDto) {
+  //   console.log('in login');
+  //   // const tmp = this.s42.validate(dto.token,dto.auth,dto,VerifyCallback);
+  //   // console.log(tmp);
+  //   console.log('in login2');
+  //   const user = await this.prisma.user.findUnique({
+  //     where: {
+  //       email: dto.email,
+  //     },
+  //   });
+  //   //if user does not exist hrow exception
+  //   // if (!user) {
+  //   //   throw new ForbiddenException("Credentials incorrect");
+  //   // }
+  //   const payload = {id: user.id ,
+  //     data:dto,
+  //     accestoken:  this.s42.tokens,
+  //     refreshtoken: this.s42.refresh,
+  //   };
+  //   // console.log(this.s42.signAsync('dsdsdfsfds'));
     
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
-    // compare password
-    // const pswdv = await prisma.verify(user.email,dto.email);
-    // //if password incorrect throw exeption
-    // if(!pswdv)
-    // {
-    //   throw new ForbiddenException(
-    //     'Credentials incorrect',
-    //   );
-    // }
-    // //send back the user
-    // delete user.hash;
-    // return user;
-  }
+  //   return {
+  //     access_token: await this.jwtService.signAsync(payload),
+  //   };
+  //   // compare password
+  //   // const pswdv = await prisma.verify(user.email,dto.email);
+  //   // //if password incorrect throw exeption
+  //   // if(!pswdv)
+  //   // {
+  //   //   throw new ForbiddenException(
+  //   //     'Credentials incorrect',
+  //   //   );
+  //   // }
+  //   // //send back the user
+  //   // delete user.hash;
+  //   // return user;
+  // }
   async userfind(user1:any)
   {
 
     //  token:string;
     // token = this.s42.tokens;
-    console.log(this.s42.tokens);
+    console.log("my token acc",user1.mytoken["accestoken"]);
+    console.log("my token ref",user1.mytoken["refreshtoken"]);
     
     const user = await this.prisma.user.findUnique({
       where: {
-        token: user1.accestoken
+        intrrid: user1.id
       }
     });
     // if user does not exist hrow exception
     if (!user) {
       return null;
     }
-    const payload = {id: user.id ,
-      accestoken:  user1.accestoken,
-      refreshtoken: user1.refreshtoken,
+    // id: '93909',
+    // mytoken: {
+    //   accestoken: '177a6c3c1c3d15f80f7d375bfaa9e1315bc549cccfa56515a4ccdbcabf7b5756',
+    //   refreshtoken: '21589e5b16809dd820d01cea599e7ae6db79b586450e9843a4dec4e4bcafb81b'
+    // }
+    const payload = {
+      id: user1.id ,
+      accestoken:  user1.mytoken["accestoken"],
+      refreshtoken: user1.mytoken["refreshtoken"],
     };
     // console.log(this.s42.signAsync('dsdsdfsfds'));
     
@@ -148,14 +155,21 @@ export class AuthService {
   //   }
   //   // return 'signup';
   // }
-  async signup(dto: AuthDto) {
+  async signup(dto: AuthDto,cookie: any) {
+      // {
+    //   id: '93909',
+    //   mytoken: {
+    //     accestoken: '177a6c3c1c3d15f80f7d375bfaa9e1315bc549cccfa56515a4ccdbcabf7b5756',
+    //     refreshtoken: '21589e5b16809dd820d01cea599e7ae6db79b586450e9843a4dec4e4bcafb81b'
+    //   }
+    // }
     try {
       const user = await this.prisma.user.create({
         data: {
           email: dto.email,
           username: dto.username,
           auth: dto.auth,
-          token: <string>this.s42.tokens,
+          intrrid: cookie.id,
           image: dto.image,
           profile: {
                       create: {
@@ -185,9 +199,9 @@ export class AuthService {
   }
   async findone(id: number)
   {
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prisma.user.findUnique({
       where : {
-        id: id,
+        intrrid: id.toString(),
       }
     })
     return user;

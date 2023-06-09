@@ -20,9 +20,10 @@ model User{
   email  String? @unique
   username String?
   image String?
-  token String @unique
+  intrrid String @unique
   auth String?
   profile Profile?
+  // sessions      Session[]
 }
 
 model Profile{
@@ -30,9 +31,19 @@ model Profile{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user User? @relation(fields: [Userid],references: [id])
+  user User? @relation(fields: [Userid],references: [id], onDelete: Cascade)
   Userid Int? @unique
   username String @unique
   profilepicter String
   email String? @unique
 }
+
+// model Session {
+//   id        String   @id
+//   sid       String   @unique
+//   data      String
+//   expiresAt   DateTime
+//   Userid Int? @unique
+//   // sessionToken String   @unique
+//   user User? @relation(fields: [Userid],references: [id], onDelete: Cascade)
+// }

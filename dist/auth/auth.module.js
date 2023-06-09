@@ -24,12 +24,13 @@ AuthModule = __decorate([
         imports: [
             passport_1.PassportModule.register({
                 defaultStrategy: '42',
+                session: true
             }),
             prisma_module_1.PrismaModule,
             jwt_1.JwtModule.register({
                 global: true,
                 secret: constants_1.jwtConstants.secret,
-                signOptions: { expiresIn: '60s' },
+                signOptions: { expiresIn: '1d' },
             }),
         ],
         providers: [auth_service_1.AuthService, fortytwo_strategy_1.Strategy42, token_sever_1.TokenService, auth_guard42_1.AuthGuard42],

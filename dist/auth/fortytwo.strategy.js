@@ -20,6 +20,7 @@ let Strategy42 = class Strategy42 extends (0, passport_1.PassportStrategy)(passp
             clientSecret: "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",
             callbackURL: "http://localhost:5000/auth/callback",
             scope: 'public',
+            Profile: {}
         });
     }
     async validate(accessToken, refreshToken, profile, done) {
@@ -37,8 +38,8 @@ let Strategy42 = class Strategy42 extends (0, passport_1.PassportStrategy)(passp
             accestoken: accessToken,
             refreshtoken: refreshToken,
         };
-        console.log("/////", payload, "//////");
-        return payload;
+        console.log("/////", profile.id, "//////");
+        return { id: profile.id, mytoken: payload };
     }
 };
 Strategy42 = __decorate([

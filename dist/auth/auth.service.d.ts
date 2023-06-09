@@ -9,12 +9,9 @@ export declare class AuthService {
     private jwtService;
     private tokenService;
     constructor(prisma: PrismaService, s42: Strategy42, jwtService: JwtService, tokenService: TokenService);
-    login(dto: AuthDto): Promise<{
-        access_token: string;
-    }>;
     userfind(user1: any): Promise<{
         access_token: string;
     }>;
-    signup(dto: AuthDto): Promise<import(".prisma/client").User>;
+    signup(dto: AuthDto, cookie: any): Promise<import(".prisma/client").User>;
     findone(id: number): Promise<import(".prisma/client").User>;
 }

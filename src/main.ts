@@ -6,14 +6,34 @@ import * as session from 'express-session';
 import passport from 'passport';
 import * as cookieParser from 'cookie-parser';
 import { json, urlencoded } from 'express';
+import { PassportModule } from '@nestjs/passport';
+// import { PrismaClient } from '@prisma/client';
+// import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
+  PassportModule.register({ 
+    defaultStrategy: '42',
+    session: true
+    
+  }),
   app.use(
     session({
+      // name: "session/-mfagri",
       secret: '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',
       resave: false,
       saveUninitialized: false,
+      // cookie:{
+      //   maxAge:10000
+      // },
+      // store: new PrismaSessionStore(
+      //   new PrismaClient(),
+      //   {
+      //     checkPeriod: 2 * 60 * 1000,  //ms
+      //     dbRecordIdIsSessionId: true,
+      //     dbRecordIdFunction: undefined,
+      //   }
+      // )
     }),
   );
   app.enableCors({

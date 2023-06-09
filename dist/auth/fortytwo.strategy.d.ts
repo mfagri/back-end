@@ -6,8 +6,11 @@ export declare class Strategy42 extends Strategy42_base {
     refresh: String;
     constructor();
     validate(accessToken: String, refreshToken: string, profile: Profile, done: VerifyCallback): Promise<{
-        accestoken: String;
-        refreshtoken: string;
+        id: any;
+        mytoken: {
+            accestoken: String;
+            refreshtoken: string;
+        };
     }>;
 }
 export {};

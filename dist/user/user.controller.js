@@ -33,15 +33,14 @@ let UserController = class UserController {
                 secret: constants_1.jwtConstants.secret,
                 ignoreExpiration: true,
             });
-            const numericId = parseInt(data.id, 10);
             if (uname && image) {
-                this.userService.updateusername(numericId, uname);
-                return this.userService.updateuserimage(numericId, image);
+                this.userService.updateusername(data.id, uname);
+                return this.userService.updateuserimage(data.id, image);
             }
             else if (uname)
-                return this.userService.updateusername(numericId, uname);
+                return this.userService.updateusername(data.id, uname);
             else if (image)
-                return this.userService.updateuserimage(numericId, image);
+                return this.userService.updateuserimage(data.id, image);
         }
         catch (e) {
             throw new common_1.ForbiddenException('no user here');

@@ -12,15 +12,17 @@ import { AuthGuard42 } from './auth.guard42';
 
 @Module({
   imports: [
+   
     PassportModule.register({ 
       defaultStrategy: '42',
+      session: true
       
     }),
     PrismaModule,
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '1d' },
     }),
     // Strategy42
   ],

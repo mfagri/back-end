@@ -6,5 +6,7 @@ export declare class UserController {
     private jwtService;
     constructor(userService: UserService, jwtService: JwtService);
     users(id: string): Promise<import(".prisma/client").Profile>;
-    updateUser(req: Request, uname: string, image: string): Promise<import(".prisma/client").User>;
+    updateUser(req: Request, uname: string, image: string): Promise<import(".prisma/client").User & {
+        profile: import(".prisma/client").Profile;
+    }>;
 }

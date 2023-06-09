@@ -21,36 +21,53 @@ export class UserService
         })
         return user;
     }
-    async updateusername(id: number,username: string)
+    async updateusername(id: string,username: string)
     {
+
         
  
             const user = await this.prisma.user.update({
                 where: {
                   // id:id,
-                  id:id,
+                  intrrid: id,
                    
                 },
                 data: {
-                  username: username, 
+                  username: username,
+                  profile: {
+                    update: {
+                      username: username,
+                    },
+                  },
                 },
+                include:{
+                  profile: true
+                }
               });
 
         return user;
     }
 
-    async updateuserimage(id: number,image: string)
+    async updateuserimage(id: string,image: string)
     {
         
             
             const user = await this.prisma.user.update({
                 where: {
-                  id:id,
+                  intrrid:id,
                   
                 },
                 data: {
-                  image: image, 
+                  image: image,
+                  profile: {
+                    update: {
+                      profilepicter: image,
+                    },
+                  },
                 },
+                include:{
+                  profile: true
+                }
               });
 
         return user;

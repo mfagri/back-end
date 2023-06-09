@@ -4,20 +4,20 @@ import { User } from "@prisma/client";
 
 @Injectable()
 export class AuthGuard42 extends AuthGuard("42") {
-  // async canActivate(context: ExecutionContext) {
-  //   const active = (await super.canActivate(context)) as boolean;
-  //   const request = context.switchToHttp().getRequest();
-  //   console.log("===", request.payload)
-  //   // const token = this.extractTokenFromHeader(request);
-  //   await super.logIn(request);
-  //   // console.log(token);
-  //   return active;
-  // }
-  // private extractTokenFromHeader(request: Request): string | undefined {
-  //   const [type, token] =
-  //     request.headers.get("authorization")?.split(" ") ?? [];
-  //   return type === "Bearer" ? token : undefined;
-  // }
+  async canActivate(context: ExecutionContext) {
+    const active = (await super.canActivate(context)) as boolean;
+    const request = context.switchToHttp().getRequest();
+    console.log("===", request.payload)
+    // const token = this.extractTokenFromHeader(request);
+    await super.logIn(request);
+    // console.log(token);
+    return active;
+  }
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] =
+      request.headers.get("authorization")?.split(" ") ?? [];
+    return type === "Bearer" ? token : undefined;
+  }
   // serialize(user: User, done: (err: Error, id: any) => void): void {
   //   done(null, user.id);
   // }

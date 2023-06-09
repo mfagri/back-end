@@ -61,17 +61,17 @@ export class UserController {
             }
             
             );
-           
-            const numericId = parseInt(data.id, 10);
+            // console.log(data.intrrid)
+            // const numericId = parseInt(data.intrrid, 10000);
             if(uname && image)
             {
-                this.userService.updateusername(numericId,uname);
-                return this.userService.updateuserimage(numericId,image)
+                this.userService.updateusername(data.id,uname);
+                return this.userService.updateuserimage(data.id,image)
             }
             else if(uname)
-                return this.userService.updateusername(numericId,uname);
+                return this.userService.updateusername(data.id,uname);
             else if(image)
-                return this.userService.updateuserimage(numericId,image)
+                return this.userService.updateuserimage(data.id,image)
           }
           catch(e)
           {
