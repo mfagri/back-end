@@ -85,7 +85,7 @@ export class UserService
 
         return user;
     }
-    async shearchuser(username: string)
+    async searchuser(username: string)
     {
       const result = await this.prisma.user.findMany({
         where: {
@@ -133,12 +133,12 @@ export class UserService
         return user;
     }
 
-    async  getprofile(id:number)
+    async  getprofile(username: string)
     {
       const profile = await this.prisma.profile.findUnique(
         {
           where:{
-            id:id
+            username: username,
           }
         }
       );

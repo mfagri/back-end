@@ -81,7 +81,7 @@ let UserService = class UserService {
         });
         return user;
     }
-    async shearchuser(username) {
+    async searchuser(username) {
         const result = await this.prisma.user.findMany({
             where: {
                 username: {
@@ -110,10 +110,10 @@ let UserService = class UserService {
         });
         return user;
     }
-    async getprofile(id) {
+    async getprofile(username) {
         const profile = await this.prisma.profile.findUnique({
             where: {
-                id: id
+                username: username,
             }
         });
         return profile;

@@ -22,12 +22,11 @@ let UserController = class UserController {
         this.userService = userService;
         this.jwtService = jwtService;
     }
-    async Shearch(username) {
-        console.log(username);
+    async Search(username) {
         if (username === '')
             return [];
         try {
-            return this.userService.shearchuser(username);
+            return this.userService.searchuser(username);
         }
         catch (e) {
             return { e: "no users" };
@@ -80,14 +79,17 @@ let UserController = class UserController {
             throw new common_1.ForbiddenException("no user here");
         }
     }
+    showprofile(username) {
+        return this.userService.getprofile(username);
+    }
 };
 __decorate([
-    (0, common_1.Get)("shearch"),
+    (0, common_1.Get)("search"),
     __param(0, (0, common_1.Query)("username")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], UserController.prototype, "Shearch", null);
+], UserController.prototype, "Search", null);
 __decorate([
     (0, common_1.Get)("accept"),
     __param(0, (0, common_1.Query)("id")),
@@ -127,6 +129,13 @@ __decorate([
     __metadata("design:paramtypes", [Object, String, String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "updateUser", null);
+__decorate([
+    (0, common_1.Get)('showprofile'),
+    __param(0, (0, common_1.Query)("username")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], UserController.prototype, "showprofile", null);
 UserController = __decorate([
     (0, common_1.Controller)("user"),
     __metadata("design:paramtypes", [user_service_1.UserService,

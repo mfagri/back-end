@@ -5,7 +5,7 @@ export declare class UserController {
     private readonly userService;
     private jwtService;
     constructor(userService: UserService, jwtService: JwtService);
-    Shearch(username: string): Promise<import(".prisma/client").User[] | {
+    Search(username: string): Promise<import(".prisma/client").User[] | {
         e: string;
     }>;
     addFriend(userId: string, friendId: string): Promise<any>;
@@ -15,4 +15,5 @@ export declare class UserController {
     updateUser(req: Request, uname: string, image: string): Promise<import(".prisma/client").User & {
         profile: import(".prisma/client").Profile;
     }>;
+    showprofile(username: string): Promise<import(".prisma/client").Profile>;
 }

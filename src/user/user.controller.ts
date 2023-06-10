@@ -21,13 +21,13 @@ export class UserController {
     private readonly userService: UserService,
     private jwtService: JwtService
   ) {}
-  @Get("shearch")
-  async Shearch(@Query("username") username: string) {
-    console.log(username);
+  @Get("search")
+  async Search(@Query("username") username: string) {
+    
     if(username === '')
       return [];
     try {
-      return this.userService.shearchuser(username);
+      return this.userService.searchuser(username);
     } catch (e) {
       return { e: "no users" };
     }
@@ -66,12 +66,8 @@ export class UserController {
     const numericId2 = parseInt(idfriend, 10);
     return this.userService.inviteUser(numericId, numericId2);
   }
-  // @Post()
-  // getUserlog(@Param('uname') name: string)
-  // {
-  //     console.log(name);
-  //     return this.userService.getSingleUser(name);
-  // }
+
+
   @Patch()
   async updateUser(
     @Req() req: Request,
@@ -87,8 +83,6 @@ export class UserController {
           ignoreExpiration: true,
         }
       );
-      // console.log(data.intrrid)
-      // const numericId = parseInt(data.intrrid, 10000);
       if (uname && image) {
         this.userService.updateusername(data.id, uname);
         return this.userService.updateuserimage(data.id, image);
@@ -97,9 +91,12 @@ export class UserController {
     } catch (e) {
       throw new ForbiddenException("no user here");
     }
-    // const User = this.userService.findByid(username);
   }
-
+  @Get('showprofile')
+  showprofile(@Query("username") username: string)
+  {
+   return this.userService.getprofile(username)
+  }
   // @Delete(':uname')
   // removeUser(@Param('uname') uname : string)
   // {
