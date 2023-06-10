@@ -22,10 +22,31 @@ let UserController = class UserController {
         this.userService = userService;
         this.jwtService = jwtService;
     }
-    users(id) {
+    async addFriend(userId, friendId) {
+        try {
+            console.log(userId);
+            console.log(friendId);
+            const numericId = parseInt(userId, 10);
+            const numericId2 = parseInt(friendId, 10);
+            const user = await this.userService.addFriend(numericId, numericId2);
+            return { message: 'Friend added successfully', user };
+        }
+        catch (error) {
+            return { error: 'Failed to add friend' };
+        }
+    }
+    usersRequest(id) {
         const numericId = parseInt(id, 10);
         console.log(numericId);
-        return this.userService.getprofile(numericId);
+        return this.userService.getFriendRequest(numericId);
+    }
+    usersEnvit(id) {
+        const numericId = parseInt(id, 10);
+        console.log(numericId);
+        return this.userService.getFriendsendRequest(numericId);
+    }
+    getUser() {
+        return this.userService.inviteUser(1, 4);
     }
     async updateUser(req, uname, image) {
         try {
@@ -48,12 +69,33 @@ let UserController = class UserController {
     }
 };
 __decorate([
+    (0, common_1.Post)(':userId/friends/:friendId'),
+    __param(0, (0, common_1.Param)('userId')),
+    __param(1, (0, common_1.Param)('friendId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "addFriend", null);
+__decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
-], UserController.prototype, "users", null);
+], UserController.prototype, "usersRequest", null);
+__decorate([
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], UserController.prototype, "usersEnvit", null);
+__decorate([
+    (0, common_1.Get)('hi'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], UserController.prototype, "getUser", null);
 __decorate([
     (0, common_1.Patch)(),
     __param(0, (0, common_1.Req)()),

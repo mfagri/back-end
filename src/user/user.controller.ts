@@ -7,37 +7,41 @@ import { jwtConstants } from "src/auth/constants";
 export class UserController {
     constructor(private readonly userService: UserService,private jwtService: JwtService){}
     
-    // // @Post()
-    // @Post()
-    // // async addUser(@Body() user: User): Promise<{ userid: number }> {
-    // //   const { name, password } = user;
-    // //   const id = await this.userService.insertUser(name, password);
-    // //   return { userid: id };
-    // // }
-    // addUser(
-    //     @Body('uname') name: string,
-    //     // @Body('lastname') lastname: string,
-    //     @Body('password') password: string,
-    //     @Body() data
-    //     )
-    //     {
-    //     // console.log('hello');
-    //     const id = this.userService.insertUser(name,password);
-    //     return {userid: id};
-    // }
+    @Post(':userId/friends/:friendId')
+  async addFriend(
+    @Param('userId') userId: string,
+    @Param('friendId') friendId: string,
+    ): Promise<any> {
+      try {
+        console.log(userId);
+        console.log(friendId);
+        const numericId = parseInt(userId, 10);
+        const numericId2 = parseInt(friendId, 10);
+        const user = await this.userService.addFriend(numericId, numericId2);
+        return { message: 'Friend added successfully', user };
+      } catch (error) {
+        return { error: 'Failed to add friend' };
+      }
+    }
     @Get()
-    users(@Query('id') id:string,)
+    usersRequest(@Query('id') id:string,)
     {
         const numericId = parseInt(id, 10);
         console.log(numericId);
-        return this.userService.getprofile(numericId);
+        return this.userService.getFriendRequest(numericId)
     }
-    // @Get(':uname')
-    // getUser(@Param('uname') name : string,)
-    // {
-    //     console.log(name);
-    //     return this.userService.getSingleUser(name);
-    // }
+    @Get()
+    usersEnvit(@Query('id') id:string,)
+    {
+        const numericId = parseInt(id, 10);
+        console.log(numericId);
+        return this.userService.getFriendsendRequest(numericId)
+    }
+    @Get('hi')
+    getUser()
+    {
+        return this.userService.inviteUser(1,4)
+    }
     // @Post()
     // getUserlog(@Param('uname') name: string)
     // {

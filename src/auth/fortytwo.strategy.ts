@@ -14,7 +14,7 @@ export class Strategy42 extends PassportStrategy(FortyTwoStrategy) {
         "u-s4t2ud-d2078e9c2d7ea34d37a5adffa013cee9c2715889268480c4eba8a13a93ec6469",
       clientSecret:
         "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",
-      callbackURL: "http://localhost:5000/auth/callback",
+      callbackURL: "http://localhost:3333/auth/callback",
       scope: 'public',
       Profile:{
         

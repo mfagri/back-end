@@ -23,7 +23,15 @@ model User{
   intrrid String @unique
   auth String?
   profile Profile?
-  // sessions      Session[]
+  envit             User?    @relation("envit", fields: [envitId], references: [id])
+  envitId           Int?
+  request           User?    @relation("request", fields: [requestId], references: [id])
+  requestId         Int?
+  // parentId Int?
+  friends         User[]  @relation("friends")
+  friendsRelation User[]  @relation("friends")
+  requestedBy       User[]   @relation("request")
+  envitOf           User[]   @relation("envit")
 }
 
 model Profile{
@@ -36,6 +44,7 @@ model Profile{
   username String @unique
   profilepicter String
   email String? @unique
+  
 }
 
 // model Session {
