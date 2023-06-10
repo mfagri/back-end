@@ -150,6 +150,17 @@ let UserService = class UserService {
         }
         return 'request sended';
     }
+    async rfriends(id) {
+        const user = await this.prisma.user.findUnique({
+            where: {
+                id: id,
+            },
+            include: {
+                friends: true
+            }
+        });
+        return user.friends;
+    }
 };
 UserService = __decorate([
     (0, common_1.Injectable)(),

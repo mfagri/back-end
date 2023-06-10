@@ -184,5 +184,16 @@ export class UserService
       }
       return 'request sended';
     }
-    
+    async rfriends(id:number)
+    {
+      const user = await this.prisma.user.findUnique({
+        where:{
+          id:id,
+        },
+        include:{
+          friends:true
+        }
+      });
+      return user.friends
+    }
 }

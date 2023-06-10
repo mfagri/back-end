@@ -48,6 +48,13 @@ export class UserController {
       return { error: "Failed to add friend" };
     }
   }
+  @Get("friends")
+  async showfriends(@Query("id") id: string)
+  {
+    const numericId = parseInt(id, 10);
+    console.log(numericId);
+      return this.userService.rfriends(numericId);
+  }
   @Get("myreq")
   usersRequest(@Query("id") id: string) {
     const numericId = parseInt(id, 10);

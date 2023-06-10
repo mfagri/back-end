@@ -45,6 +45,11 @@ let UserController = class UserController {
             return { error: "Failed to add friend" };
         }
     }
+    async showfriends(id) {
+        const numericId = parseInt(id, 10);
+        console.log(numericId);
+        return this.userService.rfriends(numericId);
+    }
     usersRequest(id) {
         const numericId = parseInt(id, 10);
         console.log(numericId);
@@ -98,6 +103,13 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "addFriend", null);
+__decorate([
+    (0, common_1.Get)("friends"),
+    __param(0, (0, common_1.Query)("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "showfriends", null);
 __decorate([
     (0, common_1.Get)("myreq"),
     __param(0, (0, common_1.Query)("id")),

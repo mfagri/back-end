@@ -15,4 +15,5 @@ export declare class UserService {
     }>;
     getprofile(username: string): Promise<import(".prisma/client").Profile>;
     inviteUser(userId: number, inviterId: number): Promise<string>;
+    rfriends(id: number): Promise<import(".prisma/client").User[]>;
 }
