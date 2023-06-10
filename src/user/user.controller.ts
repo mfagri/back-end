@@ -23,6 +23,9 @@ export class UserController {
   ) {}
   @Get("shearch")
   async Shearch(@Query("username") username: string) {
+    console.log(username);
+    if(username === '')
+      return [];
     try {
       return this.userService.shearchuser(username);
     } catch (e) {

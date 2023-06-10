@@ -23,6 +23,9 @@ let UserController = class UserController {
         this.jwtService = jwtService;
     }
     async Shearch(username) {
+        console.log(username);
+        if (username === '')
+            return [];
         try {
             return this.userService.shearchuser(username);
         }
