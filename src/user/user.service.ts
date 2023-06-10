@@ -135,14 +135,21 @@ export class UserService
 
     async  getprofile(username: string)
     {
-      const profile = await this.prisma.profile.findUnique(
-        {
-          where:{
-            username: username,
+      try{
+
+        const profile = await this.prisma.profile.findUniqueOrThrow(
+          {
+            where:{
+              username: username,
+            }
           }
-        }
-      );
-      return profile;
+        );
+        return profile;
+      }
+      catch(e)
+      {
+        throw new NotFoundException('404');
+      }
     }
 
      async inviteUser(userId:number, inviterId:number) {

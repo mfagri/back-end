@@ -111,12 +111,17 @@ let UserService = class UserService {
         return user;
     }
     async getprofile(username) {
-        const profile = await this.prisma.profile.findUnique({
-            where: {
-                username: username,
-            }
-        });
-        return profile;
+        try {
+            const profile = await this.prisma.profile.findUniqueOrThrow({
+                where: {
+                    username: username,
+                }
+            });
+            return profile;
+        }
+        catch (e) {
+            throw new common_1.NotFoundException('404');
+        }
     }
     async inviteUser(userId, inviterId) {
         try {
