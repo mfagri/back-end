@@ -9,9 +9,10 @@ export declare class UserService {
     updateusername(id: string, username: string): Promise<import(".prisma/client").User & {
         profile: import(".prisma/client").Profile;
     }>;
+    shearchuser(username: string): Promise<import(".prisma/client").User[]>;
     updateuserimage(id: string, image: string): Promise<import(".prisma/client").User & {
         profile: import(".prisma/client").Profile;
     }>;
     getprofile(id: number): Promise<import(".prisma/client").Profile>;
-    inviteUser(userId: any, inviterId: any): Promise<void>;
+    inviteUser(userId: number, inviterId: number): Promise<string>;
 }

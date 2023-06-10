@@ -23,15 +23,14 @@ model User{
   intrrid String @unique
   auth String?
   profile Profile?
-  envit             User?    @relation("envit", fields: [envitId], references: [id])
-  envitId           Int?
-  request           User?    @relation("request", fields: [requestId], references: [id])
-  requestId         Int?
+  // envit             User?    @relation("envit", fields: [envitId], references: [id])
+  // envitId           Int?
   // parentId Int?
   friends         User[]  @relation("friends")
   friendsRelation User[]  @relation("friends")
+  request           User[]    @relation("request")
   requestedBy       User[]   @relation("request")
-  envitOf           User[]   @relation("envit")
+  // envitOf           User[]   @relation("envit")
 }
 
 model Profile{

@@ -22,6 +22,14 @@ let UserController = class UserController {
         this.userService = userService;
         this.jwtService = jwtService;
     }
+    async Shearch(username) {
+        try {
+            return this.userService.shearchuser(username);
+        }
+        catch (e) {
+            return { e: "no users" };
+        }
+    }
     async addFriend(userId, friendId) {
         try {
             console.log(userId);
@@ -29,10 +37,10 @@ let UserController = class UserController {
             const numericId = parseInt(userId, 10);
             const numericId2 = parseInt(friendId, 10);
             const user = await this.userService.addFriend(numericId, numericId2);
-            return { message: 'Friend added successfully', user };
+            return { message: "Friend added successfully", user };
         }
         catch (error) {
-            return { error: 'Failed to add friend' };
+            return { error: "Failed to add friend" };
         }
     }
     usersRequest(id) {
@@ -42,15 +50,17 @@ let UserController = class UserController {
     }
     usersEnvit(id) {
         const numericId = parseInt(id, 10);
-        console.log(numericId);
+        console.log("sendreq", numericId);
         return this.userService.getFriendsendRequest(numericId);
     }
-    getUser() {
-        return this.userService.inviteUser(1, 4);
+    getUser(iduser, idfriend) {
+        const numericId = parseInt(iduser, 10);
+        const numericId2 = parseInt(idfriend, 10);
+        return this.userService.inviteUser(numericId, numericId2);
     }
     async updateUser(req, uname, image) {
         try {
-            const data = await this.jwtService.verifyAsync(req.cookies['authcookie']['access_token'], {
+            const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
                 secret: constants_1.jwtConstants.secret,
                 ignoreExpiration: true,
             });
@@ -64,50 +74,60 @@ let UserController = class UserController {
                 return this.userService.updateuserimage(data.id, image);
         }
         catch (e) {
-            throw new common_1.ForbiddenException('no user here');
+            throw new common_1.ForbiddenException("no user here");
         }
     }
 };
 __decorate([
-    (0, common_1.Post)(':userId/friends/:friendId'),
-    __param(0, (0, common_1.Param)('userId')),
-    __param(1, (0, common_1.Param)('friendId')),
+    (0, common_1.Get)("shearch"),
+    __param(0, (0, common_1.Query)("username")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "Shearch", null);
+__decorate([
+    (0, common_1.Get)("accept"),
+    __param(0, (0, common_1.Query)("id")),
+    __param(1, (0, common_1.Query)("idfriend")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "addFriend", null);
 __decorate([
-    (0, common_1.Get)(),
-    __param(0, (0, common_1.Query)('id')),
+    (0, common_1.Get)("myreq"),
+    __param(0, (0, common_1.Query)("id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], UserController.prototype, "usersRequest", null);
 __decorate([
-    (0, common_1.Get)(),
-    __param(0, (0, common_1.Query)('id')),
+    (0, common_1.Get)("sendreq"),
+    __param(0, (0, common_1.Query)("id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], UserController.prototype, "usersEnvit", null);
 __decorate([
-    (0, common_1.Get)('hi'),
+    (0, common_1.Get)("invet"),
+    __param(0, (0, common_1.Query)("id")),
+    __param(1, (0, common_1.Query)("idfriend")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], UserController.prototype, "getUser", null);
 __decorate([
     (0, common_1.Patch)(),
     __param(0, (0, common_1.Req)()),
-    __param(1, (0, common_1.Body)('username')),
-    __param(2, (0, common_1.Body)('image')),
+    __param(1, (0, common_1.Body)("username")),
+    __param(2, (0, common_1.Body)("image")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, String, String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "updateUser", null);
 UserController = __decorate([
-    (0, common_1.Controller)('user'),
-    __metadata("design:paramtypes", [user_service_1.UserService, jwt_1.JwtService])
+    (0, common_1.Controller)("user"),
+    __metadata("design:paramtypes", [user_service_1.UserService,
+        jwt_1.JwtService])
 ], UserController);
 exports.UserController = UserController;
 //# sourceMappingURL=user.controller.js.map

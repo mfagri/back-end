@@ -23,13 +23,19 @@ export class UserService
         return user;
     }
     async addFriend(userId: number, friendId: number){
-      return await this.prisma.user.update({
+      const user = await this.prisma.user.update({
         where: { id: userId },
         data: {
           friendsRelation: { connect: { id: friendId } },
         },
       });
-    
+      await this.prisma.user.update({
+        where: { id: friendId },
+        data: {
+          friendsRelation: { connect: { id: userId } },
+        },
+      });
+      return user;
     }
     async getFriendRequest(userId: number) {
       const user = await this.prisma.user.findUnique({
@@ -37,10 +43,10 @@ export class UserService
           id: userId,
         },
         include: {
-          envitOf: true
+          requestedBy: true
         },
       });
-      return user.envitOf;
+      return user.requestedBy;
     }
     async getFriendsendRequest(userId: number) {
       const user = await this.prisma.user.findUnique({
@@ -48,10 +54,10 @@ export class UserService
           id: userId,
         },
         include: {
-          envitOf: true
+          request: true
         },
       });
-      return user.envitOf;
+      return user.request;
     }
     async updateusername(id: string,username: string)
     {
@@ -79,7 +85,29 @@ export class UserService
 
         return user;
     }
-
+    async shearchuser(username: string)
+    {
+      const result = await this.prisma.user.findMany({
+        where: {
+          username: {
+            startsWith: username,
+          },
+          // posts: {
+          //   some: {
+          //     published: true,
+          //   },
+          // },
+        },
+        // include: {
+        //   posts: {
+        //     where: {
+        //       published: true,
+        //     },
+        //   },
+        // },
+      })
+      return result;
+    }
     async updateuserimage(id: string,image: string)
     {
         
@@ -117,8 +145,11 @@ export class UserService
       return profile;
     }
 
-     async inviteUser(userId, inviterId) {
+     async inviteUser(userId:number, inviterId:number) {
       try {
+        console.log(userId)
+        console.log(inviterId)
+
         // Fetch the user to invite
         const userToInvite = await this.prisma.user.findUnique({
           where: { id: userId },
@@ -141,7 +172,7 @@ export class UserService
         const updatedUser = await this.prisma.user.update({
           where: { id: userId },
           data: {
-            envit: { connect: { id: inviterId } },
+            requestedBy: { connect: { id: inviterId } },
           },
         });
     
@@ -151,6 +182,7 @@ export class UserService
       } finally {
         await this.prisma.$disconnect();
       }
+      return 'request sended';
     }
     
 }
