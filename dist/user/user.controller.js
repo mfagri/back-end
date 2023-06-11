@@ -84,8 +84,16 @@ let UserController = class UserController {
             throw new common_1.ForbiddenException("no user here");
         }
     }
-    showprofile(username) {
-        return this.userService.getprofile(username);
+    async showprofile(username, req) {
+        console.log("here", req.cookies["authcookie"]["access_token"]);
+        console.log("in show profie");
+        const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
+            secret: constants_1.jwtConstants.secret,
+            ignoreExpiration: true,
+        });
+        console.log(data);
+        console.log("in show profie2");
+        return this.userService.getprofile(username, data.id);
     }
 };
 __decorate([
@@ -144,9 +152,10 @@ __decorate([
 __decorate([
     (0, common_1.Get)('showprofile'),
     __param(0, (0, common_1.Query)("username")),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "showprofile", null);
 UserController = __decorate([
     (0, common_1.Controller)("user"),

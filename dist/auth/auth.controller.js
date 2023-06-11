@@ -51,6 +51,7 @@ let AuthController = class AuthController {
     }
     async fortyTwoAuthRedirect(a, req, res) {
         console.log("i get this", req.user);
+        a.authenticated = true;
         console.log("========", req.user.id);
         const user = await this.authService.userfind(req.user);
         console.log(user);

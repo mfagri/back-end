@@ -9,6 +9,7 @@ import {
   Query,
   Req,
   ForbiddenException,
+  Res,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { Response, Request } from "express";
@@ -100,9 +101,24 @@ export class UserController {
     }
   }
   @Get('showprofile')
-  showprofile(@Query("username") username: string)
+  async showprofile(@Query("username") username: string,@Req() req: Request)
   {
-   return this.userService.getprofile(username)
+    console.log("here",req.cookies["authcookie"]["access_token"]);
+
+
+      console.log("in show profie");
+      const data = await this.jwtService.verifyAsync(
+        req.cookies["authcookie"]["access_token"],
+  
+        {
+          secret: jwtConstants.secret,
+          ignoreExpiration: true,
+        });
+      console.log(data);
+      console.log("in show profie2");
+
+    // const numericId = parseInt(data.id, 10);
+   return this.userService.getprofile(username,data.id);
   }
   // @Delete(':uname')
   // removeUser(@Param('uname') uname : string)

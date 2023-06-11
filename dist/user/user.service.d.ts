@@ -13,7 +13,16 @@ export declare class UserService {
     updateuserimage(id: string, image: string): Promise<import(".prisma/client").User & {
         profile: import(".prisma/client").Profile;
     }>;
-    getprofile(username: string): Promise<import(".prisma/client").Profile>;
+    getprofile(username: string, id: string): Promise<{
+        friend: boolean;
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        Userid: number;
+        username: string;
+        profilepicter: string;
+        email: string;
+    }>;
     inviteUser(userId: number, inviterId: number): Promise<string>;
     rfriends(id: number): Promise<import(".prisma/client").User[]>;
 }

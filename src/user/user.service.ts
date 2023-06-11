@@ -92,18 +92,9 @@ export class UserService
           username: {
             startsWith: username,
           },
-          // posts: {
-          //   some: {
-          //     published: true,
-          //   },
-          // },
         },
         // include: {
-        //   posts: {
-        //     where: {
-        //       published: true,
-        //     },
-        //   },
+        //   friends: true
         // },
       })
       return result;
@@ -133,7 +124,7 @@ export class UserService
         return user;
     }
 
-    async  getprofile(username: string)
+    async  getprofile(username: string,id:string)
     {
       try{
 
@@ -144,7 +135,30 @@ export class UserService
             }
           }
         );
-        return profile;
+        const result = await this.prisma.user.findUniqueOrThrow(
+          {
+            where:{
+              intrrid: id
+            }
+            ,
+            include:{
+              friends:true
+            }
+          }
+          )
+          //get user friends check if this user in frends and return obj have the statu and profile
+          const found = result.friends.find((obj) => {
+            return obj.username === username;
+          });
+          if(found)
+            return{
+              ...profile,friend: true
+
+            }
+          else
+            return{
+               ...profile,friend: false
+            }
       }
       catch(e)
       {

@@ -110,14 +110,28 @@ let UserService = class UserService {
         });
         return user;
     }
-    async getprofile(username) {
+    async getprofile(username, id) {
         try {
             const profile = await this.prisma.profile.findUniqueOrThrow({
                 where: {
                     username: username,
                 }
             });
-            return profile;
+            const result = await this.prisma.user.findUniqueOrThrow({
+                where: {
+                    intrrid: id
+                },
+                include: {
+                    friends: true
+                }
+            });
+            const found = result.friends.find((obj) => {
+                return obj.username === username;
+            });
+            if (found)
+                return Object.assign(Object.assign({}, profile), { friend: true });
+            else
+                return Object.assign(Object.assign({}, profile), { friend: false });
         }
         catch (e) {
             throw new common_1.NotFoundException('404');

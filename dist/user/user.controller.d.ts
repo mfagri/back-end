@@ -16,5 +16,14 @@ export declare class UserController {
     updateUser(req: Request, uname: string, image: string): Promise<import(".prisma/client").User & {
         profile: import(".prisma/client").Profile;
     }>;
-    showprofile(username: string): Promise<import(".prisma/client").Profile>;
+    showprofile(username: string, req: Request): Promise<{
+        friend: boolean;
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        Userid: number;
+        username: string;
+        profilepicter: string;
+        email: string;
+    }>;
 }

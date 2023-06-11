@@ -38,7 +38,7 @@ export class AuthController {
   // @UseGuards(AuthGuard42)
   @Get('profile')
   // @UseGuards(AuthGuardJWS)
-  async getProfile(@Req() req,@Session() a ) { 
+  async getProfile(@Req() req,@Session() a) { 
     console.log("sasa");
     a.authenticated = true;
     // console.log(req)
@@ -83,7 +83,7 @@ export class AuthController {
   async fortyTwoAuthRedirect(@Session() a ,@Request() req, @Res() res: Response) {
     // if user exist
     console.log("i get this",req.user);
-    // a.authenticated = true;
+    a.authenticated = true;
       //42=>req.user{acc& ref} =>req.usrif login else signup 
     console.log("========",req.user.id)
     const user = await this.authService.userfind(req.user);//user

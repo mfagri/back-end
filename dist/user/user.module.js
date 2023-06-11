@@ -12,11 +12,12 @@ const user_controller_1 = require("./user.controller");
 const user_service_1 = require("./user.service");
 const fortytwo_strategy_1 = require("../auth/fortytwo.strategy");
 const token_sever_1 = require("../auth/token.sever");
+const auth_module_1 = require("../auth/auth.module");
 let userModule = class userModule {
 };
 userModule = __decorate([
     (0, common_1.Module)({
-        imports: [],
+        imports: [auth_module_1.AuthModule],
         controllers: [user_controller_1.UserController],
         providers: [user_service_1.UserService, fortytwo_strategy_1.Strategy42, token_sever_1.TokenService],
     })
