@@ -14,7 +14,8 @@ export declare class UserService {
         profile: import(".prisma/client").Profile;
     }>;
     getprofile(username: string, id: string): Promise<{
-        friend: boolean;
+        friend: string;
+        requestsent: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;

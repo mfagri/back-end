@@ -123,15 +123,16 @@ let UserService = class UserService {
                 },
                 include: {
                     friends: true,
+                    requestedBy: true,
                 },
             });
             const found = result.friends.find((obj) => {
                 return obj.username === username;
             });
-            if (found)
-                return Object.assign(Object.assign({}, profile), { friend: true });
-            else
-                return Object.assign(Object.assign({}, profile), { friend: false });
+            const foundreq = result.requestedBy.find((obj) => {
+                return obj.username == username;
+            });
+            return Object.assign(Object.assign({}, profile), { friend: found ? "friend" : "", requestsent: foundreq ? "reqestsent" : "" });
         }
         catch (e) {
             throw new common_1.NotFoundException("404");

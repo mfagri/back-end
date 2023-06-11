@@ -120,22 +120,31 @@ export class UserService {
         },
         include: {
           friends: true,
+          requestedBy: true,
         },
       });
       //get user friends check if this user in frends and return obj have the statu and profile
       const found = result.friends.find((obj) => {
         return obj.username === username;
       });
-      if (found)
-        return {
-          ...profile,
-          friend: true,
-        };
-      else
-        return {
-          ...profile,
-          friend: false,
-        };
+      const foundreq = result.requestedBy.find((obj)=>{
+        return obj.username == username;
+      })
+      // if (found)
+      //   return {
+      //     ...profile,
+      //     friend: "friend",
+      //   };
+      // else
+      //   return {
+      //     ...profile,
+      //     friend: "",
+      //   };
+      return {
+        ...profile,
+        friend: found ? "friend" : "",
+        requestsent: foundreq ? "reqestsent" : "",
+      }
     } catch (e) {
       throw new NotFoundException("404");
     }

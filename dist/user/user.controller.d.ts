@@ -18,7 +18,8 @@ export declare class UserController {
         profile: import(".prisma/client").Profile;
     }>;
     showprofile(username: string, req: Request): Promise<{
-        friend: boolean;
+        friend: string;
+        requestsent: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
