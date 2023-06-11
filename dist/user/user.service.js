@@ -17,11 +17,11 @@ let UserService = class UserService {
         this.prisma = prisma;
     }
     async findByid(id) {
-        console.log('here');
+        console.log("here");
         const user = await this.prisma.user.findUnique({
             where: {
-                id: id
-            }
+                id: id,
+            },
         });
         return user;
     }
@@ -46,7 +46,7 @@ let UserService = class UserService {
                 id: userId,
             },
             include: {
-                requestedBy: true
+                requestedBy: true,
             },
         });
         return user.requestedBy;
@@ -57,7 +57,7 @@ let UserService = class UserService {
                 id: userId,
             },
             include: {
-                request: true
+                request: true,
             },
         });
         return user.request;
@@ -76,8 +76,8 @@ let UserService = class UserService {
                 },
             },
             include: {
-                profile: true
-            }
+                profile: true,
+            },
         });
         return user;
     }
@@ -105,8 +105,8 @@ let UserService = class UserService {
                 },
             },
             include: {
-                profile: true
-            }
+                profile: true,
+            },
         });
         return user;
     }
@@ -115,15 +115,15 @@ let UserService = class UserService {
             const profile = await this.prisma.profile.findUniqueOrThrow({
                 where: {
                     username: username,
-                }
+                },
             });
             const result = await this.prisma.user.findUniqueOrThrow({
                 where: {
-                    intrrid: id
+                    intrrid: id,
                 },
                 include: {
-                    friends: true
-                }
+                    friends: true,
+                },
             });
             const found = result.friends.find((obj) => {
                 return obj.username === username;
@@ -134,7 +134,7 @@ let UserService = class UserService {
                 return Object.assign(Object.assign({}, profile), { friend: false });
         }
         catch (e) {
-            throw new common_1.NotFoundException('404');
+            throw new common_1.NotFoundException("404");
         }
     }
     async inviteUser(userId, inviterId) {
@@ -148,7 +148,7 @@ let UserService = class UserService {
                 throw new Error(`User with ID ${userId} not found.`);
             }
             const inviter = await this.prisma.user.findUnique({
-                where: { id: inviterId },
+                where: { intrrid: inviterId },
             });
             if (!inviter) {
                 throw new Error(`Inviter user with ID ${inviterId} not found.`);
@@ -156,10 +156,10 @@ let UserService = class UserService {
             const updatedUser = await this.prisma.user.update({
                 where: { id: userId },
                 data: {
-                    requestedBy: { connect: { id: inviterId } },
+                    requestedBy: { connect: { intrrid: inviterId } },
                 },
             });
-            console.log(`User with ID ${updatedUser.id} has been invited by user with ID ${inviter.id}.`);
+            console.log(`User with ID ${updatedUser.username} has been invited by user with ID ${inviter.username}.`);
         }
         catch (error) {
             console.error(error);
@@ -167,7 +167,22 @@ let UserService = class UserService {
         finally {
             await this.prisma.$disconnect();
         }
-        return 'request sended';
+        return true;
+    }
+    async removefiend(id, myuserid) {
+        await this.prisma.user.update({
+            where: {
+                id: id,
+            },
+            data: {
+                friends: {
+                    disconnect: [{ intrrid: myuserid }]
+                },
+            },
+            include: {
+                friends: true
+            }
+        });
     }
     async rfriends(id) {
         const user = await this.prisma.user.findUnique({
@@ -175,8 +190,8 @@ let UserService = class UserService {
                 id: id,
             },
             include: {
-                friends: true
-            }
+                friends: true,
+            },
         });
         return user.friends;
     }

@@ -69,12 +69,33 @@ export class UserController {
     return this.userService.getFriendsendRequest(numericId);
   }
   @Get("invet")
-  getUser(@Query("id") iduser: string, @Query("idfriend") idfriend: string) {
+  async getUser(@Query("id") iduser: string,@Req() req: Request,) {
     const numericId = parseInt(iduser, 10);
-    const numericId2 = parseInt(idfriend, 10);
-    return this.userService.inviteUser(numericId, numericId2);
-  }
+    // const numericId2 = parseInt(idfriend, 10);
+    const data = await this.jwtService.verifyAsync(
+      req.cookies["authcookie"]["access_token"],
 
+      {
+        secret: jwtConstants.secret,
+        ignoreExpiration: true,
+      }
+    );
+    return this.userService.inviteUser(numericId, data.id);
+  }
+  @Get("remove")
+  async deletefromefriends(@Req() req: Request,)
+  {
+    const data = await this.jwtService.verifyAsync(
+      req.cookies["authcookie"]["access_token"],
+
+      {
+        secret: jwtConstants.secret,
+        ignoreExpiration: true,
+      }
+    );
+    this.userService.removefiend(2,data.id);///
+    return true;
+  }
 
   @Patch()
   async updateUser(

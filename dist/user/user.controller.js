@@ -60,10 +60,21 @@ let UserController = class UserController {
         console.log("sendreq", numericId);
         return this.userService.getFriendsendRequest(numericId);
     }
-    getUser(iduser, idfriend) {
+    async getUser(iduser, req) {
         const numericId = parseInt(iduser, 10);
-        const numericId2 = parseInt(idfriend, 10);
-        return this.userService.inviteUser(numericId, numericId2);
+        const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
+            secret: constants_1.jwtConstants.secret,
+            ignoreExpiration: true,
+        });
+        return this.userService.inviteUser(numericId, data.id);
+    }
+    async deletefromefriends(req) {
+        const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
+            secret: constants_1.jwtConstants.secret,
+            ignoreExpiration: true,
+        });
+        this.userService.removefiend(2, data.id);
+        return true;
     }
     async updateUser(req, uname, image) {
         try {
@@ -135,11 +146,18 @@ __decorate([
 __decorate([
     (0, common_1.Get)("invet"),
     __param(0, (0, common_1.Query)("id")),
-    __param(1, (0, common_1.Query)("idfriend")),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUser", null);
+__decorate([
+    (0, common_1.Get)("remove"),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "deletefromefriends", null);
 __decorate([
     (0, common_1.Patch)(),
     __param(0, (0, common_1.Req)()),

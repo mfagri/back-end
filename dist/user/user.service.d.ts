@@ -23,6 +23,7 @@ export declare class UserService {
         profilepicter: string;
         email: string;
     }>;
-    inviteUser(userId: number, inviterId: number): Promise<string>;
+    inviteUser(userId: number, inviterId: string): Promise<boolean>;
+    removefiend(id: number, myuserid: string): Promise<void>;
     rfriends(id: number): Promise<import(".prisma/client").User[]>;
 }
