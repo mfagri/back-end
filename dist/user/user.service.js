@@ -123,15 +123,16 @@ let UserService = class UserService {
                 },
                 include: {
                     friends: true,
-                    requestedBy: true,
+                    request: true,
                 },
             });
             const found = result.friends.find((obj) => {
                 return obj.username === username;
             });
-            const foundreq = result.requestedBy.find((obj) => {
+            const foundreq = result.request.find((obj) => {
                 return obj.username == username;
             });
+            console.log("here", foundreq);
             return Object.assign(Object.assign({}, profile), { friend: found ? "friend" : "", requestsent: foundreq ? "reqestsent" : "" });
         }
         catch (e) {

@@ -120,14 +120,14 @@ export class UserService {
         },
         include: {
           friends: true,
-          requestedBy: true,
+          request: true,
         },
       });
       //get user friends check if this user in frends and return obj have the statu and profile
       const found = result.friends.find((obj) => {
         return obj.username === username;
       });
-      const foundreq = result.requestedBy.find((obj)=>{
+      const foundreq = result.request.find((obj)=>{
         return obj.username == username;
       })
       // if (found)
@@ -140,6 +140,7 @@ export class UserService {
       //     ...profile,
       //     friend: "",
       //   };
+      console.log("here", foundreq);
       return {
         ...profile,
         friend: found ? "friend" : "",
