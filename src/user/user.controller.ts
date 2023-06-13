@@ -82,6 +82,21 @@ export class UserController {
     );
     return this.userService.inviteUser(numericId, data.id);
   }
+  @Get("cancel")
+  async cancelreq(@Query("id") iduser: string,@Req() req: Request,)
+  {
+    const numericId = parseInt(iduser, 10);
+  
+    const data = await this.jwtService.verifyAsync(
+      req.cookies["authcookie"]["access_token"],
+
+      {
+        secret: jwtConstants.secret,
+        ignoreExpiration: true,
+      }
+    );
+    return this.userService.cancelreqest(data.id,numericId);
+  }
   @Get("remove")
   async deletefromefriends(@Req() req: Request,)
   {

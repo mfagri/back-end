@@ -27,4 +27,5 @@ export declare class UserService {
     inviteUser(userId: number, inviterId: string): Promise<boolean>;
     removefiend(id: number, myuserid: string): Promise<void>;
     rfriends(id: number): Promise<import(".prisma/client").User[]>;
+    cancelreqest(myuserid: string, userid: number): Promise<boolean>;
 }

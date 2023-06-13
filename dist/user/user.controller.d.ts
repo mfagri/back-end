@@ -13,6 +13,7 @@ export declare class UserController {
     usersRequest(id: string): Promise<import(".prisma/client").User[]>;
     usersEnvit(id: string): Promise<import(".prisma/client").User[]>;
     getUser(iduser: string, req: Request): Promise<boolean>;
+    cancelreq(iduser: string, req: Request): Promise<boolean>;
     deletefromefriends(req: Request): Promise<boolean>;
     updateUser(req: Request, uname: string, image: string): Promise<import(".prisma/client").User & {
         profile: import(".prisma/client").Profile;

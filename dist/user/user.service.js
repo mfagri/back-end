@@ -197,6 +197,35 @@ let UserService = class UserService {
         });
         return user.friends;
     }
+    async cancelreqest(myuserid, userid) {
+        await this.prisma.user.update({
+            where: {
+                id: userid,
+            },
+            data: {
+                requestedBy: {
+                    disconnect: [{ intrrid: myuserid }]
+                },
+            },
+            include: {
+                requestedBy: true
+            }
+        });
+        await this.prisma.user.update({
+            where: {
+                intrrid: myuserid,
+            },
+            data: {
+                request: {
+                    disconnect: [{ id: userid }]
+                },
+            },
+            include: {
+                request: true
+            }
+        });
+        return true;
+    }
 };
 UserService = __decorate([
     (0, common_1.Injectable)(),
