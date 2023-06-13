@@ -25,7 +25,7 @@ export declare class UserController {
         updatedAt: Date;
         Userid: number;
         username: string;
-        profilepicter: string;
+        image: string;
         email: string;
     }>;
 }

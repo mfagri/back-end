@@ -100,7 +100,7 @@ let UserService = class UserService {
                 image: image,
                 profile: {
                     update: {
-                        profilepicter: image,
+                        image: image,
                     },
                 },
             },

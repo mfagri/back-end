@@ -173,7 +173,7 @@ export class AuthService {
           image: dto.image,
           profile: {
                       create: {
-                        profilepicter: dto.image,
+                        image: dto.image,
                         username: dto.username,
                         email: dto.email,
                       }

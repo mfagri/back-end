@@ -21,7 +21,7 @@ export declare class UserService {
         updatedAt: Date;
         Userid: number;
         username: string;
-        profilepicter: string;
+        image: string;
         email: string;
     }>;
     inviteUser(userId: number, inviterId: string): Promise<boolean>;

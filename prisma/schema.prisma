@@ -41,7 +41,7 @@ model Profile{
   user User? @relation(fields: [Userid],references: [id], onDelete: Cascade)
   Userid Int? @unique
   username String @unique
-  profilepicter String
+  image String
   email String? @unique
   
 }
