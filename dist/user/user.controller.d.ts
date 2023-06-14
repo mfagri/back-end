@@ -10,7 +10,7 @@ export declare class UserController {
     }>;
     addFriend(userId: string, friendId: string): Promise<any>;
     showfriends(id: string): Promise<import(".prisma/client").User[]>;
-    usersRequest(id: string): Promise<import(".prisma/client").User[]>;
+    usersRequest(req: Request): Promise<import(".prisma/client").User[]>;
     usersEnvit(id: string): Promise<import(".prisma/client").User[]>;
     getUser(iduser: string, req: Request): Promise<boolean>;
     cancelreq(iduser: string, req: Request): Promise<boolean>;
@@ -29,7 +29,7 @@ export declare class UserController {
         image: string;
         email: string;
     }>;
-    getUserInbox(userId: number): Promise<{
+    getUserInbox(req: Request): Promise<{
         rooms: {
             id: number;
             whoJoined: {

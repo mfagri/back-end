@@ -29,7 +29,7 @@ let UserService = class UserService {
     }
     async getUserConversationInbox(userId) {
         let inbox = await this.prisma.user.findUnique({
-            where: { id: userId },
+            where: { intrrid: userId },
             select: {
                 rooms: {
                     where: {
@@ -39,7 +39,7 @@ let UserService = class UserService {
                         id: true,
                         whoJoined: {
                             where: {
-                                id: {
+                                intrrid: {
                                     not: userId,
                                 }
                             },
@@ -70,7 +70,7 @@ let UserService = class UserService {
             }
         });
         const check_inbox = await this.prisma.user.findUnique({
-            where: { id: userId },
+            where: { intrrid: userId },
             select: {
                 rooms: {
                     select: {
@@ -109,7 +109,7 @@ let UserService = class UserService {
     async getFriendRequest(userId) {
         const user = await this.prisma.user.findUnique({
             where: {
-                id: userId,
+                intrrid: userId,
             },
             include: {
                 requestedBy: true,

@@ -11,8 +11,8 @@ export declare class RoomsController {
         createdAt: Date;
         content: string;
         createdBy: {
-            id: number;
             username: string;
+            id: number;
         };
     }[]>;
 }

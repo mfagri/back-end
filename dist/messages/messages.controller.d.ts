@@ -4,8 +4,8 @@ export declare class MessagesController {
     constructor(messagesService: MessagesService);
     createMessage(messageContent: string, userId: number, roomId: number): Promise<void>;
     getMessagesInTheRoom(roomId: number, take: number): Promise<{
-        content: string;
         createdAt: Date;
+        content: string;
         createdBy: {
             username: string;
         };
