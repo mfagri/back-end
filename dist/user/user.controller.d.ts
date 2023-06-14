@@ -29,4 +29,22 @@ export declare class UserController {
         image: string;
         email: string;
     }>;
+    getUserInbox(userId: number): Promise<{
+        rooms: {
+            id: number;
+            whoJoined: {
+                id: number;
+                username: string;
+                image: string;
+            }[];
+            messages: {
+                createdAt: Date;
+                content: string;
+                createdBy: {
+                    id: number;
+                    username: string;
+                };
+            }[];
+        }[];
+    }>;
 }

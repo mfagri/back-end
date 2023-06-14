@@ -14,12 +14,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
+const auth_1 = require("../dto/auth");
 const auth_service_1 = require("./auth.service");
-const dto_1 = require("./dto");
-const auth_guard42_1 = require("./auth.guard42");
-const App = require('express');
 const jwt_1 = require("@nestjs/jwt");
+const auth_guard42_1 = require("./auth.guard42");
 const constants_1 = require("./constants");
+const App = require('express');
 let AuthController = class AuthController {
     constructor(authService, jwtService) {
         this.authService = authService;
@@ -73,7 +73,7 @@ __decorate([
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, dto_1.AuthDto, Object]),
+    __metadata("design:paramtypes", [Object, auth_1.AuthDto, Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "signup", null);
 __decorate([

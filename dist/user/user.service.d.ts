@@ -1,8 +1,28 @@
 import { PrismaService } from "src/prisma/prisma.service";
+import { RoomsService } from "src/rooms/rooms.service";
 export declare class UserService {
     private readonly prisma;
-    constructor(prisma: PrismaService);
+    private readonly roomService;
+    constructor(prisma: PrismaService, roomService: RoomsService);
     findByid(id: number): Promise<import(".prisma/client").User>;
+    getUserConversationInbox(userId: number): Promise<{
+        rooms: {
+            id: number;
+            whoJoined: {
+                id: number;
+                username: string;
+                image: string;
+            }[];
+            messages: {
+                createdAt: Date;
+                content: string;
+                createdBy: {
+                    id: number;
+                    username: string;
+                };
+            }[];
+        }[];
+    }>;
     addFriend(userId: number, friendId: number): Promise<import(".prisma/client").User>;
     getFriendRequest(userId: number): Promise<import(".prisma/client").User[]>;
     getFriendsendRequest(userId: number): Promise<import(".prisma/client").User[]>;

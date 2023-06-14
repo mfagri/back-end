@@ -1,5 +1,5 @@
-import { AuthDto } from "./dto";
 import { PrismaService } from "src/prisma/prisma.service";
+import { AuthDto } from "../dto/auth";
 import { Strategy42 } from "./fortytwo.strategy";
 import { JwtService } from '@nestjs/jwt';
 import { TokenService } from "./token.sever";

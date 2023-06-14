@@ -12,9 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
+const rooms_service_1 = require("../rooms/rooms.service");
 let UserService = class UserService {
-    constructor(prisma) {
+    constructor(prisma, roomService) {
         this.prisma = prisma;
+        this.roomService = roomService;
     }
     async findByid(id) {
         console.log("here");
@@ -24,6 +26,69 @@ let UserService = class UserService {
             },
         });
         return user;
+    }
+    async getUserConversationInbox(userId) {
+        let inbox = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                rooms: {
+                    where: {
+                        group: false,
+                    },
+                    select: {
+                        id: true,
+                        whoJoined: {
+                            where: {
+                                id: {
+                                    not: userId,
+                                }
+                            },
+                            select: {
+                                username: true,
+                                image: true,
+                                id: true,
+                            }
+                        },
+                        messages: {
+                            select: {
+                                createdAt: true,
+                                createdBy: {
+                                    select: {
+                                        username: true,
+                                        id: true,
+                                    }
+                                },
+                                content: true,
+                            },
+                            orderBy: {
+                                createdAt: "desc"
+                            },
+                            take: 1,
+                        }
+                    }
+                }
+            }
+        });
+        const check_inbox = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                rooms: {
+                    select: {
+                        group: true,
+                        whoJoined: {
+                            select: {
+                                image: true,
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        if (!check_inbox)
+            throw new common_1.NotFoundException("No inbox found for this user");
+        for (let i = 0; i < check_inbox.rooms.length; i++) {
+        }
+        return inbox;
     }
     async addFriend(userId, friendId) {
         const user = await this.prisma.user.update({
@@ -38,6 +103,7 @@ let UserService = class UserService {
                 friendsRelation: { connect: { id: userId } },
             },
         });
+        await this.roomService.createConversation(userId, friendId);
         return user;
     }
     async getFriendRequest(userId) {
@@ -229,7 +295,7 @@ let UserService = class UserService {
 };
 UserService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService, rooms_service_1.RoomsService])
 ], UserService);
 exports.UserService = UserService;
 //# sourceMappingURL=user.service.js.map

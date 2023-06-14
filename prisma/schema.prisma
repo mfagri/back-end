@@ -12,7 +12,7 @@ datasource db {
 
 
 
-model User{
+model User {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -23,14 +23,14 @@ model User{
   intrrid String @unique
   auth String?
   profile Profile?
-  // envit             User?    @relation("envit", fields: [envitId], references: [id])
-  // envitId           Int?
-  // parentId Int?
   friends         User[]  @relation("friends")
   friendsRelation User[]  @relation("friends")
   request           User[]    @relation("request")
   requestedBy       User[]   @relation("request")
-  // envitOf           User[]   @relation("envit")
+  ///
+  inbox          Inbox?
+  rooms          Room[]
+  messages       Message[]
 }
 
 model Profile{
@@ -46,12 +46,30 @@ model Profile{
   
 }
 
-// model Session {
-//   id        String   @id
-//   sid       String   @unique
-//   data      String
-//   expiresAt   DateTime
-//   Userid Int? @unique
-//   // sessionToken String   @unique
-//   user User? @relation(fields: [Userid],references: [id], onDelete: Cascade)
-// }
+model Inbox {
+  id      Int    @id() @default(autoincrement())
+  userId  Int    @unique
+  inboxOf User   @relation(fields: [userId], references: [id])
+  rooms   Room[]
+}
+
+
+model Room {
+  id          Int       @id() @default(autoincrement())
+  group       Boolean   @default(false)
+  whoJoined   User[]
+  room_name   String?
+  inbox       Inbox[]
+  messages    Message[]
+  roomPicture String?
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  createdBy User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  content   String
+  room      Room     @relation(fields: [roomId], references: [id])
+  roomId    Int
+  userId    Int
+}

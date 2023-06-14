@@ -114,6 +114,9 @@ let UserController = class UserController {
         console.log("in show profie2");
         return this.userService.getprofile(username, data.id);
     }
+    getUserInbox(userId) {
+        return this.userService.getUserConversationInbox(userId);
+    }
 };
 __decorate([
     (0, common_1.Get)("search"),
@@ -191,6 +194,13 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "showprofile", null);
+__decorate([
+    (0, common_1.Get)("/getUserConversationInbox/:id"),
+    __param(0, (0, common_1.Param)("id", common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], UserController.prototype, "getUserInbox", null);
 UserController = __decorate([
     (0, common_1.Controller)("user"),
     __metadata("design:paramtypes", [user_service_1.UserService,

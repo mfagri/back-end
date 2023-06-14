@@ -1,17 +1,13 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Req, Redirect, Res, ForbiddenException, Patch, Request, Query,Session } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Post, Query, Req, Request, Res, Session, UseGuards } from '@nestjs/common';
+import { AuthDto } from '../dto/auth';
 import { AuthService } from './auth.service';
-import { AuthDto } from './dto';
-import { AuthGuardJWS } from './auth.guard';
 // import { AuthGuard } from '@nestjs/passport';
 // import { Strategy } from 'passport-42';
-import { AuthGuard42 } from './auth.guard42';
-import { Response } from 'express';
-import { Request as req } from 'express'
-const App = require('express')
 import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
+import { AuthGuard42 } from './auth.guard42';
 import { jwtConstants } from './constants';
-import { AuthGuard } from '@nestjs/passport';
-import { Strategy42 } from './fortytwo.strategy';
+const App = require('express')
 
 
 @Controller('auth')

@@ -10,6 +10,7 @@ import {
   Req,
   ForbiddenException,
   Res,
+  ParseIntPipe,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { Response, Request } from "express";
@@ -155,6 +156,10 @@ export class UserController {
 
     // const numericId = parseInt(data.id, 10);
    return this.userService.getprofile(username,data.id);
+  }
+  @Get("/getUserConversationInbox/:id")
+  getUserInbox(@Param("id", ParseIntPipe) userId:number) {
+    return this.userService.getUserConversationInbox(userId);
   }
   // @Delete(':uname')
   // removeUser(@Param('uname') uname : string)

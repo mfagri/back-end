@@ -1,7 +1,7 @@
+import { AuthDto } from '../dto/auth';
 import { AuthService } from './auth.service';
-import { AuthDto } from './dto';
-import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
 export declare class AuthController {
     private authService;
     private jwtService;

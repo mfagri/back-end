@@ -1,18 +1,11 @@
 import {
-  ForbiddenException,
-  Injectable,
-  UnauthorizedException,
+    ForbiddenException,
+    Injectable
 } from "@nestjs/common";
-import { AuthDto } from "./dto";
 import { PrismaService } from "src/prisma/prisma.service";
-import { validate } from "class-validator";
+import { AuthDto } from "../dto/auth";
 import { Strategy42 } from "./fortytwo.strategy";
 // import { VerifyCallback } from 'passport-42';
-import { verify } from "crypto";
-import { PassportStrategy } from "@nestjs/passport/dist/passport/passport.strategy";
-import { Strategy } from "passport-local";
-import { Profile, use } from "passport";
-import { VerifyCallback } from 'passport-42';
 import { JwtService } from '@nestjs/jwt';
 import { TokenService } from "./token.sever";
 
