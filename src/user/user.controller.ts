@@ -36,15 +36,22 @@ export class UserController {
   }
   @Get("accept")
   async addFriend(
-    @Query("id") userId: string,
-    @Query("idfriend") friendId: string
-  ): Promise<any> {
+    @Query("idfriend") userId: string, @Req() req: Request
+  ) {
     try {
-      console.log(userId);
-      console.log(friendId);
+      const data = await this.jwtService.verifyAsync(
+        req.cookies["authcookie"]["access_token"],
+  
+        {
+          secret: jwtConstants.secret,
+          ignoreExpiration: true,
+        }
+      );
+      console.log("userid = ",userId);
+      console.log("intara id = ",data.id);
       const numericId = parseInt(userId, 10);
-      const numericId2 = parseInt(friendId, 10);
-      const user = await this.userService.addFriend(numericId, numericId2);
+      // const numericId2 = parseInt(friendId, 10);
+      const user = await this.userService.addFriend(data.id,numericId);
       return { message: "Friend added successfully", user };
     } catch (error) {
       return { error: "Failed to add friend" };
@@ -162,22 +169,22 @@ export class UserController {
     return this.userService.getprofile(username, data.id);
   }
 
-  @Get("/getUserConversationInbox/:id")
-  async getUserInbox(@Param("id", ParseIntPipe) id: number) {
-    return this.userService.getUserConversationInbox(id);
-  }
-  // @Get("/getUserConversationInbox/")
-  // async getUserInbox(@Req() req: Request) {
-  //   console.log("here");
-  //   const data = await this.jwtService.verifyAsync(
-  //     req.cookies["authcookie"]["access_token"],
-  //     {
-  //       secret: jwtConstants.secret,
-  //       ignoreExpiration: true,
-  //     });
-
-  //   return this.userService.getUserConversationInbox(data.id);
+  // @Get("/getUserConversationInbox/:id")
+  // async getUserInbox(@Param("id", ParseIntPipe) id: number) {
+  //   return this.userService.getUserConversationInbox(id);
   // }
+  @Get("/getUserConversationInbox/")
+  async getUserInbox(@Req() req: Request) {
+    console.log("here");
+    const data = await this.jwtService.verifyAsync(
+      req.cookies["authcookie"]["access_token"],
+      {
+        secret: jwtConstants.secret,
+        ignoreExpiration: true,
+      });
+
+    return this.userService.getUserConversationInbox(data.id);
+  }
   // @Delete(':uname')
   // removeUser(@Param('uname') uname : string)
   // {

@@ -7,7 +7,10 @@ import { RoomsService } from "src/rooms/rooms.service";
 // import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService, private readonly roomService: RoomsService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly roomService: RoomsService
+  ) {}
   async findByid(id: number) {
     console.log("here");
     const user = await this.prisma.user.findUnique({
@@ -17,9 +20,9 @@ export class UserService {
     });
     return user;
   }
-  async getUserConversationInbox(userId: number) {
+  async getUserConversationInbox(userId: string) {
     let inbox = await this.prisma.user.findUnique({
-      where: {id: userId},
+      where: { intrrid: userId },
       select: {
         rooms: {
           where: {
@@ -28,16 +31,16 @@ export class UserService {
           select: {
             id: true,
             whoJoined: {
-              where :{
-                id: {
+              where: {
+                intrrid: {
                   not: userId,
-                }
+                },
               },
               select: {
                 username: true,
                 image: true,
                 id: true,
-              }
+              },
             },
             messages: {
               select: {
@@ -46,21 +49,21 @@ export class UserService {
                   select: {
                     username: true,
                     id: true,
-                  }
+                  },
                 },
                 content: true,
               },
               orderBy: {
-                createdAt: "desc"
+                createdAt: "desc",
               },
               take: 1,
-            }
-          }
-        }
-      }
-    })
+            },
+          },
+        },
+      },
+    });
     const check_inbox = await this.prisma.user.findUnique({
-      where: {id: userId},
+      where: { intrrid: userId },
       select: {
         rooms: {
           select: {
@@ -68,18 +71,17 @@ export class UserService {
             whoJoined: {
               select: {
                 image: true,
-              }
-            }
-          }
-        }
-      }
-    })
+              },
+            },
+          },
+        },
+      },
+    });
 
     if (!check_inbox)
       throw new NotFoundException("No inbox found for this user");
 
-    for (let i = 0; i < check_inbox.rooms.length; i++) {
-    }
+    for (let i = 0; i < check_inbox.rooms.length; i++) {}
     return inbox;
   }
   // async getUserConversationInbox(userId: string) {
@@ -148,9 +150,9 @@ export class UserService {
   //   return inbox;
   // }
 
-  async addFriend(userId: number, friendId: number) {
+  async addFriend(userId: string, friendId: number) {
     const user = await this.prisma.user.update({
-      where: { id: userId },
+      where: { intrrid: userId },
       data: {
         friendsRelation: { connect: { id: friendId } },
       },
@@ -158,16 +160,29 @@ export class UserService {
     await this.prisma.user.update({
       where: { id: friendId },
       data: {
-        friendsRelation: { connect: { id: userId } },
+        friendsRelation: { connect: { intrrid: userId } },
+        request: {disconnect:{id:friendId}}
       },
     });
-    await this.roomService.createConversation(userId, friendId);
+    await this.prisma.user.update({
+      where: { intrrid: userId },
+      data: {
+        // friendsRelation: { connect: { intrrid: userId } },
+        requestedBy: {disconnect:{id:friendId}}
+      },
+    });
+    // data: {
+    //   requestedBy: { connect: { intrrid: inviterId } },
+    // },
+    const user1 = await this.prisma.user.findUnique({
+      where:{
+        intrrid:userId
+      }
+    })
+    await this.roomService.createConversation(user1.id, friendId);
     return user;
   }
-
-
-
-
+  ////////////////
   async getFriendRequest(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: {
@@ -265,9 +280,9 @@ export class UserService {
       const found = result.friends.find((obj) => {
         return obj.username === username;
       });
-      const foundreq = result.request.find((obj)=>{
+      const foundreq = result.request.find((obj) => {
         return obj.username == username;
-      })
+      });
       // if (found)
       //   return {
       //     ...profile,
@@ -283,7 +298,7 @@ export class UserService {
         ...profile,
         friend: found ? "friend" : "",
         requestsent: foundreq ? "reqestsent" : "",
-      }
+      };
     } catch (e) {
       throw new NotFoundException("404");
     }
@@ -331,21 +346,20 @@ export class UserService {
     return true;
   }
   /////////Remove from friends/////////
-  async removefiend(id: number,myuserid: string) {
+  async removefiend(id: number, myuserid: string) {
     await this.prisma.user.update({
       where: {
         id: id,
       },
-      data:{
-        friends:{
-          disconnect:[{intrrid:myuserid}]
+      data: {
+        friends: {
+          disconnect: [{ intrrid: myuserid }],
         },
       },
-      include:{
-        friends:true
-      }
+      include: {
+        friends: true,
+      },
     });
-  
   }
   async rfriends(id: number) {
     const user = await this.prisma.user.findUnique({
@@ -358,39 +372,33 @@ export class UserService {
     });
     return user.friends;
   }
-  async cancelreqest(myuserid:string,userid:number)
-  {
-    await this.prisma.user.update(
-      {
-        where:{
-          id:userid,
-        },
-        data:{
-          requestedBy:{
-            disconnect:[{intrrid:myuserid}]
-          },
-        
+  async cancelreqest(myuserid: string, userid: number) {
+    await this.prisma.user.update({
+      where: {
+        id: userid,
       },
-      include:{
-        requestedBy:true
-      }
-    }
-    )
-      await this.prisma.user.update(
-        {
-          where:{
-            intrrid:myuserid,
-          },
-          data:{
-            request:{
-              disconnect:[{id:userid}]
-            },
-          
+      data: {
+        requestedBy: {
+          disconnect: [{ intrrid: myuserid }],
         },
-        include:{
-          request:true
-        }
-        });
+      },
+      include: {
+        requestedBy: true,
+      },
+    });
+    await this.prisma.user.update({
+      where: {
+        intrrid: myuserid,
+      },
+      data: {
+        request: {
+          disconnect: [{ id: userid }],
+        },
+      },
+      include: {
+        request: true,
+      },
+    });
     return true;
   }
 }
