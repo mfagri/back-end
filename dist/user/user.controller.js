@@ -50,10 +50,12 @@ let UserController = class UserController {
         console.log(numericId);
         return this.userService.rfriends(numericId);
     }
-    usersRequest(id) {
-        const numericId = parseInt(id, 10);
-        console.log(numericId);
-        return this.userService.getFriendRequest(numericId);
+    async usersRequest(req) {
+        const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
+            secret: constants_1.jwtConstants.secret,
+            ignoreExpiration: true,
+        });
+        return this.userService.getFriendRequest(data.id);
     }
     usersEnvit(id) {
         const numericId = parseInt(id, 10);
@@ -114,8 +116,13 @@ let UserController = class UserController {
         console.log("in show profie2");
         return this.userService.getprofile(username, data.id);
     }
-    getUserInbox(userId) {
-        return this.userService.getUserConversationInbox(userId);
+    async getUserInbox(req) {
+        console.log("here");
+        const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
+            secret: constants_1.jwtConstants.secret,
+            ignoreExpiration: true,
+        });
+        return this.userService.getUserConversationInbox(data.id);
     }
 };
 __decorate([
@@ -142,10 +149,10 @@ __decorate([
 ], UserController.prototype, "showfriends", null);
 __decorate([
     (0, common_1.Get)("myreq"),
-    __param(0, (0, common_1.Query)("id")),
+    __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "usersRequest", null);
 __decorate([
     (0, common_1.Get)("sendreq"),
@@ -195,11 +202,11 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "showprofile", null);
 __decorate([
-    (0, common_1.Get)("/getUserConversationInbox/:id"),
-    __param(0, (0, common_1.Param)("id", common_1.ParseIntPipe)),
+    (0, common_1.Get)("/getUserConversationInbox"),
+    __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUserInbox", null);
 UserController = __decorate([
     (0, common_1.Controller)("user"),

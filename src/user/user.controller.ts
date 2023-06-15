@@ -22,11 +22,11 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private jwtService: JwtService
-  ) {}
+  ) { }
   @Get("search")
   async Search(@Query("username") username: string) {
-    
-    if(username === '')
+
+    if (username === '')
       return [];
     try {
       return this.userService.searchuser(username);
@@ -51,17 +51,24 @@ export class UserController {
     }
   }
   @Get("friends")
-  async showfriends(@Query("id") id: string)
-  {
+  async showfriends(@Query("id") id: string) {
     const numericId = parseInt(id, 10);
     console.log(numericId);
-      return this.userService.rfriends(numericId);
+    return this.userService.rfriends(numericId);
   }
   @Get("myreq")
-  usersRequest(@Query("id") id: string) {
-    const numericId = parseInt(id, 10);
-    console.log(numericId);
-    return this.userService.getFriendRequest(numericId);
+  async usersRequest( @Req() req: Request) {
+    const data = await this.jwtService.verifyAsync(
+      req.cookies["authcookie"]["access_token"],
+
+      {
+        secret: jwtConstants.secret,
+        ignoreExpiration: true,
+      }
+    );
+    // const numericId = parseInt(id, 10);
+    // console.log(numericId);
+    return this.userService.getFriendRequest(data.id);
   }
   @Get("sendreq")
   usersEnvit(@Query("id") id: string) {
@@ -70,7 +77,7 @@ export class UserController {
     return this.userService.getFriendsendRequest(numericId);
   }
   @Get("invet")
-  async getUser(@Query("id") iduser: string,@Req() req: Request,) {
+  async getUser(@Query("id") iduser: string, @Req() req: Request,) {
     const numericId = parseInt(iduser, 10);
     // const numericId2 = parseInt(idfriend, 10);
     const data = await this.jwtService.verifyAsync(
@@ -84,10 +91,9 @@ export class UserController {
     return this.userService.inviteUser(numericId, data.id);
   }
   @Get("cancel")
-  async cancelreq(@Query("id") iduser: string,@Req() req: Request,)
-  {
+  async cancelreq(@Query("id") iduser: string, @Req() req: Request,) {
     const numericId = parseInt(iduser, 10);
-  
+
     const data = await this.jwtService.verifyAsync(
       req.cookies["authcookie"]["access_token"],
 
@@ -96,11 +102,10 @@ export class UserController {
         ignoreExpiration: true,
       }
     );
-    return this.userService.cancelreqest(data.id,numericId);
+    return this.userService.cancelreqest(data.id, numericId);
   }
   @Get("remove")
-  async deletefromefriends(@Req() req: Request,)
-  {
+  async deletefromefriends(@Req() req: Request,) {
     const data = await this.jwtService.verifyAsync(
       req.cookies["authcookie"]["access_token"],
 
@@ -109,7 +114,7 @@ export class UserController {
         ignoreExpiration: true,
       }
     );
-    this.userService.removefiend(2,data.id);///
+    this.userService.removefiend(2, data.id);///
     return true;
   }
 
@@ -138,28 +143,36 @@ export class UserController {
     }
   }
   @Get('showprofile')
-  async showprofile(@Query("username") username: string,@Req() req: Request)
-  {
-    console.log("here",req.cookies["authcookie"]["access_token"]);
+  async showprofile(@Query("username") username: string, @Req() req: Request) {
+    console.log("here", req.cookies["authcookie"]["access_token"]);
 
 
-      console.log("in show profie");
-      const data = await this.jwtService.verifyAsync(
-        req.cookies["authcookie"]["access_token"],
-  
-        {
-          secret: jwtConstants.secret,
-          ignoreExpiration: true,
-        });
-      console.log(data);
-      console.log("in show profie2");
+    console.log("in show profie");
+    const data = await this.jwtService.verifyAsync(
+      req.cookies["authcookie"]["access_token"],
+
+      {
+        secret: jwtConstants.secret,
+        ignoreExpiration: true,
+      });
+    console.log(data);
+    console.log("in show profie2");
 
     // const numericId = parseInt(data.id, 10);
-   return this.userService.getprofile(username,data.id);
+    return this.userService.getprofile(username, data.id);
   }
-  @Get("/getUserConversationInbox/:id")
-  getUserInbox(@Param("id", ParseIntPipe) userId:number) {
-    return this.userService.getUserConversationInbox(userId);
+  @Get("/getUserConversationInbox")
+  async getUserInbox(@Req() req: Request) {
+    console.log("here");
+    const data = await this.jwtService.verifyAsync(
+      req.cookies["authcookie"]["access_token"],
+
+      {
+        secret: jwtConstants.secret,
+        ignoreExpiration: true,
+      });
+
+    return this.userService.getUserConversationInbox(data.id);
   }
   // @Delete(':uname')
   // removeUser(@Param('uname') uname : string)
