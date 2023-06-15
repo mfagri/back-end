@@ -15,6 +15,9 @@ export class MessagesService {
         // userId = Number(userId);
         // roomId = parseInt(roomId, 10);
         // roomId = parseInt(roomId, 10);
+        console.log("------------userId------------", userId);
+        console.log("------------userId------------", roomId);
+        console.log("------------userId------------", messageContent);
         const newMessage = await this.prisma.message.create({
             data: {
                 content: messageContent,

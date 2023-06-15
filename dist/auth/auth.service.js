@@ -60,6 +60,11 @@ let AuthService = class AuthService {
                     }
                 },
             });
+            await this.prisma.inbox.create({
+                data: {
+                    inboxOf: { connect: { id: user.id } },
+                },
+            });
             return user;
         }
         catch (e) {

@@ -18,6 +18,9 @@ let MessagesService = class MessagesService {
         this.idToUser = {};
     }
     async createMessage(messageContent, userId, roomId) {
+        console.log("------------userId------------", userId);
+        console.log("------------userId------------", roomId);
+        console.log("------------userId------------", messageContent);
         const newMessage = await this.prisma.message.create({
             data: {
                 content: messageContent,

@@ -173,7 +173,11 @@ export class AuthService {
                     }
         },
       });
-
+      await this.prisma.inbox.create({
+        data: {
+          inboxOf: { connect: { id: user.id } },
+        },
+      });
       // delete user.hash;
       // Return the saved user
       return user;
