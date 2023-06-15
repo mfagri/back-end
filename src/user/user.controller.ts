@@ -161,19 +161,23 @@ export class UserController {
     // const numericId = parseInt(data.id, 10);
     return this.userService.getprofile(username, data.id);
   }
-  @Get("/getUserConversationInbox")
-  async getUserInbox(@Req() req: Request) {
-    console.log("here");
-    const data = await this.jwtService.verifyAsync(
-      req.cookies["authcookie"]["access_token"],
 
-      {
-        secret: jwtConstants.secret,
-        ignoreExpiration: true,
-      });
-
-    return this.userService.getUserConversationInbox(data.id);
+  @Get("/getUserConversationInbox/:id")
+  async getUserInbox(@Param("id", ParseIntPipe) id: number) {
+    return this.userService.getUserConversationInbox(id);
   }
+  // @Get("/getUserConversationInbox/")
+  // async getUserInbox(@Req() req: Request) {
+  //   console.log("here");
+  //   const data = await this.jwtService.verifyAsync(
+  //     req.cookies["authcookie"]["access_token"],
+  //     {
+  //       secret: jwtConstants.secret,
+  //       ignoreExpiration: true,
+  //     });
+
+  //   return this.userService.getUserConversationInbox(data.id);
+  // }
   // @Delete(':uname')
   // removeUser(@Param('uname') uname : string)
   // {

@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { createMessageDto } from '../dto/message/createMessageDto';
 // import { TreeRepositoryUtils } from 'typeorm';
 
 @Injectable()
@@ -8,16 +7,43 @@ export class MessagesService {
     idToUser = {}
     constructor (private prisma: PrismaService) {}
 
-    // async createMessage(messageInfo: createMessageDto) {
+    async checkPermissions(userId: number, roomId: number) {
+        const room = await this.prisma.room.findUnique({
+            where: {
+                id: roomId
+            },
+            select: {
+                mutedUser: {
+                    select: {
+                        id: true,
+                    }
+                },
+                whoJoined: {
+                    select: {
+                        id: true,
+                    }
+                }
+            }
+        })
+        if (!room)
+            throw new BadRequestException('Room not found')
+        const user = await this.prisma.user.findUnique({
+            where: {
+                id: userId,
+            },
+            select: {
+                id: true,
+            }
+        });
+        if (!user)
+            throw new BadRequestException('User not found')
+        if (!room.whoJoined.some(user => user.id === userId))
+            throw new BadRequestException('user not allowed');
+        if (room.mutedUser.some(muted => muted.id === userId))
+            throw new BadRequestException('this user is already muted');
+    }
     async createMessage(messageContent: string, userId: number, roomId: number) {
-        // let {messageContent, userId, roomId} = messageInfo;
-        // roomId = Number(roomId);
-        // userId = Number(userId);
-        // roomId = parseInt(roomId, 10);
-        // roomId = parseInt(roomId, 10);
-        console.log("------------userId------------", userId);
-        console.log("------------userId------------", roomId);
-        console.log("------------userId------------", messageContent);
+        await this.checkPermissions(userId, roomId);
         const newMessage = await this.prisma.message.create({
             data: {
                 content: messageContent,
@@ -33,6 +59,7 @@ export class MessagesService {
                 }
             },
         })
+        return "message created!!!";
     }
 
     async getMessagesInTheRoom(roomId: number, take: number) {

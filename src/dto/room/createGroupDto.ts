@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsNumber, IsOptional } from "class-validator"
 
 export class createGroupDto {
-    @IsNumber()
+    // @IsNumber()
     @IsNotEmpty()
     userId: number
     

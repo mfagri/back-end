@@ -15,13 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RoomsController = void 0;
 const common_1 = require("@nestjs/common");
 const rooms_service_1 = require("./rooms.service");
-const createConversationDto_1 = require("../dto/room/createConversationDto");
 const createGroupDto_1 = require("../dto/room/createGroupDto");
 let RoomsController = class RoomsController {
     constructor(roomsService) {
         this.roomsService = roomsService;
-    }
-    createConversation(roomInfo) {
     }
     createGroup(roomInfo) {
         return this.roomsService.createGroup(roomInfo);
@@ -33,13 +30,6 @@ let RoomsController = class RoomsController {
         return this.roomsService.getRoomMessages(roomId);
     }
 };
-__decorate([
-    (0, common_1.Post)("/createConversation"),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [createConversationDto_1.createConversationDto]),
-    __metadata("design:returntype", void 0)
-], RoomsController.prototype, "createConversation", null);
 __decorate([
     (0, common_1.Post)("/createGroup"),
     __param(0, (0, common_1.Body)()),

@@ -17,10 +17,9 @@ export class UserService {
     });
     return user;
   }
-
-  async getUserConversationInbox(userId: string) {
+  async getUserConversationInbox(userId: number) {
     let inbox = await this.prisma.user.findUnique({
-      where: {intrrid: userId},
+      where: {id: userId},
       select: {
         rooms: {
           where: {
@@ -30,7 +29,7 @@ export class UserService {
             id: true,
             whoJoined: {
               where :{
-                intrrid: {
+                id: {
                   not: userId,
                 }
               },
@@ -61,7 +60,7 @@ export class UserService {
       }
     })
     const check_inbox = await this.prisma.user.findUnique({
-      where: {intrrid: userId},
+      where: {id: userId},
       select: {
         rooms: {
           select: {
@@ -83,6 +82,71 @@ export class UserService {
     }
     return inbox;
   }
+  // async getUserConversationInbox(userId: string) {
+  //   let inbox = await this.prisma.user.findUnique({
+  //     where: {intrrid: userId},
+  //     select: {
+  //       rooms: {
+  //         where: {
+  //           group: false,
+  //         },
+  //         select: {
+  //           id: true,
+  //           whoJoined: {
+  //             where :{
+  //               intrrid: {
+  //                 not: userId,
+  //               }
+  //             },
+  //             select: {
+  //               username: true,
+  //               image: true,
+  //               id: true,
+  //             }
+  //           },
+  //           messages: {
+  //             select: {
+  //               createdAt: true,
+  //               createdBy: {
+  //                 select: {
+  //                   username: true,
+  //                   id: true,
+  //                 }
+  //               },
+  //               content: true,
+  //             },
+  //             orderBy: {
+  //               createdAt: "desc"
+  //             },
+  //             take: 1,
+  //           }
+  //         }
+  //       }
+  //     }
+  //   })
+  //   const check_inbox = await this.prisma.user.findUnique({
+  //     where: {intrrid: userId},
+  //     select: {
+  //       rooms: {
+  //         select: {
+  //           group: true,
+  //           whoJoined: {
+  //             select: {
+  //               image: true,
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
+  //   })
+
+  //   if (!check_inbox)
+  //     throw new NotFoundException("No inbox found for this user");
+
+  //   for (let i = 0; i < check_inbox.rooms.length; i++) {
+  //   }
+  //   return inbox;
+  // }
 
   async addFriend(userId: number, friendId: number) {
     const user = await this.prisma.user.update({

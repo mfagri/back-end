@@ -17,10 +17,43 @@ let MessagesService = class MessagesService {
         this.prisma = prisma;
         this.idToUser = {};
     }
+    async checkPermissions(userId, roomId) {
+        const room = await this.prisma.room.findUnique({
+            where: {
+                id: roomId
+            },
+            select: {
+                mutedUser: {
+                    select: {
+                        id: true,
+                    }
+                },
+                whoJoined: {
+                    select: {
+                        id: true,
+                    }
+                }
+            }
+        });
+        if (!room)
+            throw new common_1.BadRequestException('Room not found');
+        const user = await this.prisma.user.findUnique({
+            where: {
+                id: userId,
+            },
+            select: {
+                id: true,
+            }
+        });
+        if (!user)
+            throw new common_1.BadRequestException('User not found');
+        if (!room.whoJoined.some(user => user.id === userId))
+            throw new common_1.BadRequestException('user not allowed');
+        if (room.mutedUser.some(muted => muted.id === userId))
+            throw new common_1.BadRequestException('this user is already muted');
+    }
     async createMessage(messageContent, userId, roomId) {
-        console.log("------------userId------------", userId);
-        console.log("------------userId------------", roomId);
-        console.log("------------userId------------", messageContent);
+        await this.checkPermissions(userId, roomId);
         const newMessage = await this.prisma.message.create({
             data: {
                 content: messageContent,
@@ -36,6 +69,7 @@ let MessagesService = class MessagesService {
                 }
             },
         });
+        return "message created!!!";
     }
     async getMessagesInTheRoom(roomId, take) {
         const messages = this.prisma.message.findFirst({

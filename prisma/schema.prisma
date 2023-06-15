@@ -29,8 +29,9 @@ model User {
   requestedBy       User[]   @relation("request")
   ///
   inbox          Inbox?
-  rooms          Room[]
+  rooms          Room[] @relation("whojoined")
   messages       Message[]
+  mutedIn        Room[] @relation("mutedusers")
 }
 
 model Profile{
@@ -43,7 +44,6 @@ model Profile{
   username String @unique
   image String
   email String? @unique
-  
 }
 
 model Inbox {
@@ -57,11 +57,12 @@ model Inbox {
 model Room {
   id          Int       @id() @default(autoincrement())
   group       Boolean   @default(false)
-  whoJoined   User[]
+  whoJoined   User[] @relation("whojoined")
   room_name   String?
   inbox       Inbox[]
   messages    Message[]
   roomPicture String?
+  mutedUser   User[] @relation("mutedusers")
 }
 
 model Message {

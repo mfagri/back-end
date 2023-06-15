@@ -14,7 +14,6 @@ const class_validator_1 = require("class-validator");
 class createGroupDto {
 }
 __decorate([
-    (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Number)
 ], createGroupDto.prototype, "userId", void 0);

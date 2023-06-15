@@ -16,10 +16,10 @@ import { createGroupDto } from "../dto/room/createGroupDto";
 export class RoomsController {
   constructor(private roomsService: RoomsService) {}
 
-  @Post("/createConversation")
-  createConversation(@Body() roomInfo: createConversationDto) {
-    // return this.roomsService.createConversation(roomInfo);
-  }
+  // @Post("/createConversation")
+  // createConversation(@Body() roomInfo: createConversationDto) {
+  //   // return this.roomsService.createConversation(roomInfo);
+  // }
 
   @Post("/createGroup")
   createGroup(@Body() roomInfo: createGroupDto) {

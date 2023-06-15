@@ -29,21 +29,21 @@ export declare class UserController {
         image: string;
         email: string;
     }>;
-    getUserInbox(req: Request): Promise<{
+    getUserInbox(id: number): Promise<{
         rooms: {
-            id: number;
-            whoJoined: {
-                id: number;
-                username: string;
-                image: string;
-            }[];
             messages: {
                 createdAt: Date;
                 content: string;
                 createdBy: {
-                    id: number;
                     username: string;
+                    id: number;
                 };
+            }[];
+            id: number;
+            whoJoined: {
+                username: string;
+                image: string;
+                id: number;
             }[];
         }[];
     }>;

@@ -116,13 +116,8 @@ let UserController = class UserController {
         console.log("in show profie2");
         return this.userService.getprofile(username, data.id);
     }
-    async getUserInbox(req) {
-        console.log("here");
-        const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
-            secret: constants_1.jwtConstants.secret,
-            ignoreExpiration: true,
-        });
-        return this.userService.getUserConversationInbox(data.id);
+    async getUserInbox(id) {
+        return this.userService.getUserConversationInbox(id);
     }
 };
 __decorate([
@@ -202,10 +197,10 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "showprofile", null);
 __decorate([
-    (0, common_1.Get)("/getUserConversationInbox"),
-    __param(0, (0, common_1.Req)()),
+    (0, common_1.Get)("/getUserConversationInbox/:id"),
+    __param(0, (0, common_1.Param)("id", common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUserInbox", null);
 UserController = __decorate([
