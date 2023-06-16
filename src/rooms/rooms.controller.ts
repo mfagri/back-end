@@ -4,13 +4,16 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Put,
+  UploadedFile,
 } from "@nestjs/common";
 import { RoomsService } from "./rooms.service";
 import { createConversationDto } from "../dto/room/createConversationDto";
 import { CreateHistogramOptions } from "perf_hooks";
 import { createGroupDto } from "../dto/room/createGroupDto";
+import { ChangeRoleInfoDto } from "../dto/room/changeRoleInfoDto";
 
 @Controller("rooms")
 export class RoomsController {
@@ -37,5 +40,15 @@ export class RoomsController {
   @Get("/getRoomMessages/:id")
   getRoomMessages(@Param("id", ParseIntPipe) roomId: number) {
     return this.roomsService.getRoomMessages(roomId);
+  }
+
+  @Patch("/changeRoleForTheUser")
+  changeRoleForTheUser(@Body() changeRoleInfo: ChangeRoleInfoDto) {
+    return this.roomsService.changeRoleForTheUser(changeRoleInfo);      
+  }
+
+  @Patch("muteTheUser/:id")
+  muteTheUser(@Param('id') id: number, @Body("mutedId") mutedId: number, @Body("roomId") roomId: number, @Body("muteDuration") muteDuration: number) {
+    return this.roomsService.muteTheUser(id, mutedId, roomId, muteDuration);
   }
 }

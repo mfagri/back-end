@@ -16,6 +16,7 @@ exports.RoomsController = void 0;
 const common_1 = require("@nestjs/common");
 const rooms_service_1 = require("./rooms.service");
 const createGroupDto_1 = require("../dto/room/createGroupDto");
+const changeRoleInfoDto_1 = require("../dto/room/changeRoleInfoDto");
 let RoomsController = class RoomsController {
     constructor(roomsService) {
         this.roomsService = roomsService;
@@ -28,6 +29,12 @@ let RoomsController = class RoomsController {
     }
     getRoomMessages(roomId) {
         return this.roomsService.getRoomMessages(roomId);
+    }
+    changeRoleForTheUser(changeRoleInfo) {
+        return this.roomsService.changeRoleForTheUser(changeRoleInfo);
+    }
+    muteTheUser(id, mutedId, roomId, muteDuration) {
+        return this.roomsService.muteTheUser(id, mutedId, roomId, muteDuration);
     }
 };
 __decorate([
@@ -52,6 +59,23 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], RoomsController.prototype, "getRoomMessages", null);
+__decorate([
+    (0, common_1.Patch)("/changeRoleForTheUser"),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [changeRoleInfoDto_1.ChangeRoleInfoDto]),
+    __metadata("design:returntype", void 0)
+], RoomsController.prototype, "changeRoleForTheUser", null);
+__decorate([
+    (0, common_1.Patch)("muteTheUser/:id"),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)("mutedId")),
+    __param(2, (0, common_1.Body)("roomId")),
+    __param(3, (0, common_1.Body)("muteDuration")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number, Number, Number]),
+    __metadata("design:returntype", void 0)
+], RoomsController.prototype, "muteTheUser", null);
 RoomsController = __decorate([
     (0, common_1.Controller)("rooms"),
     __metadata("design:paramtypes", [rooms_service_1.RoomsService])

@@ -1,5 +1,6 @@
 import { RoomsService } from "./rooms.service";
 import { createGroupDto } from "../dto/room/createGroupDto";
+import { ChangeRoleInfoDto } from "../dto/room/changeRoleInfoDto";
 export declare class RoomsController {
     private roomsService;
     constructor(roomsService: RoomsService);
@@ -9,8 +10,10 @@ export declare class RoomsController {
         createdAt: Date;
         content: string;
         createdBy: {
-            username: string;
             id: number;
+            username: string;
         };
     }[]>;
+    changeRoleForTheUser(changeRoleInfo: ChangeRoleInfoDto): Promise<void>;
+    muteTheUser(id: number, mutedId: number, roomId: number, muteDuration: number): Promise<string>;
 }

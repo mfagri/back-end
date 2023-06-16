@@ -8,15 +8,7 @@ export declare class UserController {
     Search(username: string): Promise<import(".prisma/client").User[] | {
         e: string;
     }>;
-    addFriend(userId: string, req: Request): Promise<{
-        message: string;
-        user: import(".prisma/client").User;
-        error?: undefined;
-    } | {
-        error: string;
-        message?: undefined;
-        user?: undefined;
-    }>;
+    addFriend(userId: string, friendId: string): Promise<any>;
     showfriends(id: string): Promise<import(".prisma/client").User[]>;
     usersRequest(req: Request): Promise<import(".prisma/client").User[]>;
     usersEnvit(id: string): Promise<import(".prisma/client").User[]>;
@@ -39,20 +31,20 @@ export declare class UserController {
     }>;
     getUserInbox(req: Request): Promise<{
         rooms: {
+            whoJoined: {
+                id: number;
+                username: string;
+                image: string;
+            }[];
             messages: {
                 createdAt: Date;
                 content: string;
                 createdBy: {
-                    username: string;
                     id: number;
+                    username: string;
                 };
             }[];
             id: number;
-            whoJoined: {
-                username: string;
-                image: string;
-                id: number;
-            }[];
         }[];
     }>;
 }

@@ -7,7 +7,7 @@ export class MessagesService {
     idToUser = {}
     constructor (private prisma: PrismaService) {}
 
-    async checkPermissions(userId: number, roomId: number) {
+    async checkPermissionsForCreateMessage(userId: number, roomId: number) {
         const room = await this.prisma.room.findUnique({
             where: {
                 id: roomId
@@ -15,7 +15,7 @@ export class MessagesService {
             select: {
                 mutedUser: {
                     select: {
-                        id: true,
+                          userId: true,
                     }
                 },
                 whoJoined: {
@@ -39,11 +39,11 @@ export class MessagesService {
             throw new BadRequestException('User not found')
         if (!room.whoJoined.some(user => user.id === userId))
             throw new BadRequestException('user not allowed');
-        if (room.mutedUser.some(muted => muted.id === userId))
+        if (room.mutedUser.some(muted => muted.userId === userId))
             throw new BadRequestException('this user is already muted');
     }
     async createMessage(messageContent: string, userId: number, roomId: number) {
-        await this.checkPermissions(userId, roomId);
+        await this.checkPermissionsForCreateMessage(userId, roomId);
         const newMessage = await this.prisma.message.create({
             data: {
                 content: messageContent,

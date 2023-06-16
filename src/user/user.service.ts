@@ -150,9 +150,9 @@ export class UserService {
   //   return inbox;
   // }
 
-  async addFriend(userId: string, friendId: number) {
+  async addFriend(userId: number, friendId: number) {
     const user = await this.prisma.user.update({
-      where: { intrrid: userId },
+      where: { id: userId },
       data: {
         friendsRelation: { connect: { id: friendId } },
       },
@@ -160,28 +160,45 @@ export class UserService {
     await this.prisma.user.update({
       where: { id: friendId },
       data: {
-        friendsRelation: { connect: { intrrid: userId } },
-        request: {disconnect:{id:friendId}}
+        friendsRelation: { connect: { id: userId } },
       },
     });
-    await this.prisma.user.update({
-      where: { intrrid: userId },
-      data: {
-        // friendsRelation: { connect: { intrrid: userId } },
-        requestedBy: {disconnect:{id:friendId}}
-      },
-    });
-    // data: {
-    //   requestedBy: { connect: { intrrid: inviterId } },
-    // },
-    const user1 = await this.prisma.user.findUnique({
-      where:{
-        intrrid:userId
-      }
-    })
-    await this.roomService.createConversation(user1.id, friendId);
+    await this.roomService.createConversation(userId, friendId);
     return user;
   }
+
+  // async addFriend(userId: string, friendId: number) {
+  //   const user = await this.prisma.user.update({
+  //     where: { intrrid: userId },
+  //     data: {
+  //       friendsRelation: { connect: { id: friendId } },
+  //     },
+  //   });
+  //   await this.prisma.user.update({
+  //     where: { id: friendId },
+  //     data: {
+  //       friendsRelation: { connect: { intrrid: userId } },
+  //       request: {disconnect:{id:friendId}}
+  //     },
+  //   });
+  //   await this.prisma.user.update({
+  //     where: { intrrid: userId },
+  //     data: {
+  //       // friendsRelation: { connect: { intrrid: userId } },
+  //       requestedBy: {disconnect:{id:friendId}}
+  //     },
+  //   });
+  //   // data: {
+  //   //   requestedBy: { connect: { intrrid: inviterId } },
+  //   // },
+  //   const user1 = await this.prisma.user.findUnique({
+  //     where:{
+  //       intrrid:userId
+  //     }
+  //   })
+  //   await this.roomService.createConversation(user1.id, friendId);
+  //   return user;
+  // }
   ////////////////
   async getFriendRequest(userId: string) {
     const user = await this.prisma.user.findUnique({

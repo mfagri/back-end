@@ -91,7 +91,7 @@ let UserService = class UserService {
     }
     async addFriend(userId, friendId) {
         const user = await this.prisma.user.update({
-            where: { intrrid: userId },
+            where: { id: userId },
             data: {
                 friendsRelation: { connect: { id: friendId } },
             },
@@ -99,22 +99,10 @@ let UserService = class UserService {
         await this.prisma.user.update({
             where: { id: friendId },
             data: {
-                friendsRelation: { connect: { intrrid: userId } },
-                request: { disconnect: { id: friendId } }
+                friendsRelation: { connect: { id: userId } },
             },
         });
-        await this.prisma.user.update({
-            where: { intrrid: userId },
-            data: {
-                requestedBy: { disconnect: { id: friendId } }
-            },
-        });
-        const user1 = await this.prisma.user.findUnique({
-            where: {
-                intrrid: userId
-            }
-        });
-        await this.roomService.createConversation(user1.id, friendId);
+        await this.roomService.createConversation(userId, friendId);
         return user;
     }
     async getFriendRequest(userId) {

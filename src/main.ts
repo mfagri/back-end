@@ -9,6 +9,8 @@ import { json, urlencoded } from 'express';
 import { PassportModule } from '@nestjs/passport';
 // import { PrismaClient } from '@prisma/client';
 // import { PrismaSessionStore } from '@quixo3/prisma-session-store';
+import { ExceptionFilter } from '@nestjs/common';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
@@ -36,6 +38,7 @@ async function bootstrap() {
       // )
     }),
   );
+  // app.useGlobalFilters(new GlobalExceptionFilter())
   app.enableCors({
     origin:'http://localhost:3000',
     credentials: true
