@@ -12,6 +12,24 @@ import { disconnect } from "process";
 export class RoomsService {
   constructor(private prisma: PrismaService) {}
 
+  async banTheUser(userId: number, banedId: number, roomId: number) {
+    await this.checkPermisionForBan(userId, banedId, roomId);
+    
+    const room = await this.prisma.room.update({
+      where: {
+        id: roomId,
+      },
+      data: {
+        banedUsers: {
+          connect: {
+            id: banedId,
+          }
+        }
+      }
+    })
+    return "user baned successfully!!";
+  }
+
   async unmuteTheUser(mutedId: number, roomId: number) {
     console.log("called!!!");
     const room = await this.prisma.room.findUnique({
@@ -356,5 +374,37 @@ export class RoomsService {
     if (!user) {
       throw new NotFoundException("user not found");
     }
+  }
+
+  async checkPermisionForBan(userId: number, mutedId: number, roomId: number) {
+    const room = await this.prisma.room.findUnique({
+      where : {
+        id: roomId,
+      },
+      select: {
+        role: {
+          select: {
+            adminisrator: true,
+            member: true,
+            owner: true
+          }
+        },
+        group: true,
+        banedUsers: true,
+      }
+    });
+
+    if (!room || !room.group || !room.role)
+      throw new BadRequestException("no group found!!");
+    if (room.role.owner.id !== userId && !room.role.adminisrator.some(user => user.id === userId))
+      throw new UnauthorizedException("Unauthorized user!!");
+    if (mutedId === userId)
+      throw new BadRequestException("can't ban yourself!");
+    if (room.role.owner.id === mutedId)
+      throw new BadRequestException('You cant ban the owner');
+    if (!room.role.member.some(user => user.id === mutedId) && !room.role.adminisrator.some(user => user.id === mutedId))
+      throw new BadRequestException("user isn't a member!");
+    if (room.banedUsers.some(user => user.id === mutedId))
+      throw new BadRequestException("user already baned!");
   }
 }

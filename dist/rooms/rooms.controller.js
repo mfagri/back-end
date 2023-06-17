@@ -36,6 +36,9 @@ let RoomsController = class RoomsController {
     muteTheUser(id, mutedId, roomId, muteDuration) {
         return this.roomsService.muteTheUser(id, mutedId, roomId, muteDuration);
     }
+    banTheUser(userId, mutedId, roomId) {
+        return this.roomsService.banTheUser(userId, mutedId, roomId);
+    }
 };
 __decorate([
     (0, common_1.Post)("/createGroup"),
@@ -76,6 +79,15 @@ __decorate([
     __metadata("design:paramtypes", [Number, Number, Number, Number]),
     __metadata("design:returntype", void 0)
 ], RoomsController.prototype, "muteTheUser", null);
+__decorate([
+    (0, common_1.Patch)("banTheUser"),
+    __param(0, (0, common_1.Body)('userId', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)("banedId", common_1.ParseIntPipe)),
+    __param(2, (0, common_1.Body)("roomId", common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number, Number]),
+    __metadata("design:returntype", void 0)
+], RoomsController.prototype, "banTheUser", null);
 RoomsController = __decorate([
     (0, common_1.Controller)("rooms"),
     __metadata("design:paramtypes", [rooms_service_1.RoomsService])

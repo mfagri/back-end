@@ -51,4 +51,9 @@ export class RoomsController {
   muteTheUser(@Param('id') id: number, @Body("mutedId") mutedId: number, @Body("roomId") roomId: number, @Body("muteDuration") muteDuration: number) {
     return this.roomsService.muteTheUser(id, mutedId, roomId, muteDuration);
   }
+  
+  @Patch("banTheUser")
+  banTheUser(@Body('userId', ParseIntPipe) userId: number, @Body("banedId", ParseIntPipe) mutedId: number, @Body("roomId", ParseIntPipe) roomId: number) {
+    return this.roomsService.banTheUser(userId, mutedId, roomId);
+  }
 }
