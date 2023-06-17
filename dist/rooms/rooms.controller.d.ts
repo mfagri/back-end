@@ -10,8 +10,8 @@ export declare class RoomsController {
         createdAt: Date;
         content: string;
         createdBy: {
-            username: string;
             id: number;
+            username: string;
         };
     }[]>;
     changeRoleForTheUser(changeRoleInfo: ChangeRoleInfoDto): Promise<string>;

@@ -1,11 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import * as moment from 'moment';
+import { RoomsService } from '../rooms/rooms.service';
 // import { TreeRepositoryUtils } from 'typeorm';
 
 @Injectable()
 export class MessagesService {
     idToUser = {}
-    constructor (private prisma: PrismaService) {}
+    constructor (private prisma: PrismaService,
+                 private roomService: RoomsService) {}
 
     async checkPermissionsForCreateMessage(userId: number, roomId: number) {
         const room = await this.prisma.room.findUnique({
@@ -15,7 +18,8 @@ export class MessagesService {
             select: {
                 mutedUser: {
                     select: {
-                          userId: true,
+                        userId: true,
+                        muteduntil: true,
                     }
                 },
                 whoJoined: {
@@ -38,9 +42,22 @@ export class MessagesService {
         if (!user)
             throw new BadRequestException('User not found')
         if (!room.whoJoined.some(user => user.id === userId))
-            throw new BadRequestException('user not allowed');
-        if (room.mutedUser.some(muted => muted.userId === userId))
-            throw new BadRequestException('this user is already muted');
+            throw new BadRequestException('user not in this room');
+        if (room.mutedUser.some(muted => muted.userId === userId)) {
+            if (room.mutedUser.some(muted => {
+                if (muted.userId === userId) {
+                    console.log("-----", moment().diff(muted.muteduntil, "seconds"));
+                    if (moment().diff(muted.muteduntil, "seconds") > 0) {
+                    // if (true) {
+                        this.roomService.unmuteTheUser(userId, roomId);
+                        return false;
+                    }
+                    return true;
+                }
+                return false;
+            }))
+                throw new BadRequestException('this user is muted!!');
+        }
     }
     async createMessage(messageContent: string, userId: number, roomId: number) {
         await this.checkPermissionsForCreateMessage(userId, roomId);

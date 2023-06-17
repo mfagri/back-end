@@ -6,20 +6,61 @@ import { group } from "console";
 import { connect } from "http2";
 import * as moment from 'moment';
 import { number } from "yargs";
+import { disconnect } from "process";
 
 @Injectable()
 export class RoomsService {
   constructor(private prisma: PrismaService) {}
 
-  async muteTheUser(userId: number, mutedId: number, roomId: number, mutedDuration: number) {
+  async unmuteTheUser(mutedId: number, roomId: number) {
+    console.log("called!!!");
+    const room = await this.prisma.room.findUnique({
+      where: {
+        id: roomId,
+      },
+      select: {
+        mutedUser: {
+          select: {
+            id: true,
+            userId: true,
+          }
+        }
+      }
+    })
+    if (!room)
+      throw new NotFoundException("No room found");
+    if (!room.mutedUser.length)
+      throw new NotFoundException("No muted users found");
+    const muteModelId = room.mutedUser.find(muted => muted.userId === mutedId)?.id;
+    console.log(muteModelId, roomId);
+    await this.prisma.room.update({
+      where: {
+        id: roomId,
+      },
+      data: {
+        mutedUser: {
+          delete: {
+            id: muteModelId,
+          }
+        }
+      }
+    })
+    // await this.prisma.mute.delete({
+    //   where: {
+    //     id: muteModelId,
+    //   }
+    // })
+    return "user Unmuted!!";
+  }
+
+  async muteTheUser(userId: number, mutedId: number, roomId: number, muteDuration: number) {
     userId = Number(userId);
     roomId = Number(roomId);
     mutedId = Number(mutedId);
-    mutedDuration = Number(mutedDuration);
+    muteDuration = Number(muteDuration);
     await this.checkMutingPermission(userId, mutedId, roomId);
-    const now_ = moment().add(5, 'minutes').format();
-    console.log(now_);
-    // console.log("-----", now_, "\n-----------", now, "\n--------", moment().diff(now_, "seconds"));
+    console.log()
+    const now_ = moment().add(muteDuration, 'seconds').format();
     await this.prisma.room.update({
       where: {
         id: roomId,

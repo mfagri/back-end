@@ -4,13 +4,14 @@ import { PrismaService } from '../prisma/prisma.service';
 export declare class RoomsService {
     private prisma;
     constructor(prisma: PrismaService);
-    muteTheUser(userId: number, mutedId: number, roomId: number, mutedDuration: number): Promise<string>;
+    unmuteTheUser(mutedId: number, roomId: number): Promise<string>;
+    muteTheUser(userId: number, mutedId: number, roomId: number, muteDuration: number): Promise<string>;
     getRoomMessages(roomId: number): Promise<{
         createdAt: Date;
         content: string;
         createdBy: {
-            username: string;
             id: number;
+            username: string;
         };
     }[]>;
     createConversation(userId: number, joinWithId: number): Promise<void>;

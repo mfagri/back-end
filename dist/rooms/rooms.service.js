@@ -17,14 +17,50 @@ let RoomsService = class RoomsService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async muteTheUser(userId, mutedId, roomId, mutedDuration) {
+    async unmuteTheUser(mutedId, roomId) {
+        var _a;
+        console.log("called!!!");
+        const room = await this.prisma.room.findUnique({
+            where: {
+                id: roomId,
+            },
+            select: {
+                mutedUser: {
+                    select: {
+                        id: true,
+                        userId: true,
+                    }
+                }
+            }
+        });
+        if (!room)
+            throw new common_1.NotFoundException("No room found");
+        if (!room.mutedUser.length)
+            throw new common_1.NotFoundException("No muted users found");
+        const muteModelId = (_a = room.mutedUser.find(muted => muted.userId === mutedId)) === null || _a === void 0 ? void 0 : _a.id;
+        console.log(muteModelId, roomId);
+        await this.prisma.room.update({
+            where: {
+                id: roomId,
+            },
+            data: {
+                mutedUser: {
+                    delete: {
+                        id: muteModelId,
+                    }
+                }
+            }
+        });
+        return "user Unmuted!!";
+    }
+    async muteTheUser(userId, mutedId, roomId, muteDuration) {
         userId = Number(userId);
         roomId = Number(roomId);
         mutedId = Number(mutedId);
-        mutedDuration = Number(mutedDuration);
+        muteDuration = Number(muteDuration);
         await this.checkMutingPermission(userId, mutedId, roomId);
-        const now_ = moment().add(5, 'minutes').format();
-        console.log(now_);
+        console.log();
+        const now_ = moment().add(muteDuration, 'seconds').format();
         await this.prisma.room.update({
             where: {
                 id: roomId,

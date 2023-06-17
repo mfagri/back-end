@@ -68,9 +68,9 @@ model Room {
 
 model mute {
   id         Int      @id() @default(autoincrement())
-  muted      User     @relation(fields: [userId], references: [id])
+  muted      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     Int
-  inTheRoom  Room     @relation(fields: [roomId], references: [id])
+  inTheRoom  Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
   roomId     Int
   muteduntil String
 }
