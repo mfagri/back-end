@@ -15,8 +15,8 @@ export declare class RoomsService {
     }[]>;
     createConversation(userId: number, joinWithId: number): Promise<void>;
     createGroup(roomInfo: createGroupDto): Promise<void>;
-    changeRoleForTheUser(changeRoleInfo: ChangeRoleInfoDto): Promise<void>;
-    joinRoom(roomId: number, userId: number): Promise<void>;
+    changeRoleForTheUser(changeRoleInfo: ChangeRoleInfoDto): Promise<string>;
+    joinRoom(roomId: number, userId: number): Promise<string>;
     addRoomToInbox(roomId: number, userId: number): Promise<void>;
     giveRoleToNewUser(roomId: number, userId: number): Promise<void>;
     addUserToTheRoom(roomId: number, userId: number): Promise<void>;

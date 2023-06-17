@@ -115,7 +115,6 @@ export class RoomsService {
     roomId = Number(roomId);
     await this.checkPermissionForChangeRole(userId, changeId, roleId, roomId);
     if (roleId === 0) {
-      console.log("in");
       await this.prisma.role.update({
         where: {
           roomId,
@@ -135,7 +134,6 @@ export class RoomsService {
       })
     }
     else if (roleId === 1) {
-      console.log("in");
       await this.prisma.role.update({
         where: {
           roomId,
@@ -154,19 +152,28 @@ export class RoomsService {
         }
       })
     }
+    return "Role changed successfully!";
   }
 
   async joinRoom(roomId: number, userId: number) {
     const room = await this.prisma.room.findUnique({
       where: {
           id: roomId,
+      },
+      select: {
+        whoJoined: true,
+        group: true,
       }
     })
     if (!room || !room.group) {
       throw new NotFoundException("No group founded!");
     }
+    if (room.whoJoined.some(user => user.id === userId)) {
+      throw new BadRequestException("User already joined!");
+    }
     this.addUserToTheRoom(roomId, userId);
     this.addRoomToInbox(roomId, userId);
+    return "user joined successfully!"
   }
 
   async addRoomToInbox(roomId: number, userId: number) {
@@ -198,7 +205,7 @@ export class RoomsService {
   }
 
   async addUserToTheRoom(roomId: number, userId: number) {
-    await this.prisma.room.update({
+    const room = await this.prisma.room.update({
       where: { id: roomId },
       data: {
         whoJoined: {
@@ -208,7 +215,10 @@ export class RoomsService {
         },
       },
     });
-    this.giveRoleToNewUser(roomId, userId);
+    if (!room)
+      throw new NotFoundException("No room founded!");
+    if (room.group)
+      this.giveRoleToNewUser(roomId, userId);
     this.addRoomToInbox(roomId, userId);
   }
 

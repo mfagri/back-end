@@ -114,7 +114,6 @@ let RoomsService = class RoomsService {
         roomId = Number(roomId);
         await this.checkPermissionForChangeRole(userId, changeId, roleId, roomId);
         if (roleId === 0) {
-            console.log("in");
             await this.prisma.role.update({
                 where: {
                     roomId,
@@ -134,7 +133,6 @@ let RoomsService = class RoomsService {
             });
         }
         else if (roleId === 1) {
-            console.log("in");
             await this.prisma.role.update({
                 where: {
                     roomId,
@@ -153,18 +151,27 @@ let RoomsService = class RoomsService {
                 }
             });
         }
+        return "Role changed successfully!";
     }
     async joinRoom(roomId, userId) {
         const room = await this.prisma.room.findUnique({
             where: {
                 id: roomId,
+            },
+            select: {
+                whoJoined: true,
+                group: true,
             }
         });
         if (!room || !room.group) {
             throw new common_1.NotFoundException("No group founded!");
         }
+        if (room.whoJoined.some(user => user.id === userId)) {
+            throw new common_1.BadRequestException("User already joined!");
+        }
         this.addUserToTheRoom(roomId, userId);
         this.addRoomToInbox(roomId, userId);
+        return "user joined successfully!";
     }
     async addRoomToInbox(roomId, userId) {
         await this.prisma.inbox.update({
@@ -193,7 +200,7 @@ let RoomsService = class RoomsService {
         });
     }
     async addUserToTheRoom(roomId, userId) {
-        await this.prisma.room.update({
+        const room = await this.prisma.room.update({
             where: { id: roomId },
             data: {
                 whoJoined: {
@@ -203,7 +210,10 @@ let RoomsService = class RoomsService {
                 },
             },
         });
-        this.giveRoleToNewUser(roomId, userId);
+        if (!room)
+            throw new common_1.NotFoundException("No room founded!");
+        if (room.group)
+            this.giveRoleToNewUser(roomId, userId);
         this.addRoomToInbox(roomId, userId);
     }
     async checkPermissionForChangeRole(userId, changeId, roleId, roomId) {
