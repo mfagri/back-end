@@ -17,24 +17,25 @@ export class RoomsService {
     mutedId = Number(mutedId);
     mutedDuration = Number(mutedDuration);
     await this.checkMutingPermission(userId, mutedId, roomId);
-    const now_ = moment().add(5, 'minutes');
-    await this.prisma.room.update({
-      where: {
-        id: roomId,
-      },
-      data: {
-        mutedUser: {
-          create: {
-            muted: {
-              connect: {
-                id: mutedId,
-              }
-            },
-            muteduntil: "test",
-          }
-        }
-      }
-    })
+    const now_ = moment().add(5, 'minutes').calendar;
+    console.log(now_);
+    // await this.prisma.room.update({
+    //   where: {
+    //     id: roomId,
+    //   },
+    //   data: {
+    //     mutedUser: {
+    //       create: {
+    //         muted: {
+    //           connect: {
+    //             id: mutedId,
+    //           }
+    //         },
+    //         muteduntil: "test",
+    //       }
+    //     }
+    //   }
+    // })
     return "user muted!";
   }
 
@@ -241,6 +242,7 @@ export class RoomsService {
             owner: true,
             member: true,
             adminisrator: true,
+            userId: true,
           }
         }
       }
@@ -248,16 +250,20 @@ export class RoomsService {
     if (!room || !room.group || !room.role)
       throw new BadRequestException('Invalid Group!!');
     if (roleId === 0) {
-      if (room.role.owner.id !== userId)
-        throw new UnauthorizedException("This user issn't authorized to give administrator role to others!!")
+      if (room.role.owner.id !== userId && !room.role.adminisrator.some(user => user.id === userId))
+        throw new UnauthorizedException("This user issn't authorized to give administrator role to other members!!")
+      if (room.role.owner.id === changeId)
+        throw new BadRequestException("This user is the ownor of this group group!!")
       if (room.role.adminisrator.some(user => user.id === changeId))
         throw new BadRequestException("This user is already an administrator!!")
-        if (!room.role.member.some(user => user.id === changeId))  
+      if (!room.role.member.some(user => user.id === changeId))  
         throw new BadRequestException("User not member in this group!!")
-    }
+      }
     else if (roleId === 1) {
-      if (room.role.owner.id !== userId)
-        throw new UnauthorizedException("This user issn't authorized to change role!!")
+      if (room.role.owner.id !== userId && !room.role.adminisrator.some(user => user.id === userId))
+        throw new UnauthorizedException("This user issn't authorized to give member role to other administrators!!")
+      if (room.role.owner.id === changeId)
+            throw new BadRequestException("This user is the ownor of this group group!!")
       if (room.role.member.some(user => user.id === changeId))  
         throw new BadRequestException("User is already just a member!!")
       if (!room.role.member.some(user => user.id === changeId) && !room.role.adminisrator.some(user => user.id === changeId))
