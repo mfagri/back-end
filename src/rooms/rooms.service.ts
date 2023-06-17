@@ -17,25 +17,26 @@ export class RoomsService {
     mutedId = Number(mutedId);
     mutedDuration = Number(mutedDuration);
     await this.checkMutingPermission(userId, mutedId, roomId);
-    const now_ = moment().add(5, 'minutes').calendar;
+    const now_ = moment().add(5, 'minutes').format();
     console.log(now_);
-    // await this.prisma.room.update({
-    //   where: {
-    //     id: roomId,
-    //   },
-    //   data: {
-    //     mutedUser: {
-    //       create: {
-    //         muted: {
-    //           connect: {
-    //             id: mutedId,
-    //           }
-    //         },
-    //         muteduntil: "test",
-    //       }
-    //     }
-    //   }
-    // })
+    // console.log("-----", now_, "\n-----------", now, "\n--------", moment().diff(now_, "seconds"));
+    await this.prisma.room.update({
+      where: {
+        id: roomId,
+      },
+      data: {
+        mutedUser: {
+          create: {
+            muted: {
+              connect: {
+                id: mutedId,
+              }
+            },
+            muteduntil: now_,
+          }
+        }
+      }
+    })
     return "user muted!";
   }
 
@@ -293,12 +294,16 @@ export class RoomsService {
 
     if (!room || !room.group || !room.role)
       throw new BadRequestException("no group found!!");
-    if (room.role?.owner.id != userId && !room.role.adminisrator.some(user => user.id === userId))
+    if (room.role.owner.id !== userId && !room.role.adminisrator.some(user => user.id === userId))
       throw new UnauthorizedException("Unauthorized user!!");
-    if (!room.role.member.some(user => user.id === mutedId))
+    if (room.role.owner.id === mutedId)
+      throw new BadRequestException('You cant mute the owner');
+    if (!room.role.member.some(user => user.id === mutedId) && !room.role.adminisrator.some(user => user.id === mutedId))
       throw new BadRequestException("user isn't a member!");
     if (room.mutedUser.some(user => user.userId === mutedId))
       throw new BadRequestException("user already muted!");
+    if (mutedId === userId)
+      throw new BadRequestException("can't mute yourself!");
   }
 
   async checkPermisionForCreateGroup(userId: number) {

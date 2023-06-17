@@ -7,20 +7,20 @@ export declare class UserService {
     findByid(id: number): Promise<import(".prisma/client").User>;
     getUserConversationInbox(userId: string): Promise<{
         rooms: {
-            whoJoined: {
-                id: number;
-                username: string;
-                image: string;
-            }[];
             messages: {
                 createdAt: Date;
                 content: string;
                 createdBy: {
-                    id: number;
                     username: string;
+                    id: number;
                 };
             }[];
             id: number;
+            whoJoined: {
+                username: string;
+                image: string;
+                id: number;
+            }[];
         }[];
     }>;
     addFriend(userId: number, friendId: number): Promise<import(".prisma/client").User>;

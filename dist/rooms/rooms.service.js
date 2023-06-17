@@ -23,8 +23,25 @@ let RoomsService = class RoomsService {
         mutedId = Number(mutedId);
         mutedDuration = Number(mutedDuration);
         await this.checkMutingPermission(userId, mutedId, roomId);
-        const now_ = moment().add(5, 'minutes').calendar;
+        const now_ = moment().add(5, 'minutes').format();
         console.log(now_);
+        await this.prisma.room.update({
+            where: {
+                id: roomId,
+            },
+            data: {
+                mutedUser: {
+                    create: {
+                        muted: {
+                            connect: {
+                                id: mutedId,
+                            }
+                        },
+                        muteduntil: now_,
+                    }
+                }
+            }
+        });
         return "user muted!";
     }
     async getRoomMessages(roomId) {
@@ -243,7 +260,6 @@ let RoomsService = class RoomsService {
         }
     }
     async checkMutingPermission(userId, mutedId, roomId) {
-        var _a;
         const room = await this.prisma.room.findUnique({
             where: {
                 id: roomId,
@@ -262,12 +278,16 @@ let RoomsService = class RoomsService {
         });
         if (!room || !room.group || !room.role)
             throw new common_1.BadRequestException("no group found!!");
-        if (((_a = room.role) === null || _a === void 0 ? void 0 : _a.owner.id) != userId && !room.role.adminisrator.some(user => user.id === userId))
+        if (room.role.owner.id !== userId && !room.role.adminisrator.some(user => user.id === userId))
             throw new common_1.UnauthorizedException("Unauthorized user!!");
-        if (!room.role.member.some(user => user.id === mutedId))
+        if (room.role.owner.id === mutedId)
+            throw new common_1.BadRequestException('You cant mute the owner');
+        if (!room.role.member.some(user => user.id === mutedId) && !room.role.adminisrator.some(user => user.id === mutedId))
             throw new common_1.BadRequestException("user isn't a member!");
         if (room.mutedUser.some(user => user.userId === mutedId))
             throw new common_1.BadRequestException("user already muted!");
+        if (mutedId === userId)
+            throw new common_1.BadRequestException("can't mute yourself!");
     }
     async checkPermisionForCreateGroup(userId) {
         const user = await this.prisma.user.findUnique({
