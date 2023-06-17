@@ -14,15 +14,32 @@ export class RoomsService {
 
   async unbanTheUser(userId: number, banedId: number, roomId: number) {
     await this.checkPermisionForUnban(userId, banedId, roomId);
-    
-    const room = await this.prisma.room.update({
+    const room = await this.prisma.room.findUnique({
+      where: {
+        id: roomId,
+      },
+      select: {
+        banedUsers: {
+          select: {
+            id: true,
+            userId: true,
+          }
+        }
+      }
+    })
+    if (!room)
+      throw new NotFoundException("No room found");
+    if (!room.banedUsers.length)
+      throw new NotFoundException("No baned users found");
+    const baneId = room.banedUsers.find(muted => muted.userId === banedId)?.id;
+    await this.prisma.room.update({
       where: {
         id: roomId,
       },
       data: {
         banedUsers: {
           disconnect: {
-            id: banedId,
+            id: baneId,
           }
         }
       }
@@ -39,8 +56,12 @@ export class RoomsService {
       },
       data: {
         banedUsers: {
-          connect: {
-            id: banedId,
+          create: {
+            baned: {
+              connect: {
+                id: banedId,
+              }
+            }
           }
         }
       }
@@ -49,7 +70,6 @@ export class RoomsService {
   }
 
   async unmuteTheUser(mutedId: number, roomId: number) {
-    console.log("called!!!");
     const room = await this.prisma.room.findUnique({
       where: {
         id: roomId,
@@ -81,11 +101,6 @@ export class RoomsService {
         }
       }
     })
-    // await this.prisma.mute.delete({
-    //   where: {
-    //     id: muteModelId,
-    //   }
-    // })
     return "user Unmuted!!";
   }
 
@@ -408,10 +423,17 @@ export class RoomsService {
           }
         },
         group: true,
-        banedUsers: true,
+        banedUsers: {
+          select: {
+            baned: {
+              select: {
+                id: true,
+              }
+            }
+          }
+        },
       }
     });
-
     if (!room || !room.group || !room.role)
       throw new BadRequestException("no group found!!");
     if (room.role.owner.id !== userId && !room.role.adminisrator.some(user => user.id === userId))
@@ -422,7 +444,7 @@ export class RoomsService {
       throw new BadRequestException('You cant ban the owner');
     if (!room.role.member.some(user => user.id === mutedId) && !room.role.adminisrator.some(user => user.id === mutedId))
       throw new BadRequestException("user isn't a member!");
-    if (room.banedUsers.some(user => user.id === mutedId))
+    if (room.banedUsers.some(user => user.baned.id === mutedId))
       throw new BadRequestException("user already baned!");
   }
 
@@ -440,7 +462,15 @@ export class RoomsService {
           }
         },
         group: true,
-        banedUsers: true,
+        banedUsers: {
+          select: {
+            baned: {
+              select: {
+                id: true,
+              }
+            }
+          }
+        },
       }
     });
 
@@ -454,7 +484,7 @@ export class RoomsService {
       throw new BadRequestException('You cant unban the owner');
     if (!room.role.member.some(user => user.id === mutedId) && !room.role.adminisrator.some(user => user.id === mutedId))
       throw new BadRequestException("user isn't a member!");
-    if (!room.banedUsers.some(user => user.id === mutedId))
+    if (!room.banedUsers.some(user => user.baned.id === mutedId))
       throw new BadRequestException("user is not baned!");
   }
 }

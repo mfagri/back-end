@@ -22,6 +22,11 @@ export class MessagesService {
                         muteduntil: true,
                     }
                 },
+                banedUsers: {
+                    select: {
+                        id: true,
+                    }
+                },
                 whoJoined: {
                     select: {
                         id: true,
@@ -43,6 +48,8 @@ export class MessagesService {
             throw new BadRequestException('User not found')
         if (!room.whoJoined.some(user => user.id === userId))
             throw new BadRequestException('user not in this room');
+        if (room.banedUsers.some(muted => muted.id === userId))
+            throw new BadRequestException("user Banned!!");
         if (room.mutedUser.some(muted => muted.userId === userId)) {
             if (room.mutedUser.some(muted => {
                 if (muted.userId === userId) {

@@ -33,7 +33,7 @@ model User {
   ownGroup        role[]    @relation("owner")
   adminOf         role[]    @relation("Adminisrator")
   memberOf        role[]    @relation("member")
-  banedIn         Room[]    @relation("banUsers")
+  banedIn         bane[]
 }
 
 model Profile {
@@ -64,7 +64,16 @@ model Room {
   roomPicture String?
   mutedUser   mute[]
   role        role?
-  banedUsers  User[]  @relation("banUsers")
+  banedUsers  bane[]
+}
+
+model bane {
+  id          Int       @id() @default(autoincrement())
+  inTheRoom  Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId     Int
+  baned       User     @relation(fields: [userId], references: [id])
+  userId      Int
+  banedAt DateTime @default(now())
 }
 
 model mute {

@@ -18,15 +18,34 @@ let RoomsService = class RoomsService {
         this.prisma = prisma;
     }
     async unbanTheUser(userId, banedId, roomId) {
+        var _a;
         await this.checkPermisionForUnban(userId, banedId, roomId);
-        const room = await this.prisma.room.update({
+        const room = await this.prisma.room.findUnique({
+            where: {
+                id: roomId,
+            },
+            select: {
+                banedUsers: {
+                    select: {
+                        id: true,
+                        userId: true,
+                    }
+                }
+            }
+        });
+        if (!room)
+            throw new common_1.NotFoundException("No room found");
+        if (!room.banedUsers.length)
+            throw new common_1.NotFoundException("No baned users found");
+        const baneId = (_a = room.banedUsers.find(muted => muted.userId === banedId)) === null || _a === void 0 ? void 0 : _a.id;
+        await this.prisma.room.update({
             where: {
                 id: roomId,
             },
             data: {
                 banedUsers: {
                     disconnect: {
-                        id: banedId,
+                        id: baneId,
                     }
                 }
             }
@@ -41,8 +60,12 @@ let RoomsService = class RoomsService {
             },
             data: {
                 banedUsers: {
-                    connect: {
-                        id: banedId,
+                    create: {
+                        baned: {
+                            connect: {
+                                id: banedId,
+                            }
+                        }
                     }
                 }
             }
@@ -51,7 +74,6 @@ let RoomsService = class RoomsService {
     }
     async unmuteTheUser(mutedId, roomId) {
         var _a;
-        console.log("called!!!");
         const room = await this.prisma.room.findUnique({
             where: {
                 id: roomId,
@@ -381,7 +403,15 @@ let RoomsService = class RoomsService {
                     }
                 },
                 group: true,
-                banedUsers: true,
+                banedUsers: {
+                    select: {
+                        baned: {
+                            select: {
+                                id: true,
+                            }
+                        }
+                    }
+                },
             }
         });
         if (!room || !room.group || !room.role)
@@ -394,7 +424,7 @@ let RoomsService = class RoomsService {
             throw new common_1.BadRequestException('You cant ban the owner');
         if (!room.role.member.some(user => user.id === mutedId) && !room.role.adminisrator.some(user => user.id === mutedId))
             throw new common_1.BadRequestException("user isn't a member!");
-        if (room.banedUsers.some(user => user.id === mutedId))
+        if (room.banedUsers.some(user => user.baned.id === mutedId))
             throw new common_1.BadRequestException("user already baned!");
     }
     async checkPermisionForUnban(userId, mutedId, roomId) {
@@ -411,7 +441,15 @@ let RoomsService = class RoomsService {
                     }
                 },
                 group: true,
-                banedUsers: true,
+                banedUsers: {
+                    select: {
+                        baned: {
+                            select: {
+                                id: true,
+                            }
+                        }
+                    }
+                },
             }
         });
         if (!room || !room.group || !room.role)
@@ -424,7 +462,7 @@ let RoomsService = class RoomsService {
             throw new common_1.BadRequestException('You cant unban the owner');
         if (!room.role.member.some(user => user.id === mutedId) && !room.role.adminisrator.some(user => user.id === mutedId))
             throw new common_1.BadRequestException("user isn't a member!");
-        if (!room.banedUsers.some(user => user.id === mutedId))
+        if (!room.banedUsers.some(user => user.baned.id === mutedId))
             throw new common_1.BadRequestException("user is not baned!");
     }
 };
