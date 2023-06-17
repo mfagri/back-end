@@ -17,4 +17,5 @@ export declare class RoomsController {
     changeRoleForTheUser(changeRoleInfo: ChangeRoleInfoDto): Promise<string>;
     muteTheUser(id: number, mutedId: number, roomId: number, muteDuration: number): Promise<string>;
     banTheUser(userId: number, mutedId: number, roomId: number): Promise<string>;
+    unbanTheUser(userId: number, mutedId: number, roomId: number): Promise<string>;
 }

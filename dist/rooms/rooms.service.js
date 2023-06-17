@@ -17,6 +17,22 @@ let RoomsService = class RoomsService {
     constructor(prisma) {
         this.prisma = prisma;
     }
+    async unbanTheUser(userId, banedId, roomId) {
+        await this.checkPermisionForUnban(userId, banedId, roomId);
+        const room = await this.prisma.room.update({
+            where: {
+                id: roomId,
+            },
+            data: {
+                banedUsers: {
+                    disconnect: {
+                        id: banedId,
+                    }
+                }
+            }
+        });
+        return "user baned successfully!!";
+    }
     async banTheUser(userId, banedId, roomId) {
         await this.checkPermisionForBan(userId, banedId, roomId);
         const room = await this.prisma.room.update({
@@ -380,6 +396,36 @@ let RoomsService = class RoomsService {
             throw new common_1.BadRequestException("user isn't a member!");
         if (room.banedUsers.some(user => user.id === mutedId))
             throw new common_1.BadRequestException("user already baned!");
+    }
+    async checkPermisionForUnban(userId, mutedId, roomId) {
+        const room = await this.prisma.room.findUnique({
+            where: {
+                id: roomId,
+            },
+            select: {
+                role: {
+                    select: {
+                        adminisrator: true,
+                        member: true,
+                        owner: true
+                    }
+                },
+                group: true,
+                banedUsers: true,
+            }
+        });
+        if (!room || !room.group || !room.role)
+            throw new common_1.BadRequestException("no group found!!");
+        if (room.role.owner.id !== userId && !room.role.adminisrator.some(user => user.id === userId))
+            throw new common_1.UnauthorizedException("Unauthorized user!!");
+        if (mutedId === userId)
+            throw new common_1.BadRequestException("can't unban yourself!");
+        if (room.role.owner.id === mutedId)
+            throw new common_1.BadRequestException('You cant unban the owner');
+        if (!room.role.member.some(user => user.id === mutedId) && !room.role.adminisrator.some(user => user.id === mutedId))
+            throw new common_1.BadRequestException("user isn't a member!");
+        if (!room.banedUsers.some(user => user.id === mutedId))
+            throw new common_1.BadRequestException("user is not baned!");
     }
 };
 RoomsService = __decorate([

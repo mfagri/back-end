@@ -56,4 +56,9 @@ export class RoomsController {
   banTheUser(@Body('userId', ParseIntPipe) userId: number, @Body("banedId", ParseIntPipe) mutedId: number, @Body("roomId", ParseIntPipe) roomId: number) {
     return this.roomsService.banTheUser(userId, mutedId, roomId);
   }
+
+  @Patch("unbanTheUser")
+  unbanTheUser(@Body('userId', ParseIntPipe) userId: number, @Body("banedId", ParseIntPipe) mutedId: number, @Body("roomId", ParseIntPipe) roomId: number) {
+    return this.roomsService.unbanTheUser(userId, mutedId, roomId);
+  }
 }

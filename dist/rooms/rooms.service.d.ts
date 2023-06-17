@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export declare class RoomsService {
     private prisma;
     constructor(prisma: PrismaService);
+    unbanTheUser(userId: number, banedId: number, roomId: number): Promise<string>;
     banTheUser(userId: number, banedId: number, roomId: number): Promise<string>;
     unmuteTheUser(mutedId: number, roomId: number): Promise<string>;
     muteTheUser(userId: number, mutedId: number, roomId: number, muteDuration: number): Promise<string>;
@@ -26,4 +27,5 @@ export declare class RoomsService {
     checkMutingPermission(userId: number, mutedId: number, roomId: number): Promise<void>;
     checkPermisionForCreateGroup(userId: number): Promise<void>;
     checkPermisionForBan(userId: number, mutedId: number, roomId: number): Promise<void>;
+    checkPermisionForUnban(userId: number, mutedId: number, roomId: number): Promise<void>;
 }

@@ -12,6 +12,24 @@ import { disconnect } from "process";
 export class RoomsService {
   constructor(private prisma: PrismaService) {}
 
+  async unbanTheUser(userId: number, banedId: number, roomId: number) {
+    await this.checkPermisionForUnban(userId, banedId, roomId);
+    
+    const room = await this.prisma.room.update({
+      where: {
+        id: roomId,
+      },
+      data: {
+        banedUsers: {
+          disconnect: {
+            id: banedId,
+          }
+        }
+      }
+    })
+    return "user baned successfully!!";
+  }
+
   async banTheUser(userId: number, banedId: number, roomId: number) {
     await this.checkPermisionForBan(userId, banedId, roomId);
     
@@ -406,5 +424,37 @@ export class RoomsService {
       throw new BadRequestException("user isn't a member!");
     if (room.banedUsers.some(user => user.id === mutedId))
       throw new BadRequestException("user already baned!");
+  }
+
+  async checkPermisionForUnban(userId: number, mutedId: number, roomId: number) {
+    const room = await this.prisma.room.findUnique({
+      where : {
+        id: roomId,
+      },
+      select: {
+        role: {
+          select: {
+            adminisrator: true,
+            member: true,
+            owner: true
+          }
+        },
+        group: true,
+        banedUsers: true,
+      }
+    });
+
+    if (!room || !room.group || !room.role)
+      throw new BadRequestException("no group found!!");
+    if (room.role.owner.id !== userId && !room.role.adminisrator.some(user => user.id === userId))
+      throw new UnauthorizedException("Unauthorized user!!");
+    if (mutedId === userId)
+      throw new BadRequestException("can't unban yourself!");
+    if (room.role.owner.id === mutedId)
+      throw new BadRequestException('You cant unban the owner');
+    if (!room.role.member.some(user => user.id === mutedId) && !room.role.adminisrator.some(user => user.id === mutedId))
+      throw new BadRequestException("user isn't a member!");
+    if (!room.banedUsers.some(user => user.id === mutedId))
+      throw new BadRequestException("user is not baned!");
   }
 }
