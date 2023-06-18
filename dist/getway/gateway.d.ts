@@ -5,8 +5,7 @@ export declare class MyGateway implements OnModuleInit {
     private readonly prisma;
     constructor(prisma: PrismaService);
     server: Server;
+    socket1: Socket;
     onModuleInit(): void;
-    handleEvent(client: Socket, data: string): string;
-    sendmsg(): void;
-    handleDisconnect(client: Socket): void;
+    acceptuser(socket: Socket, id: string): void;
 }

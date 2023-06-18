@@ -78,8 +78,8 @@ export class AuthService {
 
     //  token:string;
     // token = this.s42.tokens;
-    console.log("my token acc",user1.mytoken["accestoken"]);
-    console.log("my token ref",user1.mytoken["refreshtoken"]);
+    // console.log("my token acc",user1.mytoken["accestoken"]);
+    // console.log("my token ref",user1.mytoken["refreshtoken"]);
     
     const user = await this.prisma.user.findUnique({
       where: {

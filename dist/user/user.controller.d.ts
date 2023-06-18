@@ -10,7 +10,15 @@ export declare class UserController {
     Search(username: string): Promise<import(".prisma/client").User[] | {
         e: string;
     }>;
-    addFriend(userId: string, friendId: string): Promise<any>;
+    addFriend(userId: string, req: Request): Promise<{
+        message: string;
+        user: import(".prisma/client").User;
+        error?: undefined;
+    } | {
+        error: string;
+        message?: undefined;
+        user?: undefined;
+    }>;
     showfriends(id: string): Promise<import(".prisma/client").User[]>;
     usersRequest(req: Request): Promise<import(".prisma/client").User[]>;
     usersEnvit(id: string): Promise<import(".prisma/client").User[]>;

@@ -1,4 +1,4 @@
-import { OnModuleInit } from "@nestjs/common";
+import { Injectable, OnModuleInit } from "@nestjs/common";
 import { 
     ConnectedSocket,
     MessageBody,
@@ -15,25 +15,28 @@ import { PrismaService } from "src/prisma/prisma.service";
         }
     }
 )
+@Injectable()
 export class MyGateway implements OnModuleInit{
     constructor(private readonly prisma: PrismaService,){}
     @WebSocketServer()
     server : Server;
+    socket1 : Socket;
      onModuleInit() {
         this.server.on('connection',(socket)=>{
+            this.socket1 = socket;
             console.log(`Client connected: ${socket.id}`);
             // console.log(socket);
             socket.on('newUser',async (data)=> {
                 console.log(data,"dfs");
-                // const user =  await this.prisma.user.update({
-                //     where:{
-                //         username: data
-                //     },
-                //     data:{
-                //         auth: <string>socket.id
-                //     }
+                const user =  await this.prisma.user.update({
+                    where:{
+                        username: data
+                    },
+                    data:{
+                        auth: <string>socket.id
+                    }
     
-                // });
+                });
                 // console.log("here",user);
             })
             socket.on("addUser",async (data)=>{
@@ -43,37 +46,41 @@ export class MyGateway implements OnModuleInit{
                         id: data
                     }
                 })
-                socket.to(user.auth).emit("receiveNotif");
+                this.socket1.to(user.auth).emit("receiveNotif");
 
             })
         })
     }
-    @SubscribeMessage('msg')
-    handleEvent(@ConnectedSocket() client: Socket, data: string): string {//reserv from client
-        // id === messageBody.id
-        console.log(client.id,"______");
-        console.log(data)
-        client.on('msg', (data) => console.log(data));
-        const count = this.server.engine.clientsCount;
-        console.log("number is = ",count)
-        return data;
+    // @SubscribeMessage('msg')
+    // handleEvent(@ConnectedSocket() client: Socket, data: string): string {//reserv from client
+    //     // id === messageBody.id
+    //     console.log(client.id,"______");
+    //     console.log(data)
+    //     client.on('msg', (data) => console.log(data));
+    //     const count = this.server.engine.clientsCount; 
+    //     console.log("number is = ",count)
+    //     return data;
     
-      }
-    sendmsg()
+    //   }
+    acceptuser(socket :Socket,id: string)
     {
-        console.log("ddddddd");
-        this.server.to("all").emit("msg", {"hello": "you"});
+        socket.to("all").emit("acceptreq");
     }
-    // onNewmessage(@MessageBody() body: any,)
+    // sendmsg()
     // {
-    //     console.log("we are here , we are waiting", body)
-    //     this.server.to('all').emit('onMessage', {msg: body});
-    //     this.server.emit("onMessage",{
-    //         msg: body,
-            
-    //     })
+    //     console.log("ddddddd");
+    //     this.server.to("all").emit("msg", {"hello": "you"});
     // }
-    handleDisconnect(client: Socket) {
-        console.log(`Client disconnected: ${client.id}`);
-      }
+    // // onNewmessage(@MessageBody() body: any,)
+    // // {
+    // //     console.log("we are here , we are waiting", body)
+    // //     this.server.to('all').emit('onMessage', {msg: body});
+    // //     this.server.emit("onMessage",{
+    // //         msg: body,
+            
+    // //     })
+    // // }
+    // handleDisconnect(client: Socket) {
+    //     console.log(`Client disconnected: ${client.id}`);
+    //   }
 }

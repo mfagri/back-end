@@ -8,11 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MyGateway = void 0;
+const common_1 = require("@nestjs/common");
 const websockets_1 = require("@nestjs/websockets");
 const socket_io_1 = require("socket.io");
 const prisma_service_1 = require("../prisma/prisma.service");
@@ -22,9 +20,18 @@ let MyGateway = class MyGateway {
     }
     onModuleInit() {
         this.server.on('connection', (socket) => {
+            this.socket1 = socket;
             console.log(`Client connected: ${socket.id}`);
             socket.on('newUser', async (data) => {
                 console.log(data, "dfs");
+                const user = await this.prisma.user.update({
+                    where: {
+                        username: data
+                    },
+                    data: {
+                        auth: socket.id
+                    }
+                });
             });
             socket.on("addUser", async (data) => {
                 console.log(data, "9aaalwa");
@@ -33,43 +40,25 @@ let MyGateway = class MyGateway {
                         id: data
                     }
                 });
-                socket.to(user.auth).emit("receiveNotif");
+                this.socket1.to(user.auth).emit("receiveNotif");
             });
         });
     }
-    handleEvent(client, data) {
-        console.log(client.id, "______");
-        console.log(data);
-        client.on('msg', (data) => console.log(data));
-        const count = this.server.engine.clientsCount;
-        console.log("number is = ", count);
-        return data;
-    }
-    sendmsg() {
-        console.log("ddddddd");
-        this.server.to("all").emit("msg", { "hello": "you" });
-    }
-    handleDisconnect(client) {
-        console.log(`Client disconnected: ${client.id}`);
+    acceptuser(socket, id) {
+        socket.to("all").emit("acceptreq");
     }
 };
 __decorate([
     (0, websockets_1.WebSocketServer)(),
     __metadata("design:type", socket_io_1.Server)
 ], MyGateway.prototype, "server", void 0);
-__decorate([
-    (0, websockets_1.SubscribeMessage)('msg'),
-    __param(0, (0, websockets_1.ConnectedSocket)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [socket_io_1.Socket, String]),
-    __metadata("design:returntype", String)
-], MyGateway.prototype, "handleEvent", null);
 MyGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {
             origin: true
         }
     }),
+    (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], MyGateway);
 exports.MyGateway = MyGateway;

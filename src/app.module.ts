@@ -24,9 +24,10 @@ import { GatewayModule } from "./getway/gateway.module";
     userModule,
     MessagesModule,
     RoomsModule,
-    GatewayModule
+    // GatewayModule
   ],
   controllers: [AppController],
   providers: [AppService, Strategy42, Serializer,TokenService],
 })
 export class AppModule {}
+  

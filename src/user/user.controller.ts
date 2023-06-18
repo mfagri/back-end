@@ -18,6 +18,7 @@ import { JwtService } from "@nestjs/jwt";
 import { jwtConstants } from "src/auth/constants";
 import { use } from "passport";
 import { MyGateway } from "src/getway/gateway";
+import { Socket } from "socket.io";
 @Controller("user")
 export class UserController {
   constructor(
@@ -35,45 +36,47 @@ export class UserController {
     }
   }
 
-  @Get("accept")
-  async addFriend(
-    @Query("id") userId: string,
-    @Query("idfriend") friendId: string
-  ): Promise<any> {
-    try {
-      console.log(userId);
-      console.log(friendId);
-      const numericId = parseInt(userId, 10);
-      const numericId2 = parseInt(friendId, 10);
-      const user = await this.userService.addFriend(numericId, numericId2);
-      return { message: "Friend added successfully", user };
-    } catch (error) {
-      return { error: "Failed to add friend" };
-    }
-  }
   // @Get("accept")
   // async addFriend(
-  //   @Query("idfriend") userId: string, @Req() req: Request
-  // ) {
+  //   @Query("id") userId: string,
+  //   @Query("idfriend") friendId: string
+  // ): Promise<any> {
   //   try {
-  //     const data = await this.jwtService.verifyAsync(
-  //       req.cookies["authcookie"]["access_token"],
-
-  //       {
-  //         secret: jwtConstants.secret,
-  //         ignoreExpiration: true,
-  //       }
-  //     );
-  //     console.log("userid = ",userId);
-  //     console.log("intara id = ",data.id);
+  //     console.log(userId);
+  //     console.log(friendId);
   //     const numericId = parseInt(userId, 10);
-  //     // const numericId2 = parseInt(friendId, 10);
-  //     const user = await this.userService.addFriend(data.id,numericId);
+  //     const numericId2 = parseInt(friendId, 10);
+  //     const user = await this.userService.addFriend(numericId, numericId2);
   //     return { message: "Friend added successfully", user };
   //   } catch (error) {
   //     return { error: "Failed to add friend" };
   //   }
   // }
+  @Get("accept")
+  async addFriend(
+    @Query("idfriend") userId: string, @Req() req: Request
+  ) {
+    try {
+      const data = await this.jwtService.verifyAsync(
+        req.cookies["authcookie"]["access_token"],
+
+        {
+          secret: jwtConstants.secret,
+          ignoreExpiration: true,
+        }
+      );
+      console.log("userid = ",userId);
+      console.log("intara id = ",data.id);
+      const numericId = parseInt(userId, 10);
+      // const numericId2 = parseInt(friendId, 10);
+      const user = await this.userService.addFriend(data.id,numericId);
+      // socket : Socket;
+      this.Mygiteway.socket1.to(user.auth).emit("acceptreq");
+      return { message: "Friend added successfully", user };
+    } catch (error) {
+      return { error: "Failed to add friend" };
+    }
+  }
   @Get("friends")
   async showfriends(@Query("id") id: string) {
     const numericId = parseInt(id, 10);

@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import { AuthGuard42 } from './auth.guard42';
 import { jwtConstants } from './constants';
+import {Server, Socket} from "socket.io"
 const App = require('express')
 
 

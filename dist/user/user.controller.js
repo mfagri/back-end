@@ -34,13 +34,17 @@ let UserController = class UserController {
             return { e: "no users" };
         }
     }
-    async addFriend(userId, friendId) {
+    async addFriend(userId, req) {
         try {
-            console.log(userId);
-            console.log(friendId);
+            const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
+                secret: constants_1.jwtConstants.secret,
+                ignoreExpiration: true,
+            });
+            console.log("userid = ", userId);
+            console.log("intara id = ", data.id);
             const numericId = parseInt(userId, 10);
-            const numericId2 = parseInt(friendId, 10);
-            const user = await this.userService.addFriend(numericId, numericId2);
+            const user = await this.userService.addFriend(data.id, numericId);
+            this.Mygiteway.socket1.to(user.auth).emit("acceptreq");
             return { message: "Friend added successfully", user };
         }
         catch (error) {
@@ -136,10 +140,10 @@ __decorate([
 ], UserController.prototype, "Search", null);
 __decorate([
     (0, common_1.Get)("accept"),
-    __param(0, (0, common_1.Query)("id")),
-    __param(1, (0, common_1.Query)("idfriend")),
+    __param(0, (0, common_1.Query)("idfriend")),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "addFriend", null);
 __decorate([

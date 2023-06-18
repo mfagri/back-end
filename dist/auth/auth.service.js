@@ -23,8 +23,6 @@ let AuthService = class AuthService {
         this.tokenService = tokenService;
     }
     async userfind(user1) {
-        console.log("my token acc", user1.mytoken["accestoken"]);
-        console.log("my token ref", user1.mytoken["refreshtoken"]);
         const user = await this.prisma.user.findUnique({
             where: {
                 intrrid: user1.id

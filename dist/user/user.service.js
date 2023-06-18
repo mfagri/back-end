@@ -90,8 +90,26 @@ let UserService = class UserService {
         return inbox;
     }
     async addFriend(userId, friendId) {
+        const data = await this.prisma.user.findUnique({
+            where: {
+                intrrid: userId
+            },
+            include: {
+                friends: true
+            }
+        });
+        const friend = await this.prisma.user.findUnique({
+            where: {
+                id: friendId
+            }
+        });
+        const find = data.friends.find((obj) => {
+            return obj.username === friend.username;
+        });
+        if (find)
+            return null;
         const user = await this.prisma.user.update({
-            where: { id: userId },
+            where: { intrrid: userId },
             data: {
                 friendsRelation: { connect: { id: friendId } },
             },
@@ -99,11 +117,23 @@ let UserService = class UserService {
         await this.prisma.user.update({
             where: { id: friendId },
             data: {
-                friendsRelation: { connect: { id: userId } },
+                friendsRelation: { connect: { intrrid: userId } },
+                request: { disconnect: { id: friendId } }
             },
         });
-        await this.roomService.createConversation(userId, friendId);
-        return user;
+        await this.prisma.user.update({
+            where: { intrrid: userId },
+            data: {
+                requestedBy: { disconnect: { id: friendId } }
+            },
+        });
+        const user1 = await this.prisma.user.findUnique({
+            where: {
+                intrrid: userId
+            }
+        });
+        await this.roomService.createConversation(user1.id, friendId);
+        return friend;
     }
     async getFriendRequest(userId) {
         const user = await this.prisma.user.findUnique({
