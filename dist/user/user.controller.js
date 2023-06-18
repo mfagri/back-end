@@ -17,13 +17,15 @@ const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
 const jwt_1 = require("@nestjs/jwt");
 const constants_1 = require("../auth/constants");
+const gateway_1 = require("../getway/gateway");
 let UserController = class UserController {
-    constructor(userService, jwtService) {
+    constructor(userService, jwtService, Mygiteway) {
         this.userService = userService;
         this.jwtService = jwtService;
+        this.Mygiteway = Mygiteway;
     }
     async Search(username) {
-        if (username === '')
+        if (username === "")
             return [];
         try {
             return this.userService.searchuser(username);
@@ -194,7 +196,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "updateUser", null);
 __decorate([
-    (0, common_1.Get)('showprofile'),
+    (0, common_1.Get)("showprofile"),
     __param(0, (0, common_1.Query)("username")),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -211,7 +213,8 @@ __decorate([
 UserController = __decorate([
     (0, common_1.Controller)("user"),
     __metadata("design:paramtypes", [user_service_1.UserService,
-        jwt_1.JwtService])
+        jwt_1.JwtService,
+        gateway_1.MyGateway])
 ], UserController);
 exports.UserController = UserController;
 //# sourceMappingURL=user.controller.js.map

@@ -323,8 +323,8 @@ export class UserService {
 
   async inviteUser(userId: number, inviterId: string) {
     try {
-      console.log(userId);
-      console.log(inviterId);
+      // console.log(userId);
+      // console.log(inviterId);
 
       // Fetch the user to invite
       const userToInvite = await this.prisma.user.findUnique({
@@ -352,9 +352,9 @@ export class UserService {
         },
       });
 
-      console.log(
-        `User with ID ${updatedUser.username} has been invited by user with ID ${inviter.username}.`
-      );
+      // console.log(
+      //   `User with ID ${updatedUser.username} has been invited by user with ID ${inviter.username}.`
+      // );
     } catch (error) {
       console.error(error);
     } finally {

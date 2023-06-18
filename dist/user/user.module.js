@@ -15,13 +15,14 @@ const user_controller_1 = require("./user.controller");
 const user_service_1 = require("./user.service");
 const prisma_service_1 = require("../prisma/prisma.service");
 const rooms_service_1 = require("../rooms/rooms.service");
+const gateway_1 = require("../getway/gateway");
 let userModule = class userModule {
 };
 userModule = __decorate([
     (0, common_1.Module)({
         imports: [auth_module_1.AuthModule],
         controllers: [user_controller_1.UserController],
-        providers: [user_service_1.UserService, fortytwo_strategy_1.Strategy42, token_sever_1.TokenService, prisma_service_1.PrismaService, user_service_1.UserService, rooms_service_1.RoomsService],
+        providers: [user_service_1.UserService, fortytwo_strategy_1.Strategy42, token_sever_1.TokenService, prisma_service_1.PrismaService, user_service_1.UserService, rooms_service_1.RoomsService, gateway_1.MyGateway],
     })
 ], userModule);
 exports.userModule = userModule;

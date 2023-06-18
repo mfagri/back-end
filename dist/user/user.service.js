@@ -206,8 +206,6 @@ let UserService = class UserService {
     }
     async inviteUser(userId, inviterId) {
         try {
-            console.log(userId);
-            console.log(inviterId);
             const userToInvite = await this.prisma.user.findUnique({
                 where: { id: userId },
             });
@@ -226,7 +224,6 @@ let UserService = class UserService {
                     requestedBy: { connect: { intrrid: inviterId } },
                 },
             });
-            console.log(`User with ID ${updatedUser.username} has been invited by user with ID ${inviter.username}.`);
         }
         catch (error) {
             console.error(error);

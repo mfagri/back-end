@@ -19,6 +19,7 @@ const user_module_1 = require("./user/user.module");
 const token_sever_1 = require("./auth/token.sever");
 const messages_module_1 = require("./messages/messages.module");
 const rooms_module_1 = require("./rooms/rooms.module");
+const gateway_module_1 = require("./getway/gateway.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -32,7 +33,8 @@ AppModule = __decorate([
             passport_1.PassportModule,
             user_module_1.userModule,
             messages_module_1.MessagesModule,
-            rooms_module_1.RoomsModule
+            rooms_module_1.RoomsModule,
+            gateway_module_1.GatewayModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService, fortytwo_strategy_1.Strategy42, serilizer_1.Serializer, token_sever_1.TokenService],

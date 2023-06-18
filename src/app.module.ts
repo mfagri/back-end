@@ -10,6 +10,7 @@ import { userModule } from "./user/user.module";
 import { TokenService } from "./auth/token.sever";
 import { MessagesModule } from "./messages/messages.module";
 import { RoomsModule } from "./rooms/rooms.module";
+import { GatewayModule } from "./getway/gateway.module";
 
 
 @Module({
@@ -22,7 +23,8 @@ import { RoomsModule } from "./rooms/rooms.module";
     PassportModule,
     userModule,
     MessagesModule,
-    RoomsModule
+    RoomsModule,
+    GatewayModule
   ],
   controllers: [AppController],
   providers: [AppService, Strategy42, Serializer,TokenService],

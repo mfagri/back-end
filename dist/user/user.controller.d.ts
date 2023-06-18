@@ -1,10 +1,12 @@
 import { UserService } from "./user.service";
 import { Request } from "express";
 import { JwtService } from "@nestjs/jwt";
+import { MyGateway } from "src/getway/gateway";
 export declare class UserController {
     private readonly userService;
     private jwtService;
-    constructor(userService: UserService, jwtService: JwtService);
+    private readonly Mygiteway;
+    constructor(userService: UserService, jwtService: JwtService, Mygiteway: MyGateway);
     Search(username: string): Promise<import(".prisma/client").User[] | {
         e: string;
     }>;
@@ -31,20 +33,20 @@ export declare class UserController {
     }>;
     getUserInbox(req: Request): Promise<{
         rooms: {
-            whoJoined: {
-                id: number;
-                username: string;
-                image: string;
-            }[];
+            id: number;
             messages: {
                 createdAt: Date;
                 content: string;
                 createdBy: {
-                    id: number;
                     username: string;
+                    id: number;
                 };
             }[];
-            id: number;
+            whoJoined: {
+                username: string;
+                id: number;
+                image: string;
+            }[];
         }[];
     }>;
 }
