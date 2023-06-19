@@ -38,17 +38,6 @@ let MyGateway = class MyGateway {
                     }
                 });
             });
-            socket.on("addUser", async (data) => {
-                console.log(data, "aaa");
-                console.log("send requset");
-                const user = await this.prisma.user.findUnique({
-                    where: {
-                        id: data
-                    }
-                });
-                console.log(user.auth, "i see you");
-                this.socket1.to(user.auth).emit("receiveNotif");
-            });
         });
     }
     async handleDisconnect(client) {

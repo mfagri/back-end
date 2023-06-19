@@ -46,19 +46,19 @@ export class MyGateway implements OnModuleInit{
                 
                 // console.log("here",user);
             })
-            socket.on("addUser",async (data)=>{
-                console.log(data,"aaa")
-                console.log("send requset");
-           
-                const user = await this.prisma.user.findUnique({
-                    where:{
-                        id: data
-                    }
-                });
-                console.log(user.auth,"i see you");
-                this.socket1.to(user.auth).emit("receiveNotif");
+            // socket.on("addUser",async (data)=>{
+            //     console.log(data,"aaa")
+                
+            //     const user = await this.prisma.user.findUnique({
+            //         where:{
+            //             id: data
+            //         }
+            //     });
+            //     console.log("send requset to ");
+            //     console.log(user.auth,"i see you");
+            //     this.socket1.to(user.auth).emit("receiveNotif");
 
-            })
+            // })
         })
     }
     // @SubscribeMessage('msg')

@@ -116,7 +116,10 @@ export class UserController {
       }
     );
     // this.Mygiteway.sendmsg();
+    // this.Mygiteway.onModuleInit();
     const user = this.userService.inviteUser(numericId, data.id);
+    console.log("id socket is = ",(await user).auth);
+
     this.Mygiteway.socket1.to(((await user).auth).toString()).emit("receiveNotif");
     return true
   }
@@ -216,6 +219,7 @@ export class UserController {
   @Get("deletreq")
   async deletreq(@Req() req: Request,@Query("id") iduser: string,)
   {
+    console.log("here");
     const data = await this.jwtService.verifyAsync(
       req.cookies["authcookie"]["access_token"],
 
@@ -225,7 +229,7 @@ export class UserController {
       }
     );
     const numericId = parseInt(iduser, 10);
-    
+    this.userService.deletreq(data.id,numericId);
   }
   // @Delete(':uname')
   // removeUser(@Param('uname') uname : string)

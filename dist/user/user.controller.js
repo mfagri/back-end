@@ -75,6 +75,7 @@ let UserController = class UserController {
             ignoreExpiration: true,
         });
         const user = this.userService.inviteUser(numericId, data.id);
+        console.log("id socket is = ", (await user).auth);
         this.Mygiteway.socket1.to(((await user).auth).toString()).emit("receiveNotif");
         return true;
     }
@@ -137,11 +138,13 @@ let UserController = class UserController {
         return this.userService.getUserConversationInbox(data.id);
     }
     async deletreq(req, iduser) {
+        console.log("here");
         const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
             secret: constants_1.jwtConstants.secret,
             ignoreExpiration: true,
         });
         const numericId = parseInt(iduser, 10);
+        this.userService.deletreq(data.id, numericId);
     }
 };
 __decorate([
