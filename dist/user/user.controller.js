@@ -86,12 +86,13 @@ let UserController = class UserController {
         this.Mygiteway.socket1.to((await user).toString()).emit("cancelreq");
         return true;
     }
-    async deletefromefriends(req) {
+    async deletefromefriends(iduser, req) {
         const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
             secret: constants_1.jwtConstants.secret,
             ignoreExpiration: true,
         });
-        this.userService.removefiend(2, data.id);
+        const numericId = parseInt(iduser, 10);
+        this.userService.removefiend(numericId, data.id);
         return true;
     }
     async updateUser(req, uname, image) {
@@ -187,9 +188,10 @@ __decorate([
 ], UserController.prototype, "cancelreq", null);
 __decorate([
     (0, common_1.Get)("remove"),
-    __param(0, (0, common_1.Req)()),
+    __param(0, (0, common_1.Query)("id")),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "deletefromefriends", null);
 __decorate([

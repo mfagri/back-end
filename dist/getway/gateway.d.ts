@@ -7,6 +7,5 @@ export declare class MyGateway implements OnModuleInit {
     server: Server;
     socket1: Socket;
     onModuleInit(): void;
-    acceptuser(socket: Socket, id: string): void;
     handleDisconnect(client: Socket): Promise<void>;
 }

@@ -48,6 +48,7 @@ export class MyGateway implements OnModuleInit{
             })
             socket.on("addUser",async (data)=>{
                 // console.log(data,"aaa")
+           
                 const user = await this.prisma.user.findUnique({
                     where:{
                         id: data
@@ -69,10 +70,10 @@ export class MyGateway implements OnModuleInit{
     //     return data;
     
     //   }
-    acceptuser(socket :Socket,id: string)
-    {
-        socket.to("all").emit("acceptreq");
-    }
+    // acceptuser(socket :Socket,id: string)
+    // {
+    //     socket.to("all").emit("acceptreq");
+    // }
     // sendmsg()
     // {
     //     console.log("ddddddd");
@@ -88,22 +89,28 @@ export class MyGateway implements OnModuleInit{
     // //     })
     // // }
     async handleDisconnect(client: Socket) {
-        console.log(`Client disconnected: ${client.id}`);
-        await this.prisma.user.update({
-            where:{
-               auth: client.id,
-            },
-            
-            data:{
-                
-                profile:{
-                    update:{
-                        online: false
-                    }
+             try{
+                    
+                 await this.prisma.user.update({
+                     where:{
+                        auth: client.id,
+                     },
+                     
+                     data:{
+                         
+                         profile:{
+                             update:{
+                                 online: false
+                             }
+                         }
+                     }
+                 
+                 }
+                 );
                 }
-            }
-        
-        }
-    );
-    }
+                catch(e)
+                {}
+        console.log(`Client disconnected: ${client.id}`);
+    
+}
 }

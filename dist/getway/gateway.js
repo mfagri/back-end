@@ -48,23 +48,23 @@ let MyGateway = class MyGateway {
             });
         });
     }
-    acceptuser(socket, id) {
-        socket.to("all").emit("acceptreq");
-    }
     async handleDisconnect(client) {
-        console.log(`Client disconnected: ${client.id}`);
-        await this.prisma.user.update({
-            where: {
-                auth: client.id,
-            },
-            data: {
-                profile: {
-                    update: {
-                        online: false
+        try {
+            await this.prisma.user.update({
+                where: {
+                    auth: client.id,
+                },
+                data: {
+                    profile: {
+                        update: {
+                            online: false
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
+        catch (e) { }
+        console.log(`Client disconnected: ${client.id}`);
     }
 };
 __decorate([

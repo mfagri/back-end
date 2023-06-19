@@ -272,6 +272,9 @@ let UserService = class UserService {
                 friends: {
                     disconnect: [{ intrrid: myuserid }],
                 },
+                friendsRelation: {
+                    disconnect: [{ intrrid: myuserid }],
+                },
             },
             include: {
                 friends: true,

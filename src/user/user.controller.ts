@@ -135,7 +135,7 @@ export class UserController {
     return true
   }
   @Get("remove")
-  async deletefromefriends(@Req() req: Request) {
+  async deletefromefriends(@Query("id") iduser: string,@Req() req: Request) {
     const data = await this.jwtService.verifyAsync(
       req.cookies["authcookie"]["access_token"],
 
@@ -144,7 +144,8 @@ export class UserController {
         ignoreExpiration: true,
       }
     );
-    this.userService.removefiend(2, data.id); ///
+    const numericId = parseInt(iduser, 10);
+    this.userService.removefiend(numericId, data.id); ///
     return true;
   }
 
