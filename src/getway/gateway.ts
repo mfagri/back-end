@@ -25,7 +25,7 @@ export class MyGateway implements OnModuleInit{
         this.server.on('connection',(socket)=>{
             this.socket1 = socket;
             console.log(`Client connected: ${socket.id}`);
-            // console.log(socket);
+            
             socket.on('newUser',async (data)=> {
                 console.log(data,"dfs");
                 const user =  await this.prisma.user.update({
@@ -41,19 +41,21 @@ export class MyGateway implements OnModuleInit{
                             }
                         }
                     }
-    
+                    
                 });
                 
                 // console.log("here",user);
             })
             socket.on("addUser",async (data)=>{
-                // console.log(data,"aaa")
+                console.log(data,"aaa")
+                console.log("send requset");
            
                 const user = await this.prisma.user.findUnique({
                     where:{
                         id: data
                     }
-                })
+                });
+                console.log(user.auth,"i see you");
                 this.socket1.to(user.auth).emit("receiveNotif");
 
             })

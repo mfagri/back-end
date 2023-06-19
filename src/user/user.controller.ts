@@ -116,10 +116,13 @@ export class UserController {
       }
     );
     // this.Mygiteway.sendmsg();
-    return this.userService.inviteUser(numericId, data.id);
+    const user = this.userService.inviteUser(numericId, data.id);
+    this.Mygiteway.socket1.to(((await user).auth).toString()).emit("receiveNotif");
+    return true
   }
   @Get("cancel")
   async cancelreq(@Query("id") iduser: string, @Req() req: Request) {
+    console.log("hereeeeeeeeeeeeee");
     const numericId = parseInt(iduser, 10);
 
     const data = await this.jwtService.verifyAsync(
@@ -209,6 +212,20 @@ export class UserController {
     );
 
     return this.userService.getUserConversationInbox(data.id);
+  }
+  @Get("deletreq")
+  async deletreq(@Req() req: Request,@Query("id") iduser: string,)
+  {
+    const data = await this.jwtService.verifyAsync(
+      req.cookies["authcookie"]["access_token"],
+
+      {
+        secret: jwtConstants.secret,
+        ignoreExpiration: true,
+      }
+    );
+    const numericId = parseInt(iduser, 10);
+    
   }
   // @Delete(':uname')
   // removeUser(@Param('uname') uname : string)

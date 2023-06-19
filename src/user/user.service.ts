@@ -9,7 +9,7 @@ import { RoomsService } from "src/rooms/rooms.service";
 export class UserService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly roomService: RoomsService,
+    private readonly roomService: RoomsService
   ) {}
   async findByid(id: number) {
     console.log("here");
@@ -169,25 +169,23 @@ export class UserService {
 
   async addFriend(userId: string, friendId: number) {
     const data = await this.prisma.user.findUnique({
-      where:{
-        intrrid: userId
+      where: {
+        intrrid: userId,
       },
-      include:{
-        friends: true
-      }
-    })
+      include: {
+        friends: true,
+      },
+    });
     const friend = await this.prisma.user.findUnique({
-      where:{
-        id:friendId
-      }
-    })
-
+      where: {
+        id: friendId,
+      },
+    });
 
     const find = data.friends.find((obj) => {
       return obj.username === friend.username;
-    })
-    if(find)
-      return null;
+    });
+    if (find) return null;
     const user = await this.prisma.user.update({
       where: { intrrid: userId },
       data: {
@@ -198,24 +196,24 @@ export class UserService {
       where: { id: friendId },
       data: {
         friendsRelation: { connect: { intrrid: userId } },
-        request: {disconnect:{id:friendId}}
+        request: { disconnect: { id: friendId } },
       },
     });
     await this.prisma.user.update({
       where: { intrrid: userId },
       data: {
         // friendsRelation: { connect: { intrrid: userId } },
-        requestedBy: {disconnect:{id:friendId}}
+        requestedBy: { disconnect: { id: friendId } },
       },
     });
     // data: {
     //   requestedBy: { connect: { intrrid: inviterId } },
     // },
     const user1 = await this.prisma.user.findUnique({
-      where:{
-        intrrid:userId
-      }
-    })
+      where: {
+        intrrid: userId,
+      },
+    });
     await this.roomService.createConversation(user1.id, friendId);
     return friend;
   }
@@ -342,20 +340,23 @@ export class UserService {
   }
 
   async inviteUser(userId: number, inviterId: string) {
+    const userToInvite = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        requestedBy: true,
+      },
+    });
     try {
       // console.log(userId);
       // console.log(inviterId);
 
-      // Fetch the user to invite
-      const userToInvite = await this.prisma.user.findUnique({
-        where: { id: userId },
-      });
+      
 
       if (!userToInvite) {
         throw new Error(`User with ID ${userId} not found.`);
       }
 
-      // Fetch the inviter user
+    
       const inviter = await this.prisma.user.findUnique({
         where: { intrrid: inviterId },
       });
@@ -363,7 +364,10 @@ export class UserService {
       if (!inviter) {
         throw new Error(`Inviter user with ID ${inviterId} not found.`);
       }
-
+      const found = userToInvite.requestedBy.find((obj) => {
+        return obj.username === inviter.username;
+      });
+      if (found) return userToInvite;
       // Send the invite by updating the relationship
       const updatedUser = await this.prisma.user.update({
         where: { id: userId },
@@ -380,7 +384,7 @@ export class UserService {
     } finally {
       await this.prisma.$disconnect();
     }
-    return true;
+    return userToInvite;
   }
   /////////Remove from friends/////////
   async removefiend(id: number, myuserid: string) {
@@ -437,6 +441,35 @@ export class UserService {
       },
       include: {
         request: true,
+      },
+    });
+    return userf.auth;
+  }
+  async deletreq(myuserid: string, userid: number){
+    const userf = await this.prisma.user.update({
+      where: {
+        id: userid,
+      },
+      data: {
+        request: {
+          disconnect: [{ intrrid: myuserid }],
+        },
+      },
+      include: {
+        request: true,
+      },
+    });
+    await this.prisma.user.update({
+      where: {
+        intrrid: myuserid,
+      },
+      data: {
+        requestedBy: {
+          disconnect: [{ id: userid }],
+        },
+      },
+      include: {
+        requestedBy: true,
       },
     });
     return userf.auth;

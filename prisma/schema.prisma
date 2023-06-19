@@ -51,7 +51,7 @@ model Profile {
 model Inbox {
   id      Int    @id() @default(autoincrement())
   userId  Int    @unique
-  inboxOf User   @relation(fields: [userId], references: [id])
+  inboxOf User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   rooms   Room[]
 }
 

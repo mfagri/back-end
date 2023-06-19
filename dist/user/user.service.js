@@ -92,16 +92,16 @@ let UserService = class UserService {
     async addFriend(userId, friendId) {
         const data = await this.prisma.user.findUnique({
             where: {
-                intrrid: userId
+                intrrid: userId,
             },
             include: {
-                friends: true
-            }
+                friends: true,
+            },
         });
         const friend = await this.prisma.user.findUnique({
             where: {
-                id: friendId
-            }
+                id: friendId,
+            },
         });
         const find = data.friends.find((obj) => {
             return obj.username === friend.username;
@@ -118,19 +118,19 @@ let UserService = class UserService {
             where: { id: friendId },
             data: {
                 friendsRelation: { connect: { intrrid: userId } },
-                request: { disconnect: { id: friendId } }
+                request: { disconnect: { id: friendId } },
             },
         });
         await this.prisma.user.update({
             where: { intrrid: userId },
             data: {
-                requestedBy: { disconnect: { id: friendId } }
+                requestedBy: { disconnect: { id: friendId } },
             },
         });
         const user1 = await this.prisma.user.findUnique({
             where: {
-                intrrid: userId
-            }
+                intrrid: userId,
+            },
         });
         await this.roomService.createConversation(user1.id, friendId);
         return friend;
@@ -235,10 +235,13 @@ let UserService = class UserService {
         }
     }
     async inviteUser(userId, inviterId) {
+        const userToInvite = await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: {
+                requestedBy: true,
+            },
+        });
         try {
-            const userToInvite = await this.prisma.user.findUnique({
-                where: { id: userId },
-            });
             if (!userToInvite) {
                 throw new Error(`User with ID ${userId} not found.`);
             }
@@ -248,6 +251,11 @@ let UserService = class UserService {
             if (!inviter) {
                 throw new Error(`Inviter user with ID ${inviterId} not found.`);
             }
+            const found = userToInvite.requestedBy.find((obj) => {
+                return obj.username === inviter.username;
+            });
+            if (found)
+                return userToInvite;
             const updatedUser = await this.prisma.user.update({
                 where: { id: userId },
                 data: {
@@ -261,7 +269,7 @@ let UserService = class UserService {
         finally {
             await this.prisma.$disconnect();
         }
-        return true;
+        return userToInvite;
     }
     async removefiend(id, myuserid) {
         await this.prisma.user.update({
@@ -317,6 +325,35 @@ let UserService = class UserService {
             },
             include: {
                 request: true,
+            },
+        });
+        return userf.auth;
+    }
+    async deletreq(myuserid, userid) {
+        const userf = await this.prisma.user.update({
+            where: {
+                id: userid,
+            },
+            data: {
+                request: {
+                    disconnect: [{ intrrid: myuserid }],
+                },
+            },
+            include: {
+                request: true,
+            },
+        });
+        await this.prisma.user.update({
+            where: {
+                intrrid: myuserid,
+            },
+            data: {
+                requestedBy: {
+                    disconnect: [{ id: userid }],
+                },
+            },
+            include: {
+                requestedBy: true,
             },
         });
         return userf.auth;

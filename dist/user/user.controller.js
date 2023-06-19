@@ -74,9 +74,12 @@ let UserController = class UserController {
             secret: constants_1.jwtConstants.secret,
             ignoreExpiration: true,
         });
-        return this.userService.inviteUser(numericId, data.id);
+        const user = this.userService.inviteUser(numericId, data.id);
+        this.Mygiteway.socket1.to(((await user).auth).toString()).emit("receiveNotif");
+        return true;
     }
     async cancelreq(iduser, req) {
+        console.log("hereeeeeeeeeeeeee");
         const numericId = parseInt(iduser, 10);
         const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
             secret: constants_1.jwtConstants.secret,
@@ -132,6 +135,13 @@ let UserController = class UserController {
             ignoreExpiration: true,
         });
         return this.userService.getUserConversationInbox(data.id);
+    }
+    async deletreq(req, iduser) {
+        const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
+            secret: constants_1.jwtConstants.secret,
+            ignoreExpiration: true,
+        });
+        const numericId = parseInt(iduser, 10);
     }
 };
 __decorate([
@@ -218,6 +228,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUserInbox", null);
+__decorate([
+    (0, common_1.Get)("deletreq"),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Query)("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "deletreq", null);
 UserController = __decorate([
     (0, common_1.Controller)("user"),
     __metadata("design:paramtypes", [user_service_1.UserService,

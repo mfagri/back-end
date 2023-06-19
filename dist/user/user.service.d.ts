@@ -45,8 +45,11 @@ export declare class UserService {
         email: string;
         online: boolean;
     }>;
-    inviteUser(userId: number, inviterId: string): Promise<boolean>;
+    inviteUser(userId: number, inviterId: string): Promise<import(".prisma/client").User & {
+        requestedBy: import(".prisma/client").User[];
+    }>;
     removefiend(id: number, myuserid: string): Promise<void>;
     rfriends(id: number): Promise<import(".prisma/client").User[]>;
     cancelreqest(myuserid: string, userid: number): Promise<string>;
+    deletreq(myuserid: string, userid: number): Promise<string>;
 }
