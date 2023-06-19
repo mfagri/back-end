@@ -19,7 +19,7 @@ model User {
   username        String?   @unique
   image           String?
   intrrid         String    @unique
-  auth            String?
+  auth            String?   @unique
   profile         Profile?
   friends         User[]    @relation("friends")
   friendsRelation User[]    @relation("friends")
@@ -45,6 +45,7 @@ model Profile {
   username String  @unique
   image    String
   email    String? @unique
+  online   Boolean @default(false)
 }
 
 model Inbox {

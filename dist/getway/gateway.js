@@ -29,12 +29,16 @@ let MyGateway = class MyGateway {
                         username: data
                     },
                     data: {
-                        auth: socket.id
+                        auth: socket.id,
+                        profile: {
+                            update: {
+                                online: true
+                            }
+                        }
                     }
                 });
             });
             socket.on("addUser", async (data) => {
-                console.log(data, "9aaalwa");
                 const user = await this.prisma.user.findUnique({
                     where: {
                         id: data
@@ -46,6 +50,21 @@ let MyGateway = class MyGateway {
     }
     acceptuser(socket, id) {
         socket.to("all").emit("acceptreq");
+    }
+    async handleDisconnect(client) {
+        console.log(`Client disconnected: ${client.id}`);
+        await this.prisma.user.update({
+            where: {
+                auth: client.id,
+            },
+            data: {
+                profile: {
+                    update: {
+                        online: false
+                    }
+                }
+            }
+        });
     }
 };
 __decorate([

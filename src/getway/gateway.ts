@@ -32,15 +32,22 @@ export class MyGateway implements OnModuleInit{
                     where:{
                         username: data
                     },
+                    
                     data:{
-                        auth: <string>socket.id
+                        auth: <string>socket.id,
+                        profile:{
+                            update:{
+                                online: true
+                            }
+                        }
                     }
     
                 });
+                
                 // console.log("here",user);
             })
             socket.on("addUser",async (data)=>{
-                console.log(data,"9aaalwa")
+                // console.log(data,"aaa")
                 const user = await this.prisma.user.findUnique({
                     where:{
                         id: data
@@ -80,7 +87,23 @@ export class MyGateway implements OnModuleInit{
             
     // //     })
     // // }
-    // handleDisconnect(client: Socket) {
-    //     console.log(`Client disconnected: ${client.id}`);
-    //   }
+    async handleDisconnect(client: Socket) {
+        console.log(`Client disconnected: ${client.id}`);
+        await this.prisma.user.update({
+            where:{
+               auth: client.id,
+            },
+            
+            data:{
+                
+                profile:{
+                    update:{
+                        online: false
+                    }
+                }
+            }
+        
+        }
+    );
+    }
 }
