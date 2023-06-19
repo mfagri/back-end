@@ -290,7 +290,7 @@ let UserService = class UserService {
         return user.friends;
     }
     async cancelreqest(myuserid, userid) {
-        await this.prisma.user.update({
+        const userf = await this.prisma.user.update({
             where: {
                 id: userid,
             },
@@ -316,7 +316,7 @@ let UserService = class UserService {
                 request: true,
             },
         });
-        return true;
+        return userf.auth;
     }
 };
 UserService = __decorate([

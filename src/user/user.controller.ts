@@ -130,7 +130,9 @@ export class UserController {
         ignoreExpiration: true,
       }
     );
-    return this.userService.cancelreqest(data.id, numericId);
+    const user = this.userService.cancelreqest(data.id, numericId);
+    this.Mygiteway.socket1.to((await user).toString()).emit("cancelreq");
+    return true
   }
   @Get("remove")
   async deletefromefriends(@Req() req: Request) {

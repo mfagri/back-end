@@ -82,7 +82,9 @@ let UserController = class UserController {
             secret: constants_1.jwtConstants.secret,
             ignoreExpiration: true,
         });
-        return this.userService.cancelreqest(data.id, numericId);
+        const user = this.userService.cancelreqest(data.id, numericId);
+        this.Mygiteway.socket1.to((await user).toString()).emit("cancelreq");
+        return true;
     }
     async deletefromefriends(req) {
         const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {

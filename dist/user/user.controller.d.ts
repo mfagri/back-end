@@ -42,6 +42,7 @@ export declare class UserController {
     }>;
     getUserInbox(req: Request): Promise<{
         rooms: {
+            id: number;
             messages: {
                 createdAt: Date;
                 content: string;
@@ -50,11 +51,10 @@ export declare class UserController {
                     id: number;
                 };
             }[];
-            id: number;
             whoJoined: {
                 username: string;
-                image: string;
                 id: number;
+                image: string;
             }[];
         }[];
     }>;

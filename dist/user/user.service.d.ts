@@ -7,19 +7,19 @@ export declare class UserService {
     findByid(id: number): Promise<import(".prisma/client").User>;
     getUserConversationInbox(userId: string): Promise<{
         rooms: {
+            id: number;
+            whoJoined: {
+                id: number;
+                username: string;
+                image: string;
+            }[];
             messages: {
                 createdAt: Date;
                 content: string;
                 createdBy: {
-                    username: string;
                     id: number;
+                    username: string;
                 };
-            }[];
-            id: number;
-            whoJoined: {
-                username: string;
-                image: string;
-                id: number;
             }[];
         }[];
     }>;
@@ -48,5 +48,5 @@ export declare class UserService {
     inviteUser(userId: number, inviterId: string): Promise<boolean>;
     removefiend(id: number, myuserid: string): Promise<void>;
     rfriends(id: number): Promise<import(".prisma/client").User[]>;
-    cancelreqest(myuserid: string, userid: number): Promise<boolean>;
+    cancelreqest(myuserid: string, userid: number): Promise<string>;
 }

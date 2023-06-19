@@ -410,7 +410,7 @@ export class UserService {
     return user.friends;
   }
   async cancelreqest(myuserid: string, userid: number) {
-    await this.prisma.user.update({
+    const userf = await this.prisma.user.update({
       where: {
         id: userid,
       },
@@ -436,6 +436,6 @@ export class UserService {
         request: true,
       },
     });
-    return true;
+    return userf.auth;
   }
 }
