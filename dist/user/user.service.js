@@ -17,6 +17,7 @@ let UserService = class UserService {
     constructor(prisma, roomService) {
         this.prisma = prisma;
         this.roomService = roomService;
+        this.myArray = [];
     }
     async findByid(id) {
         console.log("here");
@@ -47,6 +48,11 @@ let UserService = class UserService {
                                 username: true,
                                 image: true,
                                 id: true,
+                                profile: {
+                                    select: {
+                                        online: true
+                                    }
+                                },
                             },
                         },
                         messages: {
@@ -235,6 +241,8 @@ let UserService = class UserService {
         }
     }
     async inviteUser(userId, inviterId) {
+        console.log("hnaaaaaaaaa");
+        console.log(this.myArray);
         const userToInvite = await this.prisma.user.findUnique({
             where: { id: userId },
             include: {
@@ -242,15 +250,9 @@ let UserService = class UserService {
             },
         });
         try {
-            if (!userToInvite) {
-                throw new Error(`User with ID ${userId} not found.`);
-            }
             const inviter = await this.prisma.user.findUnique({
                 where: { intrrid: inviterId },
             });
-            if (!inviter) {
-                throw new Error(`Inviter user with ID ${inviterId} not found.`);
-            }
             const found = userToInvite.requestedBy.find((obj) => {
                 return obj.username === inviter.username;
             });
@@ -265,9 +267,6 @@ let UserService = class UserService {
         }
         catch (error) {
             console.error(error);
-        }
-        finally {
-            await this.prisma.$disconnect();
         }
         return userToInvite;
     }
@@ -327,7 +326,7 @@ let UserService = class UserService {
                 request: true,
             },
         });
-        return userf.auth;
+        return userf;
     }
     async deletreq(myuserid, userid) {
         const userf = await this.prisma.user.update({

@@ -3,6 +3,7 @@ import { createConversationDto } from "src/dto/room/createConversationDto";
 // import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "src/prisma/prisma.service";
 import { RoomsService } from "src/rooms/rooms.service";
+import { MyObject } from "src/test";
 
 // import { v4 as uuidv4 } from 'uuid';
 @Injectable()
@@ -20,6 +21,9 @@ export class UserService {
     });
     return user;
   }
+
+  myArray: MyObject[] = [];
+
   async getUserConversationInbox(userId: string) {
     let inbox = await this.prisma.user.findUnique({
       where: { intrrid: userId },
@@ -40,6 +44,11 @@ export class UserService {
                 username: true,
                 image: true,
                 id: true,
+                profile: {
+                  select:{
+                    online: true
+                  }
+                },
               },
             },
             messages: {
@@ -340,6 +349,8 @@ export class UserService {
   }
 
   async inviteUser(userId: number, inviterId: string) {
+    console.log("hnaaaaaaaaa");
+    console.log(this.myArray);
     const userToInvite = await this.prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -352,18 +363,18 @@ export class UserService {
 
       
 
-      if (!userToInvite) {
-        throw new Error(`User with ID ${userId} not found.`);
-      }
+      // if (!userToInvite) {
+      //   throw new Error(`User with ID ${userId} not found.`);
+      // }
 
     
       const inviter = await this.prisma.user.findUnique({
         where: { intrrid: inviterId },
       });
 
-      if (!inviter) {
-        throw new Error(`Inviter user with ID ${inviterId} not found.`);
-      }
+      // if (!inviter) {
+      //   throw new Error(`Inviter user with ID ${inviterId} not found.`);
+      // }
       const found = userToInvite.requestedBy.find((obj) => {
         return obj.username === inviter.username;
       });
@@ -381,8 +392,6 @@ export class UserService {
       // );
     } catch (error) {
       console.error(error);
-    } finally {
-      await this.prisma.$disconnect();
     }
     return userToInvite;
   }
@@ -443,7 +452,7 @@ export class UserService {
         request: true,
       },
     });
-    return userf.auth;
+    return userf;
   }
   async deletreq(myuserid: string, userid: number){
     const userf = await this.prisma.user.update({

@@ -1,15 +1,20 @@
 import { PrismaService } from "src/prisma/prisma.service";
 import { RoomsService } from "src/rooms/rooms.service";
+import { MyObject } from "src/test";
 export declare class UserService {
     private readonly prisma;
     private readonly roomService;
     constructor(prisma: PrismaService, roomService: RoomsService);
     findByid(id: number): Promise<import(".prisma/client").User>;
+    myArray: MyObject[];
     getUserConversationInbox(userId: string): Promise<{
         rooms: {
             id: number;
             whoJoined: {
                 id: number;
+                profile: {
+                    online: boolean;
+                };
                 username: string;
                 image: string;
             }[];
@@ -50,6 +55,8 @@ export declare class UserService {
     }>;
     removefiend(id: number, myuserid: string): Promise<void>;
     rfriends(id: number): Promise<import(".prisma/client").User[]>;
-    cancelreqest(myuserid: string, userid: number): Promise<string>;
+    cancelreqest(myuserid: string, userid: number): Promise<import(".prisma/client").User & {
+        requestedBy: import(".prisma/client").User[];
+    }>;
     deletreq(myuserid: string, userid: number): Promise<string>;
 }

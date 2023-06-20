@@ -43,18 +43,21 @@ export declare class UserController {
     getUserInbox(req: Request): Promise<{
         rooms: {
             id: number;
+            whoJoined: {
+                id: number;
+                profile: {
+                    online: boolean;
+                };
+                username: string;
+                image: string;
+            }[];
             messages: {
                 createdAt: Date;
                 content: string;
                 createdBy: {
-                    username: string;
                     id: number;
+                    username: string;
                 };
-            }[];
-            whoJoined: {
-                username: string;
-                id: number;
-                image: string;
             }[];
         }[];
     }>;

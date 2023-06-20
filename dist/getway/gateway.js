@@ -14,22 +14,27 @@ const common_1 = require("@nestjs/common");
 const websockets_1 = require("@nestjs/websockets");
 const socket_io_1 = require("socket.io");
 const prisma_service_1 = require("../prisma/prisma.service");
+const user_service_1 = require("../user/user.service");
 let MyGateway = class MyGateway {
-    constructor(prisma) {
+    constructor(prisma, serv) {
         this.prisma = prisma;
+        this.serv = serv;
     }
     onModuleInit() {
+        console.log("in gateway --------------------------");
+        console.log(this.serv.myArray);
         this.server.on('connection', (socket) => {
             this.socket1 = socket;
             console.log(`Client connected: ${socket.id}`);
             socket.on('newUser', async (data) => {
-                console.log(data, "dfs");
+                this.serv.myArray.push({ element1: data, element2: socket.id });
+                console.log("in gateway --------------------------");
+                console.log(this.serv.myArray);
                 const user = await this.prisma.user.update({
                     where: {
                         username: data
                     },
                     data: {
-                        auth: socket.id,
                         profile: {
                             update: {
                                 online: true
@@ -41,21 +46,38 @@ let MyGateway = class MyGateway {
         });
     }
     async handleDisconnect(client) {
+        const find = this.serv.myArray.find((obj) => { return obj.element2 === client.id; });
+        console.log(find);
         try {
-            await this.prisma.user.update({
+            const user = await this.prisma.user.findUniqueOrThrow({
                 where: {
-                    auth: client.id,
-                },
-                data: {
-                    profile: {
-                        update: {
-                            online: false
-                        }
-                    }
+                    username: find.element1
                 }
             });
+            this.serv.myArray = this.serv.myArray.filter((obj) => { return obj !== find; });
+            console.log("new array");
+            console.log(this.serv.myArray);
+            console.log("check number of user in array : ");
+            const countUser = this.serv.myArray.filter((obj) => { return obj.element1 === find.element1; }).length;
+            console.log(countUser);
+            try {
+                await this.prisma.user.update({
+                    where: {
+                        username: find.element1,
+                    },
+                    data: {
+                        profile: {
+                            update: {
+                                online: countUser == 0 ? false : true
+                            }
+                        }
+                    }
+                });
+            }
+            catch (e) { }
         }
-        catch (e) { }
+        catch (e) {
+        }
         console.log(`Client disconnected: ${client.id}`);
     }
 };
@@ -70,7 +92,7 @@ MyGateway = __decorate([
         }
     }),
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService, user_service_1.UserService])
 ], MyGateway);
 exports.MyGateway = MyGateway;
 //# sourceMappingURL=gateway.js.map

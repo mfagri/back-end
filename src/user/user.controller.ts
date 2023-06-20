@@ -118,26 +118,48 @@ export class UserController {
     // this.Mygiteway.sendmsg();
     // this.Mygiteway.onModuleInit();
     const user = this.userService.inviteUser(numericId, data.id);
-    console.log("id socket is = ",(await user).auth);
-
-    this.Mygiteway.socket1.to(((await user).auth).toString()).emit("receiveNotif");
+  
+    const nameof = (await user).username
+    const arr = this.userService.myArray.filter((obj) => {
+    return (  obj.element1 === nameof )
+    } )
+    // console.log("arr = ",arr);
+    arr.map((element)=>  {
+      // console.log(element);
+      this.Mygiteway.socket1.to((element.element2).toString()).emit("receiveNotif")} )
+      // this.Mygiteway.socket1.disconnect()
+    // this.Mygiteway.socket1.connected
     return true
   }
   @Get("cancel")
   async cancelreq(@Query("id") iduser: string, @Req() req: Request) {
-    console.log("hereeeeeeeeeeeeee");
+    // console.log("hereeeeeeeeeeeeee");
     const numericId = parseInt(iduser, 10);
-
+    
     const data = await this.jwtService.verifyAsync(
       req.cookies["authcookie"]["access_token"],
-
+      
       {
         secret: jwtConstants.secret,
         ignoreExpiration: true,
       }
-    );
-    const user = this.userService.cancelreqest(data.id, numericId);
-    this.Mygiteway.socket1.to((await user).toString()).emit("cancelreq");
+      );
+      const user = this.userService.cancelreqest(data.id, numericId);
+      const nameof = ((await user).username)
+      console.log("id socket is = ",nameof);
+      console.log("first arr:",this.userService.myArray)
+      console.log("naaame: ",nameof);
+      const arr = this.userService.myArray.filter((obj) => {
+        return (  obj.element1 === nameof )
+      } )
+      console.log("arr =  ", arr)
+    // console.log("arr = ",arr);
+    arr.map((element)=>  
+      // console.log(element);
+      this.Mygiteway.socket1.to((element.element2)).emit("cancelreq")
+      )
+    // this.Mygiteway.socket1.disconnect()
+    // this.Mygiteway.socket1.connected
     return true
   }
   @Get("remove")
