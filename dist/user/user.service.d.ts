@@ -9,14 +9,13 @@ export declare class UserService {
     myArray: MyObject[];
     getUserConversationInbox(userId: string): Promise<{
         rooms: {
-            id: number;
             whoJoined: {
                 id: number;
+                username: string;
+                image: string;
                 profile: {
                     online: boolean;
                 };
-                username: string;
-                image: string;
             }[];
             messages: {
                 createdAt: Date;
@@ -26,6 +25,7 @@ export declare class UserService {
                     username: string;
                 };
             }[];
+            id: number;
         }[];
     }>;
     addFriend(userId: string, friendId: number): Promise<import(".prisma/client").User>;

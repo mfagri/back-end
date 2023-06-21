@@ -1,13 +1,14 @@
-import { OnModuleInit } from "@nestjs/common";
+import { OnGatewayConnection, OnGatewayDisconnect } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { PrismaService } from "src/prisma/prisma.service";
 import { UserService } from "src/user/user.service";
-export declare class MyGateway implements OnModuleInit {
+import { JwtService } from "@nestjs/jwt";
+export declare class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly prisma;
     private readonly serv;
-    constructor(prisma: PrismaService, serv: UserService);
+    private readonly jwtService;
+    constructor(prisma: PrismaService, serv: UserService, jwtService: JwtService);
     server: Server;
-    socket1: Socket;
-    onModuleInit(): void;
+    handleConnection(socket: any): void;
     handleDisconnect(client: Socket): Promise<void>;
 }

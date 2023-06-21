@@ -137,7 +137,6 @@ export class RoomsService {
       orderBy: {
         createdAt: "asc",
       },
-      take: 10,
       where: {
         roomId,
       },

@@ -71,7 +71,7 @@ export class UserController {
       // const numericId2 = parseInt(friendId, 10);
       const user = await this.userService.addFriend(data.id,numericId);
       // socket : Socket;
-      this.Mygiteway.socket1.to(user.auth).emit("acceptreq");
+      // this.Mygiteway.socket1.to(user.auth).emit("acceptreq");
       return { message: "Friend added successfully", user };
     } catch (error) {
       return { error: "Failed to add friend" };
@@ -119,14 +119,14 @@ export class UserController {
     // this.Mygiteway.onModuleInit();
     const user = this.userService.inviteUser(numericId, data.id);
   
-    const nameof = (await user).username
-    const arr = this.userService.myArray.filter((obj) => {
-    return (  obj.element1 === nameof )
-    } )
-    // console.log("arr = ",arr);
-    arr.map((element)=>  {
-      // console.log(element);
-      this.Mygiteway.socket1.to((element.element2).toString()).emit("receiveNotif")} )
+    // const nameof = (await user).username
+    // const arr = this.userService.myArray.filter((obj) => {
+    // return (  obj.element1 === nameof )
+    // } )
+    // // console.log("arr = ",arr);
+    // arr.map((element)=>  {
+    //   // console.log(element);
+    //   this.Mygiteway.socket1.to((element.element2).toString()).emit("receiveNotif")} )
       // this.Mygiteway.socket1.disconnect()
     // this.Mygiteway.socket1.connected
     return true
@@ -145,19 +145,19 @@ export class UserController {
       }
       );
       const user = this.userService.cancelreqest(data.id, numericId);
-      const nameof = ((await user).username)
-      console.log("id socket is = ",nameof);
-      console.log("first arr:",this.userService.myArray)
-      console.log("naaame: ",nameof);
-      const arr = this.userService.myArray.filter((obj) => {
-        return (  obj.element1 === nameof )
-      } )
-      console.log("arr =  ", arr)
-    // console.log("arr = ",arr);
-    arr.map((element)=>  
-      // console.log(element);
-      this.Mygiteway.socket1.to((element.element2)).emit("cancelreq")
-      )
+    //   const nameof = ((await user).username)
+    //   console.log("id socket is = ",nameof);
+    //   console.log("first arr:",this.userService.myArray)
+    //   console.log("naaame: ",nameof);
+    //   const arr = this.userService.myArray.filter((obj) => {
+    //     return (  obj.element1 === nameof )
+    //   } )
+    //   console.log("arr =  ", arr)
+    // // console.log("arr = ",arr);
+    // arr.map((element)=>  
+    //   // console.log(element);
+    //   this.Mygiteway.socket1.to((element.element2)).emit("cancelreq")
+    //   )
     // this.Mygiteway.socket1.disconnect()
     // this.Mygiteway.socket1.connected
     return true

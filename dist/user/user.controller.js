@@ -44,7 +44,6 @@ let UserController = class UserController {
             console.log("intara id = ", data.id);
             const numericId = parseInt(userId, 10);
             const user = await this.userService.addFriend(data.id, numericId);
-            this.Mygiteway.socket1.to(user.auth).emit("acceptreq");
             return { message: "Friend added successfully", user };
         }
         catch (error) {
@@ -75,13 +74,6 @@ let UserController = class UserController {
             ignoreExpiration: true,
         });
         const user = this.userService.inviteUser(numericId, data.id);
-        const nameof = (await user).username;
-        const arr = this.userService.myArray.filter((obj) => {
-            return (obj.element1 === nameof);
-        });
-        arr.map((element) => {
-            this.Mygiteway.socket1.to((element.element2).toString()).emit("receiveNotif");
-        });
         return true;
     }
     async cancelreq(iduser, req) {
@@ -91,15 +83,6 @@ let UserController = class UserController {
             ignoreExpiration: true,
         });
         const user = this.userService.cancelreqest(data.id, numericId);
-        const nameof = ((await user).username);
-        console.log("id socket is = ", nameof);
-        console.log("first arr:", this.userService.myArray);
-        console.log("naaame: ", nameof);
-        const arr = this.userService.myArray.filter((obj) => {
-            return (obj.element1 === nameof);
-        });
-        console.log("arr =  ", arr);
-        arr.map((element) => this.Mygiteway.socket1.to((element.element2)).emit("cancelreq"));
         return true;
     }
     async deletefromefriends(iduser, req) {

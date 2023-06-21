@@ -12,8 +12,8 @@ export declare class RoomsService {
         createdAt: Date;
         content: string;
         createdBy: {
-            username: string;
             id: number;
+            username: string;
         };
     }[]>;
     createConversation(userId: number, joinWithId: number): Promise<void>;

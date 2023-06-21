@@ -15,51 +15,116 @@ const websockets_1 = require("@nestjs/websockets");
 const socket_io_1 = require("socket.io");
 const prisma_service_1 = require("../prisma/prisma.service");
 const user_service_1 = require("../user/user.service");
+const jwt_1 = require("@nestjs/jwt");
+const constants_1 = require("../auth/constants");
 let MyGateway = class MyGateway {
-    constructor(prisma, serv) {
+    constructor(prisma, serv, jwtService) {
         this.prisma = prisma;
         this.serv = serv;
+        this.jwtService = jwtService;
     }
-    onModuleInit() {
-        console.log("in gateway --------------------------");
-        console.log(this.serv.myArray);
-        this.server.on('connection', (socket) => {
-            this.socket1 = socket;
-            console.log(`Client connected: ${socket.id}`);
-            socket.on('newUser', async (data) => {
-                this.serv.myArray.push({ element1: data, element2: socket.id });
-                console.log("in gateway --------------------------");
-                console.log(this.serv.myArray);
-                const user = await this.prisma.user.update({
-                    where: {
-                        username: data
-                    },
-                    data: {
-                        profile: {
-                            update: {
-                                online: true
-                            }
-                        }
+    handleConnection(socket) {
+        console.log("Incoming Connection", socket.id);
+        socket.on("newUser", async (data) => {
+            try {
+                try {
+                    const userdata = await this.jwtService.verifyAsync(data.access_token, {
+                        secret: constants_1.jwtConstants.secret,
+                        ignoreExpiration: true,
+                    });
+                    const user = await this.prisma.user.findUnique({
+                        where: {
+                            intrrid: userdata.id,
+                        },
+                    });
+                    const find = this.serv.myArray.find((obj) => {
+                        return obj.element2 === socket.id;
+                    });
+                    if (!find) {
+                        this.serv.myArray.push({
+                            element1: user.username,
+                            element2: socket.id,
+                        });
                     }
-                });
+                    const user1 = await this.prisma.user.update({
+                        where: {
+                            username: user.username,
+                        },
+                        data: {
+                            profile: {
+                                update: {
+                                    online: true,
+                                },
+                            },
+                        },
+                    });
+                }
+                catch (e) {
+                    throw new common_1.NotFoundException("not found");
+                }
+            }
+            catch (e) {
+                console.log(e);
+            }
+        });
+        socket.on("addUser", async (data) => {
+            const isin = this.serv.myArray.find((obj) => {
+                return obj.element2 === socket.id;
             });
+            console.log(isin);
+            if (!isin) {
+                console.log("i saw it coming from miles away");
+                return;
+            }
+            const user = await this.prisma.user.findUnique({
+                where: {
+                    id: data,
+                },
+            });
+            const arr = this.serv.myArray.filter((obj) => {
+                return obj.element1 === user.username;
+            });
+            arr.map((element) => socket.to(element.element2).emit("receiveNotif"));
+        });
+        socket.on("cancelReq", async (data) => {
+            const isin = this.serv.myArray.find((obj) => {
+                return obj.element2 === socket.id;
+            });
+            console.log(isin);
+            if (!isin) {
+                console.log("i saw it coming from miles away");
+                return;
+            }
+            const user = await this.prisma.user.findUnique({
+                where: {
+                    id: data,
+                },
+            });
+            const arr = this.serv.myArray.filter((obj) => {
+                return obj.element1 === user.username;
+            });
+            arr.map((element) => socket.to(element.element2).emit("cancelreq"));
         });
     }
     async handleDisconnect(client) {
-        const find = this.serv.myArray.find((obj) => { return obj.element2 === client.id; });
+        const find = this.serv.myArray.find((obj) => {
+            return obj.element2 === client.id;
+        });
         console.log(find);
         try {
             const user = await this.prisma.user.findUniqueOrThrow({
                 where: {
-                    username: find.element1
-                }
+                    username: find.element1,
+                },
             });
-            this.serv.myArray = this.serv.myArray.filter((obj) => { return obj !== find; });
+            this.serv.myArray = this.serv.myArray.filter((obj) => {
+                return obj !== find;
+            });
             console.log("new array");
             console.log(this.serv.myArray);
-            console.log("check number of user in array : ");
-            const countUser = this.serv.myArray.filter((obj) => { return obj.element1 === find.element1; }).length;
-            console.log(countUser);
+            const countUser = this.serv.myArray.filter((obj) => {
+                return obj.element1 === find.element1;
+            }).length;
             try {
                 await this.prisma.user.update({
                     where: {
@@ -68,16 +133,15 @@ let MyGateway = class MyGateway {
                     data: {
                         profile: {
                             update: {
-                                online: countUser == 0 ? false : true
-                            }
-                        }
-                    }
+                                online: countUser == 0 ? false : true,
+                            },
+                        },
+                    },
                 });
             }
             catch (e) { }
         }
-        catch (e) {
-        }
+        catch (e) { }
         console.log(`Client disconnected: ${client.id}`);
     }
 };
@@ -88,11 +152,14 @@ __decorate([
 MyGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {
-            origin: true
-        }
+            origin: true,
+        },
+        credentials: true,
     }),
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService, user_service_1.UserService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        user_service_1.UserService,
+        jwt_1.JwtService])
 ], MyGateway);
 exports.MyGateway = MyGateway;
 //# sourceMappingURL=gateway.js.map
