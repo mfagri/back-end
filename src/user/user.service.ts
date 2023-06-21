@@ -45,9 +45,9 @@ export class UserService {
                 image: true,
                 id: true,
                 profile: {
-                  select:{
-                    online: true
-                  }
+                  select: {
+                    online: true,
+                  },
                 },
               },
             },
@@ -361,13 +361,10 @@ export class UserService {
       // console.log(userId);
       // console.log(inviterId);
 
-      
-
       // if (!userToInvite) {
       //   throw new Error(`User with ID ${userId} not found.`);
       // }
 
-    
       const inviter = await this.prisma.user.findUnique({
         where: { intrrid: inviterId },
       });
@@ -397,22 +394,98 @@ export class UserService {
   }
   /////////Remove from friends/////////
   async removefiend(id: number, myuserid: string) {
-    await this.prisma.user.update({
+    const myuser = await this.prisma.user.findUnique({
       where: {
-        id: id,
-      },
-      data: {
-        friends: {
-          disconnect: [{ intrrid: myuserid }],
-        },
-        friendsRelation: {
-          disconnect: [{ intrrid: myuserid }],
-        },
-      },
-      include: {
-        friends: true,
+        intrrid: myuserid,
       },
     });
+
+    try {
+      await this.prisma.user.update({
+        where: {
+          id: id,
+        },
+        data: {
+          friends: {
+            disconnect: [{ intrrid: myuserid }],
+          },
+          friendsRelation: {
+            disconnect: [{ intrrid: myuserid }],
+          },
+        },
+        include: {
+          friends: true,
+        },
+      });
+      const room = await this.prisma.user.findUnique({
+        where: {
+          id: myuser.id,
+        },
+        select: {
+          rooms: {
+            where: {
+              group: false,
+            },
+            select: {
+              id: true,
+              whoJoined: {
+                where: {
+                  intrrid: {
+                    not: myuserid,
+                  },
+                },
+                select: {
+                  username: true,
+                  image: true,
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      // rooms: [ { id: 10, whoJoined: [Array] }, { id: 11, whoJoined: [Array] } ]
+
+      console.log("room id is === ", room.rooms.at(0).id);
+      const room1 = await this.prisma.room.findUniqueOrThrow({
+        where: { id: room.rooms.at(0).id },
+        include: { messages: true, inbox: true },
+      });
+      // Delete the messages associated with the room
+      await this.prisma.message.deleteMany({
+        where: {
+          createdBy: {
+            id: myuser.id,
+          },
+        },
+      });
+      await this.prisma.message.deleteMany({
+        where: {
+          createdBy: {
+            id: id,
+          },
+        },
+      });
+      // Delete the inbox entries associated with the room
+      // await this.prisma.inbox.deleteMany(
+      //   {
+      //     where:{
+      //       rooms:{
+
+      //       }
+      //     }
+      //   }
+      // );
+
+      // // Delete the room itself
+      await this.prisma.room.delete({
+        where: {
+          id: room1.id,
+        },
+      });
+    } catch (e) {
+      console.log(e);
+    }
   }
   async rfriends(id: number) {
     const user = await this.prisma.user.findUnique({
@@ -454,7 +527,7 @@ export class UserService {
     });
     return userf;
   }
-  async deletreq(myuserid: string, userid: number){
+  async deletreq(myuserid: string, userid: number) {
     const userf = await this.prisma.user.update({
       where: {
         id: userid,

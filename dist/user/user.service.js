@@ -50,8 +50,8 @@ let UserService = class UserService {
                                 id: true,
                                 profile: {
                                     select: {
-                                        online: true
-                                    }
+                                        online: true,
+                                    },
                                 },
                             },
                         },
@@ -271,22 +271,83 @@ let UserService = class UserService {
         return userToInvite;
     }
     async removefiend(id, myuserid) {
-        await this.prisma.user.update({
+        const myuser = await this.prisma.user.findUnique({
             where: {
-                id: id,
-            },
-            data: {
-                friends: {
-                    disconnect: [{ intrrid: myuserid }],
-                },
-                friendsRelation: {
-                    disconnect: [{ intrrid: myuserid }],
-                },
-            },
-            include: {
-                friends: true,
+                intrrid: myuserid,
             },
         });
+        try {
+            await this.prisma.user.update({
+                where: {
+                    id: id,
+                },
+                data: {
+                    friends: {
+                        disconnect: [{ intrrid: myuserid }],
+                    },
+                    friendsRelation: {
+                        disconnect: [{ intrrid: myuserid }],
+                    },
+                },
+                include: {
+                    friends: true,
+                },
+            });
+            const room = await this.prisma.user.findUnique({
+                where: {
+                    id: myuser.id,
+                },
+                select: {
+                    rooms: {
+                        where: {
+                            group: false,
+                        },
+                        select: {
+                            id: true,
+                            whoJoined: {
+                                where: {
+                                    intrrid: {
+                                        not: myuserid,
+                                    },
+                                },
+                                select: {
+                                    username: true,
+                                    image: true,
+                                    id: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+            console.log("room id is === ", room.rooms.at(0).id);
+            const room1 = await this.prisma.room.findUniqueOrThrow({
+                where: { id: room.rooms.at(0).id },
+                include: { messages: true, inbox: true },
+            });
+            await this.prisma.message.deleteMany({
+                where: {
+                    createdBy: {
+                        id: myuser.id,
+                    },
+                },
+            });
+            await this.prisma.message.deleteMany({
+                where: {
+                    createdBy: {
+                        id: id,
+                    },
+                },
+            });
+            await this.prisma.room.delete({
+                where: {
+                    id: room1.id,
+                },
+            });
+        }
+        catch (e) {
+            console.log(e);
+        }
     }
     async rfriends(id) {
         const user = await this.prisma.user.findUnique({

@@ -264,18 +264,22 @@ let RoomsService = class RoomsService {
         return "user joined successfully!";
     }
     async addRoomToInbox(roomId, userId) {
-        await this.prisma.inbox.update({
-            where: {
-                userId: userId,
-            },
-            data: {
-                rooms: {
-                    connect: {
-                        id: roomId,
+        try {
+            await this.prisma.inbox.update({
+                where: {
+                    userId: userId,
+                },
+                data: {
+                    rooms: {
+                        connect: {
+                            id: roomId,
+                        },
                     },
                 },
-            },
-        });
+            });
+        }
+        catch (e) {
+        }
     }
     async giveRoleToNewUser(roomId, userId) {
         const role = await this.prisma.role.update({

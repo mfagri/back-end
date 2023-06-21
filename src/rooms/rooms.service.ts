@@ -270,18 +270,25 @@ export class RoomsService {
   }
 
   async addRoomToInbox(roomId: number, userId: number) {
-    await this.prisma.inbox.update({
-      where: {
-        userId: userId,
-      },
-      data: {
-        rooms: {
-          connect: {
-            id: roomId,
+    try{
+
+      await this.prisma.inbox.update({
+        where: {
+          userId: userId,
+        },
+        data: {
+          rooms: {
+            connect: {
+              id: roomId,
+            },
           },
         },
-      },
-    });
+      });
+    }
+    catch(e)
+    {
+
+    }
   }
   
   async giveRoleToNewUser(roomId: number, userId: number) {
