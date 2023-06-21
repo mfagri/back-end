@@ -417,38 +417,20 @@ export class UserService {
           friends: true,
         },
       });
-      const room = await this.prisma.user.findUnique({
+      const room = await this.prisma.room.findFirst({
         where: {
-          id: myuser.id,
+          AND: [
+            { whoJoined: { some: { id: myuser.id } } },
+            { whoJoined: { some: { id: id } } },
+          ],
         },
-        select: {
-          rooms: {
-            where: {
-              group: false,
-            },
-            select: {
-              id: true,
-              whoJoined: {
-                where: {
-                  intrrid: {
-                    not: myuserid,
-                  },
-                },
-                select: {
-                  username: true,
-                  image: true,
-                  id: true,
-                },
-              },
-            },
-          },
-        },
+        include: { whoJoined: true },
       });
       // rooms: [ { id: 10, whoJoined: [Array] }, { id: 11, whoJoined: [Array] } ]
 
-      console.log("room id is === ", room.rooms.at(0).id);
+      console.log("room id is === ", room);
       const room1 = await this.prisma.room.findUniqueOrThrow({
-        where: { id: room.rooms.at(0).id },
+        where: { id: room.id },
         include: { messages: true, inbox: true },
       });
       // Delete the messages associated with the room
