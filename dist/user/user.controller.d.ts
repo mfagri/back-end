@@ -42,23 +42,23 @@ export declare class UserController {
     }>;
     getUserInbox(req: Request): Promise<{
         rooms: {
+            messages: {
+                createdAt: Date;
+                content: string;
+                createdBy: {
+                    username: string;
+                    id: number;
+                };
+            }[];
+            id: number;
             whoJoined: {
-                id: number;
                 username: string;
                 image: string;
                 profile: {
                     online: boolean;
                 };
+                id: number;
             }[];
-            messages: {
-                createdAt: Date;
-                content: string;
-                createdBy: {
-                    id: number;
-                    username: string;
-                };
-            }[];
-            id: number;
         }[];
     }>;
     deletreq(req: Request, iduser: string): Promise<void>;

@@ -105,6 +105,25 @@ let MyGateway = class MyGateway {
             });
             arr.map((element) => socket.to(element.element2).emit("cancelreq"));
         });
+        socket.on("sentMessage", async (data) => {
+            const isin = this.serv.myArray.find((obj) => {
+                return obj.element2 === socket.id;
+            });
+            console.log(isin);
+            if (!isin) {
+                console.log("i saw it coming from miles away");
+                return;
+            }
+            const user = await this.prisma.user.findUnique({
+                where: {
+                    id: data,
+                },
+            });
+            const arr = this.serv.myArray.filter((obj) => {
+                return obj.element1 === user.username;
+            });
+            arr.map((element) => socket.to(element.element2).emit("Gotmsg"));
+        });
     }
     async handleDisconnect(client) {
         const find = this.serv.myArray.find((obj) => {

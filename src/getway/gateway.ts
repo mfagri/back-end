@@ -173,6 +173,30 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
       arr.map((element) => socket.to(element.element2).emit("cancelreq"));
     });
 
+    socket.on("sentMessage", async (data) => {
+        // console.log("msg ", data);
+        const isin = this.serv.myArray.find((obj) => {
+            return obj.element2 === socket.id;
+          });
+          console.log(isin);
+          if (!isin) {
+            console.log("i saw it coming from miles away");
+            return;
+          }
+          const user = await this.prisma.user.findUnique({
+            where: {
+              id: data,
+            },
+          });
+        //   console.log("user chat",user);
+          const arr = this.serv.myArray.filter((obj) => {
+            return obj.element1 === user.username;
+          });
+    
+          arr.map((element) => socket.to(element.element2).emit("Gotmsg"));
+    })
+
+
     // socket.on("acceptReq", async (data) => {
     //     // console.log("hello you",socket.id)
     //     const isin = this.serv.myArray.find((obj) => {
