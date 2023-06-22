@@ -55,6 +55,11 @@ let UserService = class UserService {
                                 },
                             },
                         },
+                        messages: {
+                            select: {
+                                createdAt: true,
+                            },
+                        },
                     },
                 },
             },
@@ -68,8 +73,16 @@ let UserService = class UserService {
                 username: room.whoJoined.at(0).username,
                 online: room.whoJoined.at(0).profile.online,
                 image: room.whoJoined.at(0).image,
+                createdAt: room.messages.length > 0 ? room.messages[room.messages.length - 1].createdAt : null,
             };
             i++;
+        });
+        test.sort((a, b) => {
+            if (a.createdAt === null)
+                return 1;
+            if (b.createdAt === null)
+                return -1;
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         });
         return test;
     }

@@ -27,52 +27,6 @@ export class UserService {
   myArray: MyObject[] = [];
 
   async getUserConversationInbox(userId: string) {
-    // let inbox = await this.prisma.user.findUnique({
-    //   where: { intrrid: userId },
-    //   select: {
-    //     rooms: {
-    //       where: {
-    //         group: false,
-    //       },
-    //       select: {
-    //         id: true,
-    //         whoJoined: {
-    //           where: {
-    //             intrrid: {
-    //               not: userId,
-    //             },
-    //           },
-    //           select: {
-    //             username: true,
-    //             image: true,
-    //             id: true,
-    //             profile: {
-    //               select: {
-    //                 online: true,
-    //               },
-    //             },
-    //           },
-    //         },
-    //         messages: {
-    //           select: {
-    //             createdAt: true,
-    //             createdBy: {
-    //               select: {
-    //                 username: true,
-    //                 id: true,
-    //               },
-    //             },
-    //             content: true,
-    //           },
-    //           orderBy: {
-    //             createdAt: "desc",
-    //           },
-    //           take: 1,
-    //         },
-    //       },
-    //     },
-    //   },
-    // });
     let inbox11 = await this.prisma.user.findUnique({
       where: { intrrid: userId },
       include: {
@@ -99,47 +53,41 @@ export class UserService {
                 },
               },
             },
+            messages: {
+              select: {
+                createdAt: true,
+              },
+            },
           },
         },
       },
     });
-    let test:any[] = [];
-    let i:number = 0;
-   inbox11.rooms.map((room) => 
-      {
-        test[i] = {
-          roomId: room.id,
-          receiverId: room.whoJoined.at(0).id,
-          username: room.whoJoined.at(0).username,
-          online: room.whoJoined.at(0).profile.online,
-          image: room.whoJoined.at(0).image,
-        };
-        i++;
-      }
-    )
-      // console.log(test)
-    // const check_inbox = await this.prisma.user.findUnique({
-    //   where: { intrrid: userId },
-    //   select: {
-    //     rooms: {
-    //       select: {
-    //         group: true,
-    //         whoJoined: {
-    //           select: {
-    //             image: true,
-    //           },
-    //         },
-    //       },
-    //     },
-    //   },
-    // });
-
-    // if (!check_inbox)
-    //   throw new NotFoundException("No inbox found for this user");
-
-    // for (let i = 0; i < check_inbox.rooms.length; i++) {}
-      return test;
+  
+    let test: any[] = [];
+    let i: number = 0;
+  
+    inbox11.rooms.map((room) => {
+      test[i] = {
+        roomId: room.id,
+        receiverId: room.whoJoined.at(0).id,
+        username: room.whoJoined.at(0).username,
+        online: room.whoJoined.at(0).profile.online,
+        image: room.whoJoined.at(0).image,
+        createdAt: room.messages.length > 0 ? room.messages[room.messages.length - 1].createdAt : null,
+      };
+      i++;
+    });
+  
+    // Sort the test array based on the createdAt property
+    test.sort((a, b) => {
+      if (a.createdAt === null) return 1; // Move conversations without messages to the end
+      if (b.createdAt === null) return -1; // Move conversations without messages to the end
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  
+    return test;
   }
+  
   // async getUserConversationInbox(userId: string) {
   //   let inbox = await this.prisma.user.findUnique({
   //     where: {intrrid: userId},
