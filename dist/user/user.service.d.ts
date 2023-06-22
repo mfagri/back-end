@@ -9,22 +9,22 @@ export declare class UserService {
     myArray: MyObject[];
     getUserConversationInbox(userId: string): Promise<{
         rooms: {
-            id: number;
-            whoJoined: {
-                id: number;
-                profile: {
-                    online: boolean;
-                };
-                username: string;
-                image: string;
-            }[];
             messages: {
                 createdAt: Date;
                 content: string;
                 createdBy: {
-                    id: number;
                     username: string;
+                    id: number;
                 };
+            }[];
+            id: number;
+            whoJoined: {
+                username: string;
+                image: string;
+                profile: {
+                    online: boolean;
+                };
+                id: number;
             }[];
         }[];
     }>;
