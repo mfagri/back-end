@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { Exclude } from "class-transformer";
 import { createConversationDto } from "src/dto/room/createConversationDto";
 // import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "src/prisma/prisma.service";
@@ -6,6 +7,7 @@ import { RoomsService } from "src/rooms/rooms.service";
 import { MyObject } from "src/test";
 
 // import { v4 as uuidv4 } from 'uuid';
+
 @Injectable()
 export class UserService {
   constructor(
@@ -25,9 +27,55 @@ export class UserService {
   myArray: MyObject[] = [];
 
   async getUserConversationInbox(userId: string) {
-    let inbox = await this.prisma.user.findUnique({
+    // let inbox = await this.prisma.user.findUnique({
+    //   where: { intrrid: userId },
+    //   select: {
+    //     rooms: {
+    //       where: {
+    //         group: false,
+    //       },
+    //       select: {
+    //         id: true,
+    //         whoJoined: {
+    //           where: {
+    //             intrrid: {
+    //               not: userId,
+    //             },
+    //           },
+    //           select: {
+    //             username: true,
+    //             image: true,
+    //             id: true,
+    //             profile: {
+    //               select: {
+    //                 online: true,
+    //               },
+    //             },
+    //           },
+    //         },
+    //         messages: {
+    //           select: {
+    //             createdAt: true,
+    //             createdBy: {
+    //               select: {
+    //                 username: true,
+    //                 id: true,
+    //               },
+    //             },
+    //             content: true,
+    //           },
+    //           orderBy: {
+    //             createdAt: "desc",
+    //           },
+    //           take: 1,
+    //         },
+    //       },
+    //     },
+    //   },
+    // });
+    let inbox11 = await this.prisma.user.findUnique({
       where: { intrrid: userId },
-      select: {
+      include: {
         rooms: {
           where: {
             group: false,
@@ -41,9 +89,9 @@ export class UserService {
                 },
               },
               select: {
+                id: true,
                 username: true,
                 image: true,
-                id: true,
                 profile: {
                   select: {
                     online: true,
@@ -51,47 +99,46 @@ export class UserService {
                 },
               },
             },
-            messages: {
-              select: {
-                createdAt: true,
-                createdBy: {
-                  select: {
-                    username: true,
-                    id: true,
-                  },
-                },
-                content: true,
-              },
-              orderBy: {
-                createdAt: "desc",
-              },
-              take: 1,
-            },
           },
         },
       },
     });
-    const check_inbox = await this.prisma.user.findUnique({
-      where: { intrrid: userId },
-      select: {
-        rooms: {
-          select: {
-            group: true,
-            whoJoined: {
-              select: {
-                image: true,
-              },
-            },
-          },
-        },
-      },
-    });
+    let test:any[] = [];
+    let i:number = 0;
+   inbox11.rooms.map((room) => 
+      {
+        test[i] = {
+          roomId: room.id,
+          receiverId: room.whoJoined.at(0).id,
+          username: room.whoJoined.at(0).username,
+          online: room.whoJoined.at(0).profile.online,
+          image: room.whoJoined.at(0).image,
+        };
+        i++;
+      }
+    )
+      // console.log(test)
+    // const check_inbox = await this.prisma.user.findUnique({
+    //   where: { intrrid: userId },
+    //   select: {
+    //     rooms: {
+    //       select: {
+    //         group: true,
+    //         whoJoined: {
+    //           select: {
+    //             image: true,
+    //           },
+    //         },
+    //       },
+    //     },
+    //   },
+    // });
 
-    if (!check_inbox)
-      throw new NotFoundException("No inbox found for this user");
+    // if (!check_inbox)
+    //   throw new NotFoundException("No inbox found for this user");
 
-    for (let i = 0; i < check_inbox.rooms.length; i++) {}
-    return inbox;
+    // for (let i = 0; i < check_inbox.rooms.length; i++) {}
+      return test;
   }
   // async getUserConversationInbox(userId: string) {
   //   let inbox = await this.prisma.user.findUnique({

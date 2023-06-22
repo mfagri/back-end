@@ -7,27 +7,7 @@ export declare class UserService {
     constructor(prisma: PrismaService, roomService: RoomsService);
     findByid(id: number): Promise<import(".prisma/client").User>;
     myArray: MyObject[];
-    getUserConversationInbox(userId: string): Promise<{
-        rooms: {
-            messages: {
-                createdAt: Date;
-                content: string;
-                createdBy: {
-                    username: string;
-                    id: number;
-                };
-            }[];
-            id: number;
-            whoJoined: {
-                username: string;
-                image: string;
-                profile: {
-                    online: boolean;
-                };
-                id: number;
-            }[];
-        }[];
-    }>;
+    getUserConversationInbox(userId: string): Promise<any[]>;
     addFriend(userId: string, friendId: number): Promise<import(".prisma/client").User>;
     getFriendRequest(userId: string): Promise<import(".prisma/client").User[]>;
     getFriendsendRequest(userId: number): Promise<import(".prisma/client").User[]>;

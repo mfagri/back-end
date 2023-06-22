@@ -29,9 +29,9 @@ let UserService = class UserService {
         return user;
     }
     async getUserConversationInbox(userId) {
-        let inbox = await this.prisma.user.findUnique({
+        let inbox11 = await this.prisma.user.findUnique({
             where: { intrrid: userId },
-            select: {
+            include: {
                 rooms: {
                     where: {
                         group: false,
@@ -45,9 +45,9 @@ let UserService = class UserService {
                                 },
                             },
                             select: {
+                                id: true,
                                 username: true,
                                 image: true,
-                                id: true,
                                 profile: {
                                     select: {
                                         online: true,
@@ -55,45 +55,23 @@ let UserService = class UserService {
                                 },
                             },
                         },
-                        messages: {
-                            select: {
-                                createdAt: true,
-                                createdBy: {
-                                    select: {
-                                        username: true,
-                                        id: true,
-                                    },
-                                },
-                                content: true,
-                            },
-                            orderBy: {
-                                createdAt: "desc",
-                            },
-                            take: 1,
-                        },
                     },
                 },
             },
         });
-        const check_inbox = await this.prisma.user.findUnique({
-            where: { intrrid: userId },
-            select: {
-                rooms: {
-                    select: {
-                        group: true,
-                        whoJoined: {
-                            select: {
-                                image: true,
-                            },
-                        },
-                    },
-                },
-            },
+        let test = [];
+        let i = 0;
+        inbox11.rooms.map((room) => {
+            test[i] = {
+                roomId: room.id,
+                receiverId: room.whoJoined.at(0).id,
+                username: room.whoJoined.at(0).username,
+                online: room.whoJoined.at(0).profile.online,
+                image: room.whoJoined.at(0).image,
+            };
+            i++;
         });
-        if (!check_inbox)
-            throw new common_1.NotFoundException("No inbox found for this user");
-        for (let i = 0; i < check_inbox.rooms.length; i++) { }
-        return inbox;
+        return test;
     }
     async addFriend(userId, friendId) {
         const data = await this.prisma.user.findUnique({
