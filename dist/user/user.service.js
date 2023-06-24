@@ -141,6 +141,14 @@ let UserService = class UserService {
                 requestedBy: true,
             },
         });
+        await this.prisma.user.update({
+            where: {
+                intrrid: userId,
+            },
+            data: {
+                notif: false
+            }
+        });
         return user.requestedBy;
     }
     async getFriendsendRequest(userId) {
@@ -252,9 +260,11 @@ let UserService = class UserService {
             const updatedUser = await this.prisma.user.update({
                 where: { id: userId },
                 data: {
+                    notif: true,
                     requestedBy: { connect: { intrrid: inviterId } },
                 },
             });
+            console.log("9alwa", updatedUser);
         }
         catch (error) {
             console.error(error);

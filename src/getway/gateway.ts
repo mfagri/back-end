@@ -27,7 +27,7 @@ import { async } from "rxjs";
   },
   credentials: true,
 })
-@Injectable()
+// @Injectable()
 export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly prisma: PrismaService,

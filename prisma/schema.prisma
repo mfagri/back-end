@@ -26,6 +26,7 @@ model User {
   request         User[]    @relation("request")
   requestedBy     User[]    @relation("request")
   ///
+  notif Boolean @default(false)
   inbox           Inbox?
   rooms           Room[]    @relation("whojoined")
   messages        Message[]
