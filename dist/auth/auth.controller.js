@@ -25,8 +25,10 @@ let AuthController = class AuthController {
         this.authService = authService;
         this.jwtService = jwtService;
     }
-    signup(req, dto, q) {
-        console.log("no way", req.cookies['authcookie']);
+    signup(res, req, dto, q) {
+        console.log(dto);
+        console.log(dto.auth);
+        res.redirect();
         return this.authService.signup(dto, req.cookies['authcookie']);
     }
     async getProfile(req, a) {
@@ -69,11 +71,12 @@ let AuthController = class AuthController {
 };
 __decorate([
     (0, common_1.Post)('signup'),
-    __param(0, (0, common_1.Req)()),
-    __param(1, (0, common_1.Body)()),
-    __param(2, (0, common_1.Query)()),
+    __param(0, (0, common_1.Res)()),
+    __param(1, (0, common_1.Req)()),
+    __param(2, (0, common_1.Body)()),
+    __param(3, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, auth_1.AuthDto, Object]),
+    __metadata("design:paramtypes", [Object, Object, auth_1.AuthDto, Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "signup", null);
 __decorate([

@@ -264,7 +264,6 @@ let UserService = class UserService {
                     requestedBy: { connect: { intrrid: inviterId } },
                 },
             });
-            console.log("9alwa", updatedUser);
         }
         catch (error) {
             console.error(error);

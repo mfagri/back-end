@@ -11,7 +11,7 @@ export class AuthDto {
   image: string;
   // @IsString()
   // @IsNotEmpty()
-  auth: string;
+  auth: boolean;
   // @IsString()
   // @IsNotEmpty()
   token: string;

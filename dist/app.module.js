@@ -19,6 +19,9 @@ const user_module_1 = require("./user/user.module");
 const token_sever_1 = require("./auth/token.sever");
 const messages_module_1 = require("./messages/messages.module");
 const rooms_module_1 = require("./rooms/rooms.module");
+const mailing_module_1 = require("./mailing/mailing.module");
+const handlebars_adapter_1 = require("@nestjs-modules/mailer/dist/adapters/handlebars.adapter");
+const mailer_1 = require("@nestjs-modules/mailer");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -33,6 +36,20 @@ AppModule = __decorate([
             user_module_1.userModule,
             messages_module_1.MessagesModule,
             rooms_module_1.RoomsModule,
+            mailing_module_1.MailingModule,
+            config_1.ConfigModule.forRoot({
+                isGlobal: true,
+            }),
+            mailer_1.MailerModule.forRoot({
+                transport: 'smtps://user@domain.com:pass@smtp.domain.com',
+                template: {
+                    dir: process.cwd() + '/templates/',
+                    adapter: new handlebars_adapter_1.HandlebarsAdapter(),
+                    options: {
+                        strict: true,
+                    },
+                },
+            }),
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService, fortytwo_strategy_1.Strategy42, serilizer_1.Serializer, token_sever_1.TokenService],

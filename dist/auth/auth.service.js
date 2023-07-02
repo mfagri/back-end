@@ -15,12 +15,14 @@ const prisma_service_1 = require("../prisma/prisma.service");
 const fortytwo_strategy_1 = require("./fortytwo.strategy");
 const jwt_1 = require("@nestjs/jwt");
 const token_sever_1 = require("./token.sever");
+const mailer_1 = require("@nestjs-modules/mailer");
 let AuthService = class AuthService {
-    constructor(prisma, s42, jwtService, tokenService) {
+    constructor(prisma, s42, jwtService, tokenService, mailerService) {
         this.prisma = prisma;
         this.s42 = s42;
         this.jwtService = jwtService;
         this.tokenService = tokenService;
+        this.mailerService = mailerService;
     }
     async userfind(user1) {
         const user = await this.prisma.user.findUnique({
@@ -66,6 +68,7 @@ let AuthService = class AuthService {
             return user;
         }
         catch (e) {
+            console.log(e);
             if (e.code === "P2002") {
                 throw new common_1.ForbiddenException("User already exist");
             }
@@ -83,7 +86,7 @@ let AuthService = class AuthService {
 };
 AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService, fortytwo_strategy_1.Strategy42, jwt_1.JwtService, token_sever_1.TokenService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService, fortytwo_strategy_1.Strategy42, jwt_1.JwtService, token_sever_1.TokenService, mailer_1.MailerService])
 ], AuthService);
 exports.AuthService = AuthService;
 //# sourceMappingURL=auth.service.js.map

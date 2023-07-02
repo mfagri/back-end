@@ -38,5 +38,5 @@ export declare class UserService {
     cancelreqest(myuserid: string, userid: number): Promise<import(".prisma/client").User & {
         requestedBy: import(".prisma/client").User[];
     }>;
-    deletreq(myuserid: string, userid: number): Promise<string>;
+    deletreq(myuserid: string, userid: number): Promise<boolean>;
 }

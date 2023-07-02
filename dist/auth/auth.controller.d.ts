@@ -6,7 +6,7 @@ export declare class AuthController {
     private authService;
     private jwtService;
     constructor(authService: AuthService, jwtService: JwtService);
-    signup(req: any, dto: AuthDto, q: any): Promise<import(".prisma/client").User>;
+    signup(res: any, req: any, dto: AuthDto, q: any): Promise<import(".prisma/client").User>;
     getProfile(req: any, a: any): Promise<import(".prisma/client").User>;
     fortyTwoAuth(): Promise<void>;
     logout(res: Response): Promise<void>;

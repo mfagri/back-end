@@ -17,7 +17,7 @@ let Strategy42 = class Strategy42 extends (0, passport_1.PassportStrategy)(passp
     constructor() {
         super({
             clientID: "u-s4t2ud-d2078e9c2d7ea34d37a5adffa013cee9c2715889268480c4eba8a13a93ec6469",
-            clientSecret: "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",
+            clientSecret: "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",
             callbackURL: "http://localhost:5000/auth/callback",
             scope: 'public',
             Profile: {}

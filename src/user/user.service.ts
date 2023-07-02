@@ -388,10 +388,6 @@ export class UserService {
 
         },
       });
-      
-      console.log(
-       "9alwa",updatedUser
-      );
     } catch (error) {
       console.error(error);
     }

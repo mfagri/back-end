@@ -105,7 +105,7 @@ let MyGateway = class MyGateway {
             });
             arr.map((element) => socket.to(element.element2).emit("cancelreq"));
         });
-        socket.on("sendMessage", async ({ messageContent, userId, receiverId }) => {
+        socket.on("sendMessage", async ({ messageContent, userId, receiverId, roomId }) => {
             const user = await this.prisma.user.findUnique({
                 where: {
                     id: receiverId,
@@ -117,6 +117,7 @@ let MyGateway = class MyGateway {
             arr.forEach((element) => {
                 socket.to(element.element2).emit("Getmsg", {
                     userId,
+                    roomId,
                     messageContent,
                 });
             });

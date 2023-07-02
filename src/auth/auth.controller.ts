@@ -19,7 +19,7 @@ export class AuthController {
   //   return this.authService.login(dto);
   // }
   @Post('signup')
-  signup(@Req() req ,@Body() dto: AuthDto,@Query() q,) {
+  signup(@Res() res,@Req() req ,@Body() dto: AuthDto,@Query() q,) {
     // {
     //   id: '93909',
     //   mytoken: {
@@ -27,8 +27,11 @@ export class AuthController {
     //     refreshtoken: '21589e5b16809dd820d01cea599e7ae6db79b586450e9843a4dec4e4bcafb81b'
     //   }
     // }
-    console.log("no way",req.cookies['authcookie']);
-    return this.authService.signup(dto,req.cookies['authcookie']);
+    console.log(dto)
+    console.log(dto.auth)
+    
+      res.redirect()
+      return this.authService.signup(dto,req.cookies['authcookie']);
   }
   
   // console.log()
@@ -74,6 +77,7 @@ export class AuthController {
 
     // res.cookie('authcookie', '', { expires: new Date() });
   }
+
   @UseGuards(AuthGuard42)
   // @UseGuards(AuthGuard('42')) // Replace '42' with the appropriate strategy name
   @Get('/callback')

@@ -19,7 +19,7 @@ model User {
   username        String?   @unique
   image           String?
   intrrid         String    @unique
-  auth            String?   @unique
+  auth            Boolean?  @default(false)
   profile         Profile?
   friends         User[]    @relation("friends")
   friendsRelation User[]    @relation("friends")

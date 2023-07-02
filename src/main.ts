@@ -45,7 +45,7 @@ async function bootstrap() {
   });
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,
+      // whitelist: true,
     }),
   );
   app.use(json({ limit: '50mb' }));
