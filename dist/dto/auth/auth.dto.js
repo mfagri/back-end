@@ -14,10 +14,6 @@ const class_validator_1 = require("class-validator");
 class AuthDto {
 }
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], AuthDto.prototype, "email", void 0);
-__decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)

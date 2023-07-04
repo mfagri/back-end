@@ -26,11 +26,16 @@ let AuthController = class AuthController {
         this.authService = authService;
         this.jwtService = jwtService;
     }
-    async googleauth(dto) {
-        return await (0, index_1.getqrcode)((0, index_1.generatsecret)(dto.username));
+    async googleauth() {
+        return await (0, index_1.getqrcode)((0, index_1.generatsecret)("2FA"));
+    }
+    verfey(data) {
+        console.log(data);
+        var s = (0, index_1.validepass)(data.secret, data.code);
+        return s;
     }
     async signup(req, dto, q) {
-        console.log(await (0, index_1.getqrcode)((0, index_1.generatsecret)(dto.username)));
+        console.log(dto);
         return this.authService.signup(dto, req.cookies['authcookie']);
     }
     async getProfile(req, a) {
@@ -72,12 +77,18 @@ let AuthController = class AuthController {
     }
 };
 __decorate([
+    (0, common_1.Get)('2FA'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "googleauth", null);
+__decorate([
     (0, common_1.Post)('2FA'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_1.AuthDto]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "googleauth", null);
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "verfey", null);
 __decorate([
     (0, common_1.Post)('signup'),
     __param(0, (0, common_1.Req)()),

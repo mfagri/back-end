@@ -103,7 +103,7 @@ export class AuthService {
     try {
       const user = await this.prisma.user.create({
         data: {
-          email: dto.email,
+          email: 'dto.email',
           username: dto.username,
           auth: dto.auth,
           intrrid: cookie.id,
@@ -112,7 +112,7 @@ export class AuthService {
                       create: {
                         image: dto.image,
                         username: dto.username,
-                        email: dto.email,
+                        email: '',
                       }
                     }
         },

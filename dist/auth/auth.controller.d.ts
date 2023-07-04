@@ -6,7 +6,11 @@ export declare class AuthController {
     private authService;
     private jwtService;
     constructor(authService: AuthService, jwtService: JwtService);
-    googleauth(dto: AuthDto): Promise<unknown>;
+    googleauth(): Promise<unknown>;
+    verfey(data: {
+        secret: string;
+        code: string;
+    }): any;
     signup(req: any, dto: AuthDto, q: any): Promise<import(".prisma/client").User>;
     getProfile(req: any, a: any): Promise<import(".prisma/client").User>;
     fortyTwoAuth(): Promise<void>;
