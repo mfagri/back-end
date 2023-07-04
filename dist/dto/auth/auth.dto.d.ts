@@ -4,4 +4,5 @@ export declare class AuthDto {
     image: string;
     auth: boolean;
     token: string;
+    code: string;
 }

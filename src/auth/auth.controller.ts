@@ -8,6 +8,7 @@ import { Response } from 'express';
 import { AuthGuard42 } from './auth.guard42';
 import { jwtConstants } from './constants';
 import {Server, Socket} from "socket.io"
+import {generatsecret,getqrcode} from '../2FA/index';
 const App = require('express')
 
 
@@ -18,8 +19,18 @@ export class AuthController {
   // login(@Body() dto: AuthDto) {
   //   return this.authService.login(dto);
   // }
+  @Post('2FA')
+  async googleauth(@Body() dto: AuthDto)
+  {
+    return await getqrcode(generatsecret(dto.username))
+  }
+  // @Get('2FA')
+  // verfey(@Query('id') q)
+  // {
+
+  // }
   @Post('signup')
-  signup(@Res() res,@Req() req ,@Body() dto: AuthDto,@Query() q,) {
+  async signup(@Req() req ,@Body() dto: AuthDto,@Query() q,) {
     // {
     //   id: '93909',
     //   mytoken: {
@@ -27,10 +38,13 @@ export class AuthController {
     //     refreshtoken: '21589e5b16809dd820d01cea599e7ae6db79b586450e9843a4dec4e4bcafb81b'
     //   }
     // }
-    console.log(dto)
-    console.log(dto.auth)
-    
-      res.redirect()
+
+    // if(dto.auth === true)
+    // {
+    //   ///verfy
+    // }
+    console.log(await getqrcode(generatsecret(dto.username)))
+    // console.log(dto.auth)
       return this.authService.signup(dto,req.cookies['authcookie']);
   }
   

@@ -15,4 +15,6 @@ export class AuthDto {
   // @IsString()
   // @IsNotEmpty()
   token: string;
+
+  code: string;
 }

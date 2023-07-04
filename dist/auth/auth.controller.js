@@ -19,16 +19,18 @@ const auth_service_1 = require("./auth.service");
 const jwt_1 = require("@nestjs/jwt");
 const auth_guard42_1 = require("./auth.guard42");
 const constants_1 = require("./constants");
+const index_1 = require("../2FA/index");
 const App = require('express');
 let AuthController = class AuthController {
     constructor(authService, jwtService) {
         this.authService = authService;
         this.jwtService = jwtService;
     }
-    signup(res, req, dto, q) {
-        console.log(dto);
-        console.log(dto.auth);
-        res.redirect();
+    async googleauth(dto) {
+        return await (0, index_1.getqrcode)((0, index_1.generatsecret)(dto.username));
+    }
+    async signup(req, dto, q) {
+        console.log(await (0, index_1.getqrcode)((0, index_1.generatsecret)(dto.username)));
         return this.authService.signup(dto, req.cookies['authcookie']);
     }
     async getProfile(req, a) {
@@ -70,14 +72,20 @@ let AuthController = class AuthController {
     }
 };
 __decorate([
-    (0, common_1.Post)('signup'),
-    __param(0, (0, common_1.Res)()),
-    __param(1, (0, common_1.Req)()),
-    __param(2, (0, common_1.Body)()),
-    __param(3, (0, common_1.Query)()),
+    (0, common_1.Post)('2FA'),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object, auth_1.AuthDto, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [auth_1.AuthDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "googleauth", null);
+__decorate([
+    (0, common_1.Post)('signup'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, auth_1.AuthDto, Object]),
+    __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signup", null);
 __decorate([
     (0, common_1.Get)('profile'),
