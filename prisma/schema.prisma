@@ -15,7 +15,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  email           String?   @unique
+  // email           String?   @unique
   username        String?   @unique
   image           String?
   intrrid         String    @unique

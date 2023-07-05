@@ -17,7 +17,7 @@ async function getqrcode(secret) {
                 reject(err);
             }
             else {
-                resolve({ "qrcode": data, "secret": secret });
+                resolve({ "qrcode": data, "secret": secret.base32 });
             }
         });
     });
@@ -25,7 +25,7 @@ async function getqrcode(secret) {
 exports.getqrcode = getqrcode;
 function validepass(secret, mytoken) {
     var tokenValidates = speakeasy.totp.verify({
-        secret: secret.base32,
+        secret: secret,
         encoding: 'base32',
         token: mytoken,
         window: 6

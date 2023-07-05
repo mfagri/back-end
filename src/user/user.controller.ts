@@ -133,7 +133,6 @@ export class UserController {
   }
   @Get("cancel")
   async cancelreq(@Query("id") iduser: string, @Req() req: Request) {
-    // console.log("hereeeeeeeeeeeeee");
     const numericId = parseInt(iduser, 10);
     
     const data = await this.jwtService.verifyAsync(
@@ -203,9 +202,6 @@ export class UserController {
   }
   @Get("showprofile")
   async showprofile(@Query("username") username: string, @Req() req: Request) {
-    console.log("here", req.cookies["authcookie"]["access_token"]);
-
-    console.log("in show profie");
     const data = await this.jwtService.verifyAsync(
       req.cookies["authcookie"]["access_token"],
 
@@ -214,10 +210,6 @@ export class UserController {
         ignoreExpiration: true,
       }
     );
-    console.log(data);
-    console.log("in show profie2");
-
-    // const numericId = parseInt(data.id, 10);
     return this.userService.getprofile(username, data.id);
   }
 
@@ -241,7 +233,6 @@ export class UserController {
   @Get("deletreq")
   async deletreq(@Req() req: Request,@Query("id") iduser: string,)
   {
-    console.log("here");
     const data = await this.jwtService.verifyAsync(
       req.cookies["authcookie"]["access_token"],
 

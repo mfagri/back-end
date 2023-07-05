@@ -39,9 +39,7 @@ let AuthController = class AuthController {
         return this.authService.signup(dto, req.cookies['authcookie']);
     }
     async getProfile(req, a) {
-        console.log("sasa");
         a.authenticated = true;
-        console.log("in profile we see this sheat", req.cookies['authcookie']);
         try {
             const data = await this.jwtService.verifyAsync(req.cookies['authcookie']['access_token'], {
                 secret: constants_1.jwtConstants.secret,
@@ -59,15 +57,10 @@ let AuthController = class AuthController {
         res.clearCookie('authcookie', { expires: new Date() });
     }
     async fortyTwoAuthRedirect(a, req, res) {
-        console.log("i get this", req.user);
         a.authenticated = true;
-        console.log("========", req.user.id);
         const user = await this.authService.userfind(req.user);
-        console.log(user);
-        console.log("here");
         res.cookie('authcookie', req.user, {});
         if (!user) {
-            console.log('go to register page');
             return res.redirect('http://localhost:3000/register');
         }
         else {

@@ -68,6 +68,7 @@ let MyGateway = class MyGateway {
             }
         });
         socket.on("addUser", async (data) => {
+            console.log("data = {", data);
             const isin = this.serv.myArray.find((obj) => {
                 return obj.element2 === socket.id;
             });
@@ -76,11 +77,17 @@ let MyGateway = class MyGateway {
                 console.log("i saw it coming from miles away");
                 return;
             }
+            const profile = await this.prisma.profile.findUnique({
+                where: {
+                    id: data
+                }
+            });
             const user = await this.prisma.user.findUnique({
                 where: {
-                    id: data,
+                    id: profile.Userid,
                 },
             });
+            console.log("user = ", user);
             const arr = this.serv.myArray.filter((obj) => {
                 return obj.element1 === user.username;
             });

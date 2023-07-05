@@ -56,11 +56,7 @@ export class AuthController {
   @Get('profile')
   // @UseGuards(AuthGuardJWS)
   async getProfile(@Req() req,@Session() a) { 
-    console.log("sasa");
     a.authenticated = true;
-    // console.log(req)
-    // this.authService÷
-    console.log("in profile we see this sheat",req.cookies['authcookie']);
     try{
       const data = await this.jwtService.verifyAsync(req.cookies['authcookie']['access_token']
       
@@ -99,31 +95,19 @@ export class AuthController {
   // @UseGuards(AuthGuard('42')) // Replace '42' with the appropriate strategy name
   @Get('/callback')
   async fortyTwoAuthRedirect(@Session() a ,@Request() req, @Res() res: Response) {
-    // if user exist
-    console.log("i get this",req.user);
     a.authenticated = true;
-      //42=>req.user{acc& ref} =>req.usrif login else signup 
-    console.log("========",req.user.id)
     const user = await this.authService.userfind(req.user);//user
-    console.log(user);
-    console.log("here");
+
     res.cookie('authcookie',req.user, {
-      // httpOnly: true,
-      // secure: true,
     });
     if(!user)
     {
-      console.log('go to register page');
       return res.redirect('http://localhost:3000/register');
     }
     else
     {
       res.cookie('authcookie',user);
-      // // console.log(res);
       return res.redirect('http://localhost:3000/')
     }
-    // console.log(user);
-    // const cookie = req.cookies
-    // console.log(cookie)
   }
 }

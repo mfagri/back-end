@@ -114,14 +114,10 @@ let UserController = class UserController {
         }
     }
     async showprofile(username, req) {
-        console.log("here", req.cookies["authcookie"]["access_token"]);
-        console.log("in show profie");
         const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
             secret: constants_1.jwtConstants.secret,
             ignoreExpiration: true,
         });
-        console.log(data);
-        console.log("in show profie2");
         return this.userService.getprofile(username, data.id);
     }
     async getUserInbox(req) {
@@ -133,7 +129,6 @@ let UserController = class UserController {
         return this.userService.getUserConversationInbox(data.id);
     }
     async deletreq(req, iduser) {
-        console.log("here");
         const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
             secret: constants_1.jwtConstants.secret,
             ignoreExpiration: true,

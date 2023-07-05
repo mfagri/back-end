@@ -19,16 +19,16 @@
         if (err) {
           reject(err);
         } else {
-          resolve({"qrcode":data,"secret": secret});
+          resolve({"qrcode":data,"secret": secret.base32});
         }
       });
     });
   }
   
-  export function validepass(secret: any,mytoken: string)
+  export function validepass(secret: string,mytoken: string)
   {
     var tokenValidates = speakeasy.totp.verify({
-      secret: secret.base32,
+      secret: secret,
       encoding: 'base32',
       token: mytoken,
       window: 6

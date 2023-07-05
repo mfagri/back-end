@@ -129,7 +129,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
       // socket.to(user.auth).emit("receiveNotif");
     });
     socket.on("addUser", async (data) => {
-      // console.log("hello you",socket.id)
+      console.log("data = {",data)
 
       const isin = this.serv.myArray.find((obj) => {
         return obj.element2 === socket.id;
@@ -139,11 +139,17 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
         console.log("i saw it coming from miles away");
         return;
       }
+      const profile = await this.prisma.profile.findUnique({
+        where:{
+          id:data
+        }
+      })
       const user = await this.prisma.user.findUnique({
         where: {
-          id: data,
+          id: profile.Userid,
         },
       });
+      console.log("user = " ,user)
       const arr = this.serv.myArray.filter((obj) => {
         return obj.element1 === user.username;
       });
