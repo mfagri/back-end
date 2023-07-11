@@ -20,7 +20,7 @@ const jwt_1 = require("@nestjs/jwt");
 const auth_guard42_1 = require("./auth.guard42");
 const constants_1 = require("./constants");
 const index_1 = require("../2FA/index");
-const App = require('express');
+const App = require("express");
 let AuthController = class AuthController {
     constructor(authService, jwtService) {
         this.authService = authService;
@@ -35,55 +35,54 @@ let AuthController = class AuthController {
         return s;
     }
     async signup(req, dto, q) {
-        console.log(dto);
-        return this.authService.signup(dto, req.cookies['authcookie']);
+        return this.authService.signup(dto, req.cookies["authcookie"]);
     }
     async getProfile(req, a) {
         a.authenticated = true;
         try {
-            const data = await this.jwtService.verifyAsync(req.cookies['authcookie']['access_token'], {
+            const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
                 secret: constants_1.jwtConstants.secret,
             });
             return this.authService.findone(data.id);
         }
         catch (e) {
-            throw new common_1.ForbiddenException('no user here');
+            throw new common_1.ForbiddenException("no user here");
         }
     }
     async fortyTwoAuth() {
-        console.log('42 login');
+        console.log("42 login");
     }
     async logout(res) {
-        res.clearCookie('authcookie', { expires: new Date() });
+        res.clearCookie("authcookie", { expires: new Date() });
     }
     async fortyTwoAuthRedirect(a, req, res) {
         a.authenticated = true;
         const user = await this.authService.userfind(req.user);
-        res.cookie('authcookie', req.user, {});
+        res.cookie("authcookie", req.user, {});
         if (!user) {
-            return res.redirect('http://localhost:3000/register');
+            return res.redirect("http://localhost:3000/register");
         }
         else {
-            res.cookie('authcookie', user);
-            return res.redirect('http://localhost:3000/');
+            res.cookie("authcookie", user);
+            return res.redirect("http://localhost:3000/");
         }
     }
 };
 __decorate([
-    (0, common_1.Get)('2FA'),
+    (0, common_1.Get)("2FA"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "googleauth", null);
 __decorate([
-    (0, common_1.Post)('2FA'),
+    (0, common_1.Post)("2FA"),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "verfey", null);
 __decorate([
-    (0, common_1.Post)('signup'),
+    (0, common_1.Post)("signup"),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Query)()),
@@ -92,7 +91,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signup", null);
 __decorate([
-    (0, common_1.Get)('profile'),
+    (0, common_1.Get)("profile"),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Session)()),
     __metadata("design:type", Function),
@@ -101,13 +100,13 @@ __decorate([
 ], AuthController.prototype, "getProfile", null);
 __decorate([
     (0, common_1.UseGuards)(auth_guard42_1.AuthGuard42),
-    (0, common_1.Get)('42'),
+    (0, common_1.Get)("42"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "fortyTwoAuth", null);
 __decorate([
-    (0, common_1.Get)('logout'),
+    (0, common_1.Get)("logout"),
     __param(0, (0, common_1.Res)({ passthrough: true })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -115,7 +114,7 @@ __decorate([
 ], AuthController.prototype, "logout", null);
 __decorate([
     (0, common_1.UseGuards)(auth_guard42_1.AuthGuard42),
-    (0, common_1.Get)('/callback'),
+    (0, common_1.Get)("/callback"),
     __param(0, (0, common_1.Session)()),
     __param(1, (0, common_1.Request)()),
     __param(2, (0, common_1.Res)()),
@@ -124,8 +123,9 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "fortyTwoAuthRedirect", null);
 AuthController = __decorate([
-    (0, common_1.Controller)('auth'),
-    __metadata("design:paramtypes", [auth_service_1.AuthService, jwt_1.JwtService])
+    (0, common_1.Controller)("auth"),
+    __metadata("design:paramtypes", [auth_service_1.AuthService,
+        jwt_1.JwtService])
 ], AuthController);
 exports.AuthController = AuthController;
 //# sourceMappingURL=auth.controller.js.map

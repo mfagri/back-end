@@ -9,8 +9,7 @@ export declare class UserService {
     myArray: MyObject[];
     getUserConversationInbox(userId: string): Promise<any[]>;
     addFriend(userId: string, friendId: number): Promise<import(".prisma/client").User>;
-    getFriendRequest(userId: string): Promise<import(".prisma/client").User[]>;
-    getFriendsendRequest(userId: number): Promise<import(".prisma/client").User[]>;
+    getFriendRequest(userId: string): Promise<import(".prisma/client").Profile[]>;
     updateusername(id: string, username: string): Promise<import(".prisma/client").User & {
         profile: import(".prisma/client").Profile;
     }>;

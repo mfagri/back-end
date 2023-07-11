@@ -62,11 +62,6 @@ let UserController = class UserController {
         });
         return this.userService.getFriendRequest(data.id);
     }
-    usersEnvit(id) {
-        const numericId = parseInt(id, 10);
-        console.log("sendreq", numericId);
-        return this.userService.getFriendsendRequest(numericId);
-    }
     async getUser(iduser, req) {
         const numericId = parseInt(iduser, 10);
         const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
@@ -166,13 +161,6 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "usersRequest", null);
-__decorate([
-    (0, common_1.Get)("sendreq"),
-    __param(0, (0, common_1.Query)("id")),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], UserController.prototype, "usersEnvit", null);
 __decorate([
     (0, common_1.Get)("invet"),
     __param(0, (0, common_1.Query)("id")),

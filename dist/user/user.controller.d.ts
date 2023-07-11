@@ -20,8 +20,7 @@ export declare class UserController {
         user?: undefined;
     }>;
     showfriends(id: string): Promise<import(".prisma/client").User[]>;
-    usersRequest(req: Request): Promise<import(".prisma/client").User[]>;
-    usersEnvit(id: string): Promise<import(".prisma/client").User[]>;
+    usersRequest(req: Request): Promise<import(".prisma/client").Profile[]>;
     getUser(iduser: string, req: Request): Promise<boolean>;
     cancelreq(iduser: string, req: Request): Promise<boolean>;
     deletefromefriends(iduser: string, req: Request): Promise<boolean>;

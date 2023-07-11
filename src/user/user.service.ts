@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { Exclude } from "class-transformer";
+import { async } from "rxjs";
 import { createConversationDto } from "src/dto/room/createConversationDto";
 // import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "src/prisma/prisma.service";
@@ -87,91 +88,9 @@ export class UserService {
   
     return test;
   }
-  
-  // async getUserConversationInbox(userId: string) {
-  //   let inbox = await this.prisma.user.findUnique({
-  //     where: {intrrid: userId},
-  //     select: {
-  //       rooms: {
-  //         where: {
-  //           group: false,
-  //         },
-  //         select: {
-  //           id: true,
-  //           whoJoined: {
-  //             where :{
-  //               intrrid: {
-  //                 not: userId,
-  //               }
-  //             },
-  //             select: {
-  //               username: true,
-  //               image: true,
-  //               id: true,
-  //             }
-  //           },
-  //           messages: {
-  //             select: {
-  //               createdAt: true,
-  //               createdBy: {
-  //                 select: {
-  //                   username: true,
-  //                   id: true,
-  //                 }
-  //               },
-  //               content: true,
-  //             },
-  //             orderBy: {
-  //               createdAt: "desc"
-  //             },
-  //             take: 1,
-  //           }
-  //         }
-  //       }
-  //     }
-  //   })
-  //   const check_inbox = await this.prisma.user.findUnique({
-  //     where: {intrrid: userId},
-  //     select: {
-  //       rooms: {
-  //         select: {
-  //           group: true,
-  //           whoJoined: {
-  //             select: {
-  //               image: true,
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //   })
-
-  //   if (!check_inbox)
-  //     throw new NotFoundException("No inbox found for this user");
-
-  //   for (let i = 0; i < check_inbox.rooms.length; i++) {
-  //   }
-  //   return inbox;
-  // }
-
-  // async addFriend(userId: number, friendId: number) {
-  //   const user = await this.prisma.user.update({
-  //     where: { id: userId },
-  //     data: {
-  //       friendsRelation: { connect: { id: friendId } },
-  //     },
-  //   });
-  //   await this.prisma.user.update({
-  //     where: { id: friendId },
-  //     data: {
-  //       friendsRelation: { connect: { id: userId } },
-  //     },
-  //   });
-  //   await this.roomService.createConversation(userId, friendId);
-  //   return user;
-  // }
 
   async addFriend(userId: string, friendId: number) {
+   
     const data = await this.prisma.user.findUnique({
       where: {
         intrrid: userId,
@@ -180,9 +99,14 @@ export class UserService {
         friends: true,
       },
     });
+    const profileuser = await this.prisma.profile.findUnique({
+      where:{
+        id:friendId
+      }
+    })
     const friend = await this.prisma.user.findUnique({
       where: {
-        id: friendId,
+        id: profileuser.Userid,
       },
     });
 
@@ -193,32 +117,28 @@ export class UserService {
     const user = await this.prisma.user.update({
       where: { intrrid: userId },
       data: {
-        friendsRelation: { connect: { id: friendId } },
+        friendsRelation: { connect: { id: profileuser.Userid } },
       },
     });
     await this.prisma.user.update({
-      where: { id: friendId },
+      where: { id: profileuser.Userid },
       data: {
         friendsRelation: { connect: { intrrid: userId } },
-        request: { disconnect: { id: friendId } },
+        request: { disconnect: { id: profileuser.Userid } },
       },
     });
     await this.prisma.user.update({
       where: { intrrid: userId },
       data: {
-        // friendsRelation: { connect: { intrrid: userId } },
-        requestedBy: { disconnect: { id: friendId } },
+        requestedBy: { disconnect: { id: profileuser.Userid } },
       },
     });
-    // data: {
-    //   requestedBy: { connect: { intrrid: inviterId } },
-    // },
     const user1 = await this.prisma.user.findUnique({
       where: {
         intrrid: userId,
       },
     });
-    await this.roomService.createConversation(user1.id, friendId);
+    await this.roomService.createConversation(user1.id, profileuser.Userid);
     return friend;
   }
   ////////////////
@@ -228,8 +148,13 @@ export class UserService {
         intrrid: userId,
       },
       include: {
-        requestedBy: true,
+        requestedBy: {
+        include:{
+          profile: true
+        }
+      }
       },
+      
     });
     await this.prisma.user.update({
       where:{
@@ -239,19 +164,19 @@ export class UserService {
         notif: false
       }
     })
-    return user.requestedBy;
+    return user.requestedBy.map((requestedBy) => requestedBy.profile); 
   }
-  async getFriendsendRequest(userId: number) {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-      include: {
-        request: true,
-      },
-    });
-    return user.request;
-  }
+  // async getFriendsendRequest(userId: number) {
+  //   const user = await this.prisma.user.findUnique({
+  //     where: {
+  //       id: userId,
+  //     },
+  //     include: {
+  //       request: true,
+  //     },
+  //   });
+  //   return user.request;
+  // }
   async updateusername(id: string, username: string) {
     const user = await this.prisma.user.update({
       where: {
@@ -280,9 +205,6 @@ export class UserService {
           startsWith: username,
         },
       },
-      // include: {
-      //   friends: true
-      // },
     });
     return result;
   }
@@ -330,16 +252,6 @@ export class UserService {
       const foundreq = result.request.find((obj) => {
         return obj.username == username;
       });
-      // if (found)
-      //   return {
-      //     ...profile,
-      //     friend: "friend",
-      //   };
-      // else
-      //   return {
-      //     ...profile,
-      //     friend: "",
-      //   };
       return {
         ...profile,
         friend: found ? "friend" : "",
@@ -351,8 +263,6 @@ export class UserService {
   }
 
   async inviteUser(userId: number, inviterId: string) {
-    console.log("wtf = ",inviterId);
-    console.log(userId);
     const profile = await this.prisma.profile.findUnique({
       where:{
         id:userId
@@ -365,13 +275,6 @@ export class UserService {
       },
     });
     try {
-      // console.log(userId);
-      // console.log(inviterId);
-
-      // if (!userToInvite) {
-      //   throw new Error(`User with ID ${userId} not found.`);
-      // }
-
       const inviter = await this.prisma.user.findUnique({
         where: { intrrid: inviterId },
       });
@@ -395,7 +298,6 @@ export class UserService {
     } catch (error) {
       console.error(error);
     }
-    console.log("user to invite",userToInvite)
     return userToInvite;
   }
   /////////Remove from friends/////////
@@ -436,9 +338,6 @@ export class UserService {
         },
         include: { whoJoined: true },
       });
-      // rooms: [ { id: 10, whoJoined: [Array] }, { id: 11, whoJoined: [Array] } ]
-
-      console.log("room id is === ", room);
       const room1 = await this.prisma.room.findUniqueOrThrow({
         where: { id: room.id },
         include: { messages: true, inbox: true },
@@ -458,18 +357,6 @@ export class UserService {
           },
         },
       });
-      // Delete the inbox entries associated with the room
-      // await this.prisma.inbox.deleteMany(
-      //   {
-      //     where:{
-      //       rooms:{
-
-      //       }
-      //     }
-      //   }
-      // );
-
-      // // Delete the room itself
       await this.prisma.room.delete({
         where: {
           id: room1.id,
@@ -492,10 +379,14 @@ export class UserService {
   }
   async cancelreqest(myuserid: string, userid: number) {
     try{
-
+      const profileuser = await this.prisma.profile.findUnique({
+        where:{
+          id : userid
+        }
+      });
       const userf = await this.prisma.user.update({
         where: {
-          id: userid,
+          id: profileuser.Userid,
         },
         data: {
           requestedBy: {
@@ -512,7 +403,7 @@ export class UserService {
         },
         data: {
           request: {
-            disconnect: [{ id: userid }],
+            disconnect: [{ id: profileuser.Userid }],
           },
         },
         include: {
@@ -526,10 +417,16 @@ export class UserService {
       console.log(e)
     }
   }
+
   async deletreq(myuserid: string, userid: number) {
+    const profileuser = await this.prisma.profile.findUnique({
+      where:{
+        id : userid
+      }
+    });
     const userf = await this.prisma.user.update({
       where: {
-        id: userid,
+        id: profileuser.Userid,
       },
       data: {
         request: {
@@ -546,7 +443,7 @@ export class UserService {
       },
       data: {
         requestedBy: {
-          disconnect: [{ id: userid }],
+          disconnect: [{ id: profileuser.Userid }],
         },
       },
       include: {
