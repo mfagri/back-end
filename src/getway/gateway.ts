@@ -37,49 +37,9 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @WebSocketServer()
   server: Server;
-  // handleConnection(client) {
-  //     console.log("connection to socket... token = ", client.handshake.query.token)
-  // }
   handleConnection(socket: any) {
     console.log("Incoming Connection", socket.id);
-    // console.log("data = ",data);
-    // this.sessions.setUserSocket(socket.user.id, socket);
-    // socket.emit('connected', {});
-    //wtf
-
-    // console.log("in gateway --------------------------");
-    // console.log(this.serv.myArray);
-    // this.server.on('connection',(socket)=>{
-    //     // this.socket1 = socket;
-    //     console.log(`Client connected: ${socket.id}`);
-    //     // console.log(this.serv.myArray);
-    //     socket.on('newUser',async (data)=> {
-    //         //add user name and socketid
-
-    //         this.serv.myArray.push({element1: data,element2: <string>socket.id});
-    //         console.log("in gateway --------------------------");
-    //         console.log( this.serv.myArray);
-
-    //         const user =  await this.prisma.user.update({
-    //             where:{
-    //                 username: data
-    //             },
-
-    //             data:{
-    //                 // auth: <string>socket.id,
-    //                 profile:{
-    //                     update:{
-    //                         online: true
-    //                     }
-    //                 }
-    //             }
-
-    //         });
-
-    //         // console.log("here",user);
-    //     })
     socket.on("newUser", async (data) => {
-      // console.log("id is ",socket.id)
       try {
         try {
           const userdata = await this.jwtService.verifyAsync(
@@ -110,7 +70,6 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
             },
 
             data: {
-              // auth: <string>socket.id,
               profile: {
                 update: {
                   online: true,
@@ -121,12 +80,9 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
         } catch (e) {
           throw new NotFoundException("not found");
         }
-        // console.log(user);
       } catch (e) {
         console.log(e);
       }
-      // console.log(user.auth,"i see you");
-      // socket.to(user.auth).emit("receiveNotif");
     });
     socket.on("addUser", async (data) => {
       console.log("data = {",data)
@@ -149,7 +105,6 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
           id: profile.Userid,
         },
       });
-      console.log("user = " ,user)
       const arr = this.serv.myArray.filter((obj) => {
         return obj.element1 === user.username;
       });
@@ -158,7 +113,6 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
 
     socket.on("cancelReq", async (data) => {
-      // console.log("hello you",socket.id)
       const isin = this.serv.myArray.find((obj) => {
         return obj.element2 === socket.id;
       });
@@ -178,32 +132,6 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       arr.map((element) => socket.to(element.element2).emit("cancelreq"));
     });
-
-// socket.on("sentMessage", async (data) => {
-    //     // console.log("msg ", data);
-    //     const isin = this.serv.myArray.find((obj) => {
-    //         return obj.element2 === socket.id;
-    //       });
-    //       console.log(isin);
-    //       if (!isin) {
-    //         console.log("i saw it coming from miles away");
-    //         return;
-    //       }
-    //       const user = await this.prisma.user.findUnique({
-    //         where: {
-    //           id: data,
-    //         },
-    //       });
-    //     //   console.log("user chat",user);
-    //       const arr = this.serv.myArray.filter((obj) => {
-    //         return obj.element1 === user.username;
-    //       });
-
-    //       arr.map((element) => socket.to(element.element2).emit("Gotmsg"));
-    // })
-
-
-    //new socket send msg, to be modified later
     socket.on("sendMessage", async ({messageContent, userId, receiverId, roomId}) => {
       const user = await this.prisma.user.findUnique({
         where: {
@@ -221,85 +149,26 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
         });
       });
     })
-
-
-    // socket.on("acceptReq", async (data) => {
-    //     // console.log("hello you",socket.id)
-    //     const isin = this.serv.myArray.find((obj) => {
-    //       return obj.element2 === socket.id;
-    //     });
-    //     console.log(isin);
-    //     if (!isin) {
-    //       console.log("i saw it coming from miles away");
-    //       return;
-    //     }
-    //     const user = await this.prisma.user.findUnique({
-    //       where: {
-    //         id: data,
-    //       },
-    //     });
-    //     const arr = this.serv.myArray.filter((obj) => {
-    //       return obj.element1 === user.username;
-    //     });
-  
-    //     arr.map((element) => socket.to(element.element2).emit("acceptreq"));
-    //   });
-
-    // })
   }
-  // @SubscribeMessage('msg')
-  // handleEvent(@ConnectedSocket() client: Socket, data: string): string {//reserv from client
-  //     // id === messageBody.id
-  //     console.log(client.id,"______");
-  //     console.log(data)
-  //     client.on('msg', (data) => console.log(data));
-  //     const count = this.server.engine.clientsCount;
-  //     console.log("number is = ",count)
-  //     return data;
-
-  //   }
-  // acceptuser(socket :Socket,id: string)
-  // {
-  //     socket.to("all").emit("acceptreq");
-  // }
-  // sendmsg()
-  // {
-  //     console.log("ddddddd");
-  //     this.server.to("all").emit("msg", {"hello": "you"});
-  // }
-  // // onNewmessage(@MessageBody() body: any,)
-  // // {
-  // //     console.log("we are here , we are waiting", body)
-  // //     this.server.to('all').emit('onMessage', {msg: body});
-  // //     this.server.emit("onMessage",{
-  // //         msg: body,
-
-  // //     })
-  // // }
   async handleDisconnect(client: Socket) {
-    //socket disconnect find username
     const find = this.serv.myArray.find((obj) => {
       return obj.element2 === client.id;
     });
     console.log(find);
-    // //find user in db using username
     try {
       const user = await this.prisma.user.findUniqueOrThrow({
         where: {
           username: find.element1,
         },
       });
-      //delet from array
       this.serv.myArray = this.serv.myArray.filter((obj) => {
         return obj !== find;
       });
       console.log("new array");
       console.log(this.serv.myArray);
-      //   console.log("check number of user in array : ");
       const countUser = this.serv.myArray.filter((obj) => {
         return obj.element1 === find.element1;
       }).length;
-      //   console.log(countUser);
       try {
         await this.prisma.user.update({
           where: {
@@ -316,28 +185,6 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
         });
       } catch (e) {}
     } catch (e) {}
-    // //count username in array  if 0 online ---> offline
-    // //  try{
-    // //      await this.prisma.user.update({
-    // //          where:{
-    // //             auth: client.id,
-    // //          },
-
-    // //          data:{
-
-    // //              profile:{
-    // //                  update:{
-    // //                      online: false
-    // //                  }
-    // //              }
-    // //          }
-
-    // //      }
-    // //      );
-    // //     }
-    // //     catch(e)
-    // //     {}
-    // console.log(this.serv.myArray);
     console.log(`Client disconnected: ${client.id}`);
   }
 }

@@ -25,13 +25,10 @@ export class Strategy42 extends PassportStrategy(FortyTwoStrategy) {
     accessToken: String,
     refreshToken: string,
     profile: Profile,
-    done: VerifyCallback
-    // @Req() req: Request,
   ) {
     if (!accessToken) {
       throw new UnauthorizedException("Access token missing");
     } 
-    // this.Id = profile.id;
     this.tokens = accessToken;
     this.refresh = refreshToken;
 
@@ -40,19 +37,10 @@ export class Strategy42 extends PassportStrategy(FortyTwoStrategy) {
       accessToken: accessToken,
       refreshToken: refreshToken,
     };
-    // this.usr1 = user;
     const payload = {
       accestoken:  accessToken,
       refreshtoken: refreshToken,
     };
-    console.log("/////", profile.id, "//////");
-    // done(null,profile)
     return {id: profile.id,mytoken: payload}
   }
-  // private static extract42(req: any): string | null {
-  //   if (req.cookies && 'access_token' in req.cookies) {
-  //     return req.cookies.access_token;
-  //   }
-  //   return null;
-  // }
 }

@@ -23,7 +23,7 @@ let Strategy42 = class Strategy42 extends (0, passport_1.PassportStrategy)(passp
             Profile: {}
         });
     }
-    async validate(accessToken, refreshToken, profile, done) {
+    async validate(accessToken, refreshToken, profile) {
         if (!accessToken) {
             throw new common_1.UnauthorizedException("Access token missing");
         }
@@ -37,7 +37,6 @@ let Strategy42 = class Strategy42 extends (0, passport_1.PassportStrategy)(passp
             accestoken: accessToken,
             refreshtoken: refreshToken,
         };
-        console.log("/////", profile.id, "//////");
         return { id: profile.id, mytoken: payload };
     }
 };

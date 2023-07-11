@@ -87,7 +87,6 @@ let MyGateway = class MyGateway {
                     id: profile.Userid,
                 },
             });
-            console.log("user = ", user);
             const arr = this.serv.myArray.filter((obj) => {
                 return obj.element1 === user.username;
             });

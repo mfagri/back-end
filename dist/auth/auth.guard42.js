@@ -13,7 +13,6 @@ let AuthGuard42 = class AuthGuard42 extends (0, passport_1.AuthGuard)("42") {
     async canActivate(context) {
         const active = (await super.canActivate(context));
         const request = context.switchToHttp().getRequest();
-        console.log("===", request.payload);
         await super.logIn(request);
         return active;
     }
