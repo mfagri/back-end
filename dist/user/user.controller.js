@@ -16,8 +16,8 @@ exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
 const jwt_1 = require("@nestjs/jwt");
-const constants_1 = require("../auth/constants");
 const gateway_1 = require("../getway/gateway");
+const auth_guard_1 = require("../auth/auth.guard");
 let UserController = class UserController {
     constructor(userService, jwtService, Mygiteway) {
         this.userService = userService;
@@ -36,14 +36,8 @@ let UserController = class UserController {
     }
     async addFriend(userId, req) {
         try {
-            const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
-                secret: constants_1.jwtConstants.secret,
-                ignoreExpiration: true,
-            });
-            console.log("userid = ", userId);
-            console.log("intara id = ", data.id);
             const numericId = parseInt(userId, 10);
-            const user = await this.userService.addFriend(data.id, numericId);
+            const user = await this.userService.addFriend(req.user.id, numericId);
             return { message: "Friend added successfully", user };
         }
         catch (error) {
@@ -52,84 +46,50 @@ let UserController = class UserController {
     }
     async showfriends(id) {
         const numericId = parseInt(id, 10);
-        console.log(numericId);
         return this.userService.rfriends(numericId);
     }
     async usersRequest(req) {
-        const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
-            secret: constants_1.jwtConstants.secret,
-            ignoreExpiration: true,
-        });
-        return this.userService.getFriendRequest(data.id);
+        return this.userService.getFriendRequest(req.user.id);
     }
     async getUser(iduser, req) {
         const numericId = parseInt(iduser, 10);
-        const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
-            secret: constants_1.jwtConstants.secret,
-            ignoreExpiration: true,
-        });
-        const user = this.userService.inviteUser(numericId, data.id);
+        this.userService.inviteUser(numericId, req.user.id);
         return true;
     }
     async cancelreq(iduser, req) {
         const numericId = parseInt(iduser, 10);
-        const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
-            secret: constants_1.jwtConstants.secret,
-            ignoreExpiration: true,
-        });
-        const user = this.userService.cancelreqest(data.id, numericId);
+        this.userService.cancelreqest(req.user.id, numericId);
         return true;
     }
     async deletefromefriends(iduser, req) {
-        const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
-            secret: constants_1.jwtConstants.secret,
-            ignoreExpiration: true,
-        });
         const numericId = parseInt(iduser, 10);
-        this.userService.removefiend(numericId, data.id);
+        this.userService.removefiend(numericId, req.user.id);
         return true;
     }
     async updateUser(req, uname, image) {
         try {
-            const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
-                secret: constants_1.jwtConstants.secret,
-                ignoreExpiration: true,
-            });
             if (uname && image) {
-                this.userService.updateusername(data.id, uname);
-                return this.userService.updateuserimage(data.id, image);
+                this.userService.updateusername(req.user.id, uname);
+                return this.userService.updateuserimage(req.user.id, image);
             }
             else if (uname)
-                return this.userService.updateusername(data.id, uname);
+                return this.userService.updateusername(req.user.id, uname);
             else if (image)
-                return this.userService.updateuserimage(data.id, image);
+                return this.userService.updateuserimage(req.user.id, image);
         }
         catch (e) {
             throw new common_1.ForbiddenException("no user here");
         }
     }
     async showprofile(username, req) {
-        const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
-            secret: constants_1.jwtConstants.secret,
-            ignoreExpiration: true,
-        });
-        return this.userService.getprofile(username, data.id);
+        return this.userService.getprofile(username, req.user.id);
     }
     async getUserInbox(req) {
-        console.log("here");
-        const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
-            secret: constants_1.jwtConstants.secret,
-            ignoreExpiration: true,
-        });
-        return this.userService.getUserConversationInbox(data.id);
+        return this.userService.getUserConversationInbox(req.user.id);
     }
     async deletreq(req, iduser) {
-        const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
-            secret: constants_1.jwtConstants.secret,
-            ignoreExpiration: true,
-        });
         const numericId = parseInt(iduser, 10);
-        this.userService.deletreq(data.id, numericId);
+        this.userService.deletreq(req.user.id, numericId);
     }
 };
 __decorate([
@@ -141,6 +101,7 @@ __decorate([
 ], UserController.prototype, "Search", null);
 __decorate([
     (0, common_1.Get)("accept"),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuardJWS),
     __param(0, (0, common_1.Query)("idfriend")),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -156,6 +117,7 @@ __decorate([
 ], UserController.prototype, "showfriends", null);
 __decorate([
     (0, common_1.Get)("myreq"),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuardJWS),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -163,6 +125,7 @@ __decorate([
 ], UserController.prototype, "usersRequest", null);
 __decorate([
     (0, common_1.Get)("invet"),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuardJWS),
     __param(0, (0, common_1.Query)("id")),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -171,6 +134,7 @@ __decorate([
 ], UserController.prototype, "getUser", null);
 __decorate([
     (0, common_1.Get)("cancel"),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuardJWS),
     __param(0, (0, common_1.Query)("id")),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -179,6 +143,7 @@ __decorate([
 ], UserController.prototype, "cancelreq", null);
 __decorate([
     (0, common_1.Get)("remove"),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuardJWS),
     __param(0, (0, common_1.Query)("id")),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -187,6 +152,7 @@ __decorate([
 ], UserController.prototype, "deletefromefriends", null);
 __decorate([
     (0, common_1.Patch)(),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuardJWS),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)("username")),
     __param(2, (0, common_1.Body)("image")),
@@ -196,6 +162,7 @@ __decorate([
 ], UserController.prototype, "updateUser", null);
 __decorate([
     (0, common_1.Get)("showprofile"),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuardJWS),
     __param(0, (0, common_1.Query)("username")),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -204,6 +171,7 @@ __decorate([
 ], UserController.prototype, "showprofile", null);
 __decorate([
     (0, common_1.Get)("/getUserConversationInbox/"),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuardJWS),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -211,6 +179,7 @@ __decorate([
 ], UserController.prototype, "getUserInbox", null);
 __decorate([
     (0, common_1.Get)("deletreq"),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuardJWS),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Query)("id")),
     __metadata("design:type", Function),

@@ -26,9 +26,6 @@ import {
               ignoreExpiration: true,
             }
             );
-            console.log(token);
-        // 💡 We're assigning the payload to the request object here
-        // so that we can access it in our route handlers
         request['user'] = payload;
       } catch {
           throw new UnauthorizedException(); 
@@ -36,8 +33,7 @@ import {
       return true;
     }
   
-    private extractTokenFromHeader(request: Request): string | undefined {
-      const [type, token] = request.headers.authorization?.split(' ') ?? [];
-      return type === 'Bearer' ? token : undefined;
+    private extractTokenFromHeader(request: Request): string {
+      return request.cookies["authcookie"]["access_token"];
     }
   }

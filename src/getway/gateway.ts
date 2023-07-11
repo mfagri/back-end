@@ -20,7 +20,6 @@ import { UserService } from "src/user/user.service";
 import { AuthenticatedSocket } from "./test1";
 import { JwtService } from "@nestjs/jwt";
 import { jwtConstants } from "src/auth/constants";
-import { async } from "rxjs";
 @WebSocketGateway({
   cors: {
     origin: true,

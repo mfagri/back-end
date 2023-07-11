@@ -18,8 +18,8 @@ const auth_1 = require("../dto/auth");
 const auth_service_1 = require("./auth.service");
 const jwt_1 = require("@nestjs/jwt");
 const auth_guard42_1 = require("./auth.guard42");
-const constants_1 = require("./constants");
 const index_1 = require("../2FA/index");
+const auth_guard_1 = require("./auth.guard");
 const App = require("express");
 let AuthController = class AuthController {
     constructor(authService, jwtService) {
@@ -40,10 +40,8 @@ let AuthController = class AuthController {
     async getProfile(req, a) {
         a.authenticated = true;
         try {
-            const data = await this.jwtService.verifyAsync(req.cookies["authcookie"]["access_token"], {
-                secret: constants_1.jwtConstants.secret,
-            });
-            return this.authService.findone(data.id);
+            console.log("id is ", req.user.id);
+            return this.authService.findone(req.user.id);
         }
         catch (e) {
             throw new common_1.ForbiddenException("no user here");
@@ -91,6 +89,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signup", null);
 __decorate([
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuardJWS),
     (0, common_1.Get)("profile"),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Session)()),

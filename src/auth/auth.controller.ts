@@ -18,6 +18,7 @@ import { Response } from "express";
 import { AuthGuard42 } from "./auth.guard42";
 import { jwtConstants } from "./constants";
 import { generatsecret, getqrcode, validepass } from "../2FA/index";
+import { AuthGuardJWS } from "./auth.guard";
 const App = require("express");
 
 @Controller("auth")
@@ -41,19 +42,13 @@ export class AuthController {
   async signup(@Req() req, @Body() dto: AuthDto, @Query() q) {
     return this.authService.signup(dto, req.cookies["authcookie"]);
   }
-
+  @UseGuards(AuthGuardJWS)
   @Get("profile")
   async getProfile(@Req() req, @Session() a) {
     a.authenticated = true;
     try {
-      const data = await this.jwtService.verifyAsync(
-        req.cookies["authcookie"]["access_token"],
-
-        {
-          secret: jwtConstants.secret,
-        }
-      );
-      return this.authService.findone(data.id);
+      console.log("id is ",req.user.id)
+      return this.authService.findone(req.user.id);
     } catch (e) {
       throw new ForbiddenException("no user here");
     }

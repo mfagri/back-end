@@ -28,7 +28,6 @@ let AuthGuardJWS = class AuthGuardJWS {
                 secret: constants_1.jwtConstants.secret,
                 ignoreExpiration: true,
             });
-            console.log(token);
             request['user'] = payload;
         }
         catch (_a) {
@@ -37,9 +36,7 @@ let AuthGuardJWS = class AuthGuardJWS {
         return true;
     }
     extractTokenFromHeader(request) {
-        var _a, _b;
-        const [type, token] = (_b = (_a = request.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(' ')) !== null && _b !== void 0 ? _b : [];
-        return type === 'Bearer' ? token : undefined;
+        return request.cookies["authcookie"]["access_token"];
     }
 };
 AuthGuardJWS = __decorate([
